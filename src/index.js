@@ -1,6 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './app';
+import App from './client/app';
+import Swagger from './docs/swagger';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import {
+  BrowserRouter,
+  Switch,
+  Route
+} from 'react-router-dom'
+
+ReactDOM.render(
+  <BrowserRouter>
+    <Switch>
+      <Route exact path="/api" component={Swagger} />
+      <Route exact path="/" component={App} />
+    </Switch>
+  </BrowserRouter>,
+  document.getElementById('root')
+);

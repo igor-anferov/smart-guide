@@ -8,8 +8,8 @@ import './app.css';
 
 function App() {
   return (
-    <Box height={1} overflow='scroll'>
-      <Start/>
+    <Box height={1} display='flex' overflow='hidden'>
+      <Latex/>
     </Box>
   );
   return (
@@ -18,8 +18,8 @@ function App() {
     </Box>
   );
   return (
-    <Box height={1} display='flex' overflow='hidden'>
-      <Latex/>
+    <Box height={1} overflow='scroll'>
+      <Start/>
     </Box>
   );
 }
