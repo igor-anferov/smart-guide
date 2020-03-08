@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { Link, useRouteMatch } from 'react-router-dom'
 
 
 const elements = [
@@ -41,6 +42,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function Elements({spacing, breakpoints}) {
+  let match = useRouteMatch();
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -62,7 +64,7 @@ export default function Elements({spacing, breakpoints}) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Добавить LaTeX</MenuItem>
+        <MenuItem component={Link} to={`${match.url}/latex/new`}>Добавить LaTeX</MenuItem>
         <MenuItem onClick={handleClose}>Добавить фото</MenuItem>
         <MenuItem onClick={handleClose}>Добавить фрагмент PDF</MenuItem>
       </Menu>

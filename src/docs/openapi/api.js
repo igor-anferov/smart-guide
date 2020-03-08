@@ -29,21 +29,21 @@ export default {
     },
 
 
-    "/clipboard/base_blocks": {
-      get: require("./paths/clipboard/base_blocks/get.js").default,
-      post: require("./paths/clipboard/base_blocks/post.js").default,
-      delete: require("./paths/clipboard/base_blocks/delete.js").default,
+    "/clipboard/base_elements": {
+      get: require("./paths/clipboard/base_elements/get.js").default,
+      post: require("./paths/clipboard/base_elements/post.js").default,
+      delete: require("./paths/clipboard/base_elements/delete.js").default,
     },
 
 
-    "/base_blocks/{base_block_id}": {
-      post: require("./paths/base_blocks/base_block/post.js").default,
+    "/base_elements/{base_element_id}": {
+      post: require("./paths/base_elements/base_element/post.js").default,
     },
-    "/base_blocks/{base_block_id}/info": {
-      get: require("./paths/base_blocks/base_block/info/get.js").default,
+    "/base_elements/{base_element_id}/info": {
+      get: require("./paths/base_elements/base_element/info/get.js").default,
     },
-    "/base_blocks/{base_block_id}/content": {
-      get: require("./paths/base_blocks/base_block/content/get.js").default,
+    "/base_elements/{base_element_id}/content": {
+      get: require("./paths/base_elements/base_element/content/get.js").default,
     },
 
   },

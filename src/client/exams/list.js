@@ -8,6 +8,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { Link } from 'react-router-dom'
 
 
 const exams = [
@@ -42,37 +43,37 @@ export default function Exams({spacing, breakpoints}) {
   const classes = useStyles();
 
   return (
-    <Box p={8}>
-      <Grid container spacing={spacing}>
-        <Grid container direction='column' item xs={12}>
-          <TextField label="Поиск" variant="outlined" />
-        </Grid>
-        {exams.map(({ id, title, professor }) => (
-          <Grid container item key={id} {...breakpoints}>
-            <Card className={classes.flex}>
-              <CardActionArea>
-                <CardContent>
-                  <Typography gutterBottom variant="h5">
-                    { title }
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    { professor }
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        ))}
-        <Grid container item {...breakpoints}>
+    <Grid container spacing={spacing}>
+      <Grid container direction='column' item xs={12}>
+        <TextField label="Поиск" variant="outlined" />
+      </Grid>
+      {exams.map(({ id, title, professor }) => (
+        <Grid container item key={id} {...breakpoints}>
           <Card className={classes.flex}>
-            <CardActionArea>
-              <CardContent className={classes.flexBox}>
-                <AddCircleIcon className={classes.flex} color="disabled" style={{ fontSize: 120 }}/>
+            <CardActionArea component={Link} to='/exams/exam'>
+              <CardContent>
+                <Typography gutterBottom variant="h5">
+                  { title }
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  { professor }
+                </Typography>
               </CardContent>
             </CardActionArea>
           </Card>
         </Grid>
+      ))}
+      <Grid container item {...breakpoints}>
+        <Card className={classes.flex}>
+          <CardActionArea>
+            <Link to='/exams/exam'>
+              <CardContent className={classes.flexBox}>
+                <AddCircleIcon className={classes.flex} color="disabled" style={{ fontSize: 120 }}/>
+              </CardContent>
+            </Link>
+          </CardActionArea>
+        </Card>
       </Grid>
-    </Box>
+    </Grid>
   );
 }

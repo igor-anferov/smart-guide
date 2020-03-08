@@ -30,8 +30,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 
-import Questions from './questions'
-
+import useCommonStyles from '../styles';
+import Questions from '../questions/list'
 
 const drawerWidth = 320;
 
@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerContent: {
     height: '100%',
-    overflow: 'scroll',
+    overflow: 'auto',
   },
   mainLeftClosed: {
     marginLeft: -drawerWidth,
@@ -117,17 +117,16 @@ const useStyles = makeStyles(theme => ({
 
 function LeftDrawerContent() {
   const classes = useStyles();
+  const commonStyles = useCommonStyles();
 
   return (
-    <Box display="flex" p={2}>
-      <Grid container spacing={8}>
-        <Grid item xs={12}>
-          <TextField className={classes.flex} id="title" required={true} multiline={true} label="Название экзамена" />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField className={classes.flex} id="professor" required={true} multiline={true} label="Преподаватель" />
-        </Grid>
-      </Grid>
+    <Box p={2}>
+      <Box py={2}>
+        <TextField fullWidth className={classes.flex} id="title" required={true} multiline={true} label="Название экзамена" />
+      </Box>
+      <Box py={2}>
+        <TextField fullWidth className={classes.flex} id="professor" multiline={true} label="Преподаватель" />
+      </Box>
     </Box>
   );
 }
@@ -190,6 +189,7 @@ function MainContent() {
 
 export default function Exam() {
   const classes = useStyles();
+  const commonStyles = useCommonStyles();
   const theme = useTheme();
   const [leftOpen, setLeftOpen] = React.useState(true);
   const [rightOpen, setRightOpen] = React.useState(true);
@@ -227,8 +227,8 @@ export default function Exam() {
           <LeftDrawerContent/>
         </Box>
       </Drawer>
-      <Grid container item xs direction='column' alignItems='stretch'
-        className={clsx({
+      <div
+        className={clsx(commonStyles.flexCol, {
           [classes.mainLeftClosed]: !leftOpen,
           [classes.mainLeftOpened]: leftOpen,
           [classes.mainRightClosed]: !rightOpen,
@@ -263,7 +263,7 @@ export default function Exam() {
           </AppBar>
         </Grid>
         <MainContent/>
-      </Grid>
+      </div>
       <Drawer
         className={classes.drawer}
         variant="persistent"

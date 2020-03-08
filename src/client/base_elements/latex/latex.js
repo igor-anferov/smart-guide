@@ -18,28 +18,14 @@ import Fab from '@material-ui/core/Fab';
 import DoneIcon from '@material-ui/icons/Done';
 import { parse, HtmlGenerator } from 'latex.js';
 
-import LatexEditor from './latex/editor'
+import useCommonStyles from '../../styles';
+import LatexEditor from './editor';
 
 const drawerWidth = 320;
 
 const useStyles = makeStyles(theme => ({
-  flex: {
-    display: 'flex',
-    flex: 1,
-  },
-  flexBox: {
-    display: 'flex',
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
   menuButton: {
     marginRight: theme.spacing(2),
-  },
-  hide: {
-    display: 'none',
   },
   drawer: {
     width: drawerWidth,
@@ -56,15 +42,15 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
   },
   mainExpanded: {
-    marginLeft: -drawerWidth,
+    marginLeft: 0,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   mainReduced: {
+    marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: 0,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -75,23 +61,24 @@ const useStyles = makeStyles(theme => ({
 
 function DrawerContent() {
   const classes = useStyles();
+  const commonStyles = useCommonStyles();
 
   return (
-    <Box display="flex" p={2}>
-      <Grid container spacing={8}>
-        <Grid item xs={12}>
-          <TextField className={classes.flex} id="title" required={true} multiline={true} label="Название элемента" />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField className={classes.flex} id="source" multiline={true} label="Источник" />
-        </Grid>
-      </Grid>
+    <Box p={2}>
+      <Box py={2}>
+        <TextField fullWidth className={classes.flex} id="title" required={true} multiline={true} label="Название элемента" />
+      </Box>
+      <Box py={2}>
+        <TextField fullWidth className={classes.flex} id="source" multiline={true} label="Источник" />
+      </Box>
     </Box>
   );
 }
 
 export default function LaTeX() {
   const classes = useStyles();
+  const commonStyles = useCommonStyles();
+
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
 
@@ -106,9 +93,9 @@ export default function LaTeX() {
   };
 
   return (
-    <div className={classes.flex}>
+    <Box height={1}>
       <CssBaseline />
-      <Fab className={classes.fab} color="primary">
+      <Fab className={commonStyles.fab} color="primary">
         <DoneIcon />
       </Fab>
       <Drawer
@@ -128,34 +115,32 @@ export default function LaTeX() {
         <Divider />
         <DrawerContent/>
       </Drawer>
-      <Grid container item xs direction='column' alignItems='stretch'
-        className={clsx(classes.mainExpanded, {
+      <Box
+        className={clsx(commonStyles.flexCol, classes.mainExpanded, {
           [classes.mainReduced]: open,
         })}
       >
-        <Grid item>
-          <AppBar position="relative">
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawer}
-                edge="start"
-                className={clsx(classes.menuButton, open && classes.hide)}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" color="inherit" noWrap>
-                Новый базовый элемент — LaTeX
-              </Typography>
-            </Toolbar>
-          </AppBar>
-        </Grid>
-        <Grid container item xs alignItems="stretch">
-          <Grid item xs={6}>
-            <LatexEditor onChange={handleCodeChanged}/> 
+        <AppBar position="relative">
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawer}
+              edge="start"
+              className={clsx(classes.menuButton, open && commonStyles.hide)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" color="inherit" noWrap>
+              Новый базовый элемент — LaTeX
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Grid container className={commonStyles.flexGrow}>
+          <Grid item xs={6} className={commonStyles.fullHeight}>
+            <LatexEditor onChange={handleCodeChanged}/>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={commonStyles.fullHeight}>
             <Box
               component='iframe'
               id="preview"
@@ -166,8 +151,8 @@ export default function LaTeX() {
             />
           </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
@@ -178,7 +163,6 @@ var ru = require('hyphenation.ru')
 var generator = new HtmlGenerator({
     hyphenate: true,
     languagePatterns: [en, ru],
-    styles: ['css/error.css']
 })
 
 var scrollY = 0

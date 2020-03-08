@@ -14,7 +14,7 @@ ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route exact path="/api" component={Swagger} />
-      <Route exact path="/" component={App} />
+      <Route path="/" component={App} />
     </Switch>
   </BrowserRouter>,
   document.getElementById('root')
