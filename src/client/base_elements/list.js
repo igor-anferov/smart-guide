@@ -12,6 +12,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link, useRouteMatch } from 'react-router-dom'
 
+import ImageUploadDialog from './image-upload-dialog';
+import FileUploadButton from './file-upload-button';
+
 
 const elements = [
   {
@@ -55,6 +58,16 @@ export default function Elements({spacing, breakpoints}) {
     setAnchorEl(null);
   };
 
+  const [imageToUpload, setImageToUpload] = React.useState(null);
+  const handleImageUpload = (image) => {
+    setAnchorEl(null);
+    setImageToUpload(image);
+  };
+  const handleImageUploadDialogClose = () => {
+    setImageToUpload(null);
+  };
+
+
   return (
     <Box>
       <Menu
@@ -65,9 +78,10 @@ export default function Elements({spacing, breakpoints}) {
         onClose={handleClose}
       >
         <MenuItem component={Link} to={`${match.url}/latex/new`}>Добавить LaTeX</MenuItem>
-        <MenuItem onClick={handleClose}>Добавить фото</MenuItem>
+        <MenuItem component={FileUploadButton} accept="image/*" onClick={handleClose} onSuccess={handleImageUpload}>Добавить фото</MenuItem>
         <MenuItem onClick={handleClose}>Добавить фрагмент PDF</MenuItem>
       </Menu>
+      <ImageUploadDialog image={imageToUpload} onImageUpdate={handleImageUpload} onClose={handleImageUploadDialogClose} />
       <Grid container spacing={spacing}>
         <Grid container direction='column' item xs={12}>
           <TextField label="Поиск" variant="outlined" />
