@@ -19,6 +19,7 @@
     "json-schema-ref-parser": "^7.1.4",
     "latex.js": "^0.12.1",
     "material-ui": "^0.20.2",
+    "multiparty": "^4.2.1",
     "pg": "^7.18.2",
     "react": "^16.12.0",
     "react-codemirror": "^1.0.0",
@@ -34,7 +35,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "create-db": "psql -f ./src/server/Database/createDB.sql"
   },
   "eslintConfig": {
     "extends": "react-app"
