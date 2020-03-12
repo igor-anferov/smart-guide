@@ -3,22 +3,24 @@
 * [PostgreSQL](https://postgresql.org/download)
 # Installation
 ```sh
-$ git clone git@github.com:igor-anferov/smart-guide.git
-$ cd smart-guide
-$ npm install -g yarn
-$ yarn install
+git clone git@github.com:igor-anferov/smart-guide.git
+cd smart-guide
+npm install -g yarn
+yarn install
 ```
 # Creating database
 ```sh
-$ yarn create-db
+yarn create-db
 ```
 # Filling database with demo data
 ```sh
-$ yarn fill-db
+yarn fill-db
 ```
 # Running dev-server
 ```sh
-$ yarn start
+JWT_SECRET='<secret used as HMAC key to sign JWT>' \
+FILES_DIR='<directory to save uploaded user files>' \
+yarn start
 ```
 ### Available endpoints
 | URL                     | Description       |
