@@ -59,6 +59,7 @@
     ]
   },
   "devDependencies": {
-    "raw-loader": "^4.0.0"
+    "raw-loader": "^4.0.0",
+    "swagger-express-middleware": "^2.0.5"
   }
 }
