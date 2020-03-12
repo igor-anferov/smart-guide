@@ -6,8 +6,8 @@ var router = express.Router()
 router.use(morgan('combined'))
 
 router.use('/books', require('./books/router.js'))
-//router.use('/clipboard', require('./clipboard/router.js'))
-//router.use('/base_element' require('./base_element/router.js'))
+router.use('/clipboard', require('./clipboard/router.js'))
+router.use('/base_elements', require('./base_elements/router.js'))
 
 router.use((err, req, res, next) => {
   console.error(err)

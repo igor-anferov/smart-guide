@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
 var fileUpload = require('express-fileupload');
+//var multiparty = require('multiparty');
 
 var fs = require('fs')
 
@@ -31,8 +32,10 @@ router.post('/', (request, response) => {
   //const id_user = parseInt(request.params.id_user)
   var id_user = 1;
   var pdf = request.files.pdf
+  //var field = request.fields
+  //console.log(field)
   var title = pdf.name
-  var pdf_path = String('./files_users/' + title)
+  var pdf_path = String('./src/server/files_users/' + title)
   pdf.mv(pdf_path);
   pool.query('INSERT INTO Books_PDF (title, id_user, pdf_path) VALUES ($1, $2, $3);', [title, id_user, pdf_path], (error, results) => {
     if (error) {
