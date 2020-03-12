@@ -7,11 +7,21 @@ export default {
   },
   servers: [
     {
-      url: "http://localhost:3000/api",
+      url: "/api",
       description: "Development server"
     }
   ],
   paths: {
+
+    "/register": {
+      post: require("./paths/register/post.js").default,
+    },
+
+
+    "/auth": {
+      post: require("./paths/auth/post.js").default,
+    },
+
 
     "/books": {
       get: require("./paths/books/get.js").default,
@@ -49,10 +59,16 @@ export default {
   },
   components: {
     securitySchemes: {
-      basicAuth: {
-        type: "http",
-        scheme: "basic",
+      cookieAuth: {
+        type: "apiKey",
+        in: "cookie",
+        name: "token",
       }
     }
   },
+  security: [
+    {
+      cookieAuth: []
+    }
+  ]
 }

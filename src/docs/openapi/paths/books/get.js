@@ -16,6 +16,7 @@ export default {
           }
         }
       }
-    }
+    },
+    "401": require('../../responses/401').default,
   }
 }

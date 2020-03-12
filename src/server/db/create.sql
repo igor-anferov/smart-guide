@@ -74,14 +74,13 @@ CREATE TABLE IF NOT EXISTS array_answer (
 );
 
 CREATE TABLE IF NOT EXISTS Users (
-  id_user int primary key,
-  e_mail varchar,
-  name_user varchar,
+  id_user serial primary key,
+  login varchar unique,
+  hs256_sha256 char(64),
+  registration_ts timestamp,
+  email varchar unique,
   university varchar,
-  faculty varchar,
-  password_hash varchar,
-  date_registresion timestamp,
-  date_last_login timestamp
+  faculty varchar
 );
 
 CREATE TABLE IF NOT EXISTS Books_PDF (
