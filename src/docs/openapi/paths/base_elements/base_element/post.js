@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Базовые элементы'],
   summary: 'Редактировать базовый элемент',
   parameters: [
@@ -64,6 +64,6 @@ export default {
     '404': {
       description: 'Базовый элемент не найден',
     },
-    '401': require('../../../responses/401').default,
+    '401': require('../../../responses/401'),
   }
 }

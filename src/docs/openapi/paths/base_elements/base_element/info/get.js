@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Базовые элементы'],
   summary: 'Получить информацию о базовом элементе',
   parameters: [
@@ -12,6 +12,7 @@ export default {
   ],
   responses: {
     '200': {
+      description: 'Информация о базовом элементе',
       content: {
         'application/json': {
           schema: {
@@ -41,6 +42,6 @@ export default {
     '404': {
       description: 'Базовый элемент не найден',
     },
-    '401': require('../../../../responses/401').default,
+    '401': require('../../../../responses/401'),
   }
 }

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Книги'],
   summary: 'Получить информацию о книге',
   parameters: [
@@ -12,6 +12,7 @@ export default {
   ],
   responses: {
     '200': {
+      description: 'Информация о книге',
       content: {
         'application/json': {
           schema: {
@@ -31,6 +32,6 @@ export default {
     '404': {
       description: 'Книга не найдена',
     },
-    '401': require('../../../../responses/401').default,
+    '401': require('../../../../responses/401'),
   }
 }

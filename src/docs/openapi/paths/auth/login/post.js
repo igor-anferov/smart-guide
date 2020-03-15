@@ -1,6 +1,6 @@
-export default {
-  tags: ["Регистрация"],
-  summary: "Зарегистрироваться в системе и получить cookie с аутентификационным токеном",
+module.exports = {
+  tags: ["Аутентификация"],
+  summary: "Войти в систему",
   requestBody: {
     required: true,
     content: {
@@ -17,21 +17,15 @@ export default {
               description: '<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mi>h</mi><mi>e</mi><mi>x</mi><mo stretchy="false">(</mo><mi>H</mi><mi>M</mi><mi>A</mi><mi>C</mi><mo form="infix">-</mo><mi>S</mi><mi>H</mi><mi>A</mi><msub><mn>256</mn><mrow><mo form="infix">&lt;</mo><mi>п</mi><mi>а</mi><mi>р</mi><mi>о</mi><mi>л</mi><mi>ь</mi><mo form="infix">&gt;</mo></mrow></msub><mo stretchy="false">(</mo><mo form="infix">&lt;</mo><mi>л</mi><mi>о</mi><mi>г</mi><mi>и</mi><mi>н</mi><mo form="infix">&gt;</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></math>',
               example: '16aa95479af46da4def2d52a345960d2cd276398763e430571ea4aba3ac70f12',
             },
-            'email': {
-              type: 'string',
-              description: 'Email пользователя',
-              format: 'idn-email',
-              example: 'user@example.com',
-            },
           },
-          required: ['login', 'hs256', 'email']
+          required: ['login', 'hs256']
         }
       }
     }
   },
   responses: {
     '200': {
-      description: 'Пользователь успешно зарегистрирован и аутентифицирован, Выставлен cookie "token"',
+      description: 'Аутентификация успешно пройдена, выставлен cookie "token"',
       headers: {
         'Set-Cookie': {
           schema: {
@@ -42,15 +36,15 @@ export default {
       }
     },
     '400': {
-      description: 'Регистрация не удалась',
+      description: 'Аутентификация не удалась',
       content: {
         'application/json': {
           schema: {
             properties: {
               reason: {
                 type: 'string',
-                enum: ['LOGIN_ALREADY_USED', 'EMAIL_ALREADY_USED'],
-                description: 'LOGIN_ALREADY_USED — Пользователь с таким логином уже зарегистрирован в системе<br/>EMAIL_ALREADY_USED — Пользователь с таким email уже зарегистрирован в системе'
+                enum: ['USER_NOT_FOUND', 'WRONG_HS256'],
+                description: 'USER_NOT_FOUND — Пользователь с таким логином не найден<br/>WRONG_HS256 — Переданный hs256 не является указанным пользователем в качестве верного'
               }
             }
           }

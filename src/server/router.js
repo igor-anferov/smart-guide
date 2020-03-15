@@ -3,31 +3,47 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 
-const auth = require('./auth')
+const { verifyToken, refreshToken } = require('./auth/utils')
 
-var router = express.Router()
+async function setupApi(path, app) {
+  var router = express.Router()
 
-router.use(morgan('combined'))
-router.use(cookieParser())
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(fileUpload({
-  createParentPath: true
-}));
+  router.use(morgan('combined'))
 
-router.post('/auth', auth.authHandler)
-router.post('/register', auth.regHandler)
+  router.use(cookieParser())
+  router.use(bodyParser.json());
+  router.use(bodyParser.urlencoded({ extended: true }));
+  router.use(fileUpload({
+    createParentPath: true
+  }));
 
-router.use(/\/.+/, auth.verifyToken)
+  await new OpenApiValidator({
+    apiSpec: require('../docs/openapi/api'),
+    validateResponses: true,
+    validateSecurity: {
+      handlers: {
+        'Аутентификационный токен': verifyToken
+      }
+    },
+  }).install(router)
 
-router.use('/books', require('./books/router.js'))
-router.use('/clipboard', require('./clipboard/router.js'))
-router.use('/base_elements', require('./base_elements/router.js'))
+  router.use(refreshToken)
 
-router.use((err, req, res, next) => {
-  console.error(err)
-  res.status(500).send()
-})
+  router.use('/auth', require('./auth/router'))
+  router.use('/books', require('./books/router'))
+  router.use('/clipboard', require('./clipboard/router'))
+  router.use('/base_elements', require('./base_elements/router'))
 
-module.exports = router
+  router.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+      message: err.message,
+      errors: err.errors,
+    });
+  })
+
+  app.use(path, router)
+}
+
+module.exports = setupApi

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Книги'],
   summary: 'Загрузить новую книгу на сервер',
   requestBody: {
@@ -25,6 +25,7 @@ export default {
   },
   responses: {
     '200': {
+      description: 'OK',
       content: {
         'application/json': {
           schema: {
@@ -36,6 +37,6 @@ export default {
         }
       }
     },
-    '401': require('../../responses/401').default,
+    '401': require('../../responses/401'),
   }
 }

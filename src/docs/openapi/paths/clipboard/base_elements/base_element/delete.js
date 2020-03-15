@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Буфер обмена'],
   summary: 'Удалить базовый элемент из буфера обмена',
   parameters: [
@@ -17,6 +17,6 @@ export default {
     '404': {
       description: 'Базовый элемент не найден',
     },
-    '401': require('../../../../responses/401').default,
+    '401': require('../../../../responses/401'),
   }
 }

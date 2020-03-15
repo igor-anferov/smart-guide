@@ -1,9 +1,9 @@
 const assert = require('assert').strict
 const express = require('express');
-const router = express.Router();
+const fs = require('fs')
 //const multiparty = require('multiparty');
 
-var fs = require('fs')
+var router = express.Router();
 
 const pool = require('../db/pool')
 const FILES_DIR = process.env.FILES_DIR

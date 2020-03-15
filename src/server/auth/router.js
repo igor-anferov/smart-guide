@@ -1,45 +1,14 @@
-const jwt = require('jsonwebtoken')
+const express = require('express');
+
 const crypto = require('crypto');
-const assert = require('assert').strict
+const pool = require('../db/pool');
+const { updateTokenCookie } = require('./utils');
 
-const pool = require('./db/pool');
-const JWT_SECRET = process.env.JWT_SECRET;
-assert(JWT_SECRET.length > 0, "Please specify JWT_SECRET in environment")
-const expiration = 60 * 60 * 24 * 7
 
-function makeToken(props) {
-  return jwt.sign(props, JWT_SECRET, {
-    expiresIn: expiration,
-  })
-}
+var router = express.Router();
 
-function updateCookie(res, props) {
-  return res.cookie('token', makeToken(props), {
-    expires: new Date(Date.now() + expiration),
-    secure: true,
-    httpOnly: true,
-  })
-}
 
-const verifyToken = async (req, res, next) => {
-  const token = req.cookies.token || '';
-  if (!token) {
-    return res.status(401).end()
-  }
-  try {
-    const decrypt = await jwt.verify(token, JWT_SECRET);
-    req.user = decrypt.user;
-    updateCookie(res, {
-      user: decrypt.user
-    })
-  } catch (err) {
-    console.warn(err)
-    return res.clearCookie('token').status(401).end();
-  }
-  next();
-}
-
-const authHandler = async (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   const login = req.body.login
   const hs256 = req.body.hs256
   if (!login || !hs256) {
@@ -63,7 +32,7 @@ const authHandler = async (req, res, next) => {
         reason: 'WRONG_HS256'
       })
     }
-    updateCookie(res, {
+    updateTokenCookie(res, {
       user: {
         id: results.rows[0].id_user
       }
@@ -71,9 +40,9 @@ const authHandler = async (req, res, next) => {
   } catch (e) {
     next(e)
   }
-}
+})
 
-const regHandler = async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
   const login = req.body.login
   const hs256 = req.body.hs256
   const email = req.body.email
@@ -110,7 +79,7 @@ const regHandler = async (req, res, next) => {
       'SELECT id_user from Users WHERE login = $1;',
       [ login ]
     )
-    updateCookie(res, {
+    updateTokenCookie(res, {
       user: {
         id: results.rows[0].id_user
       }
@@ -118,10 +87,6 @@ const regHandler = async (req, res, next) => {
   } catch (e) {
     next(e)
   }
-}
+})
 
-module.exports = {
-  verifyToken,
-  authHandler,
-  regHandler,
-}
+module.exports = router

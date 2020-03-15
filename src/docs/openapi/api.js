@@ -1,5 +1,5 @@
-export default {
-  openapi: '3.0.0',
+module.exports = {
+  openapi: '3.0.1',
   info: {
     title: 'Умный учебник — API',
     description: 'API для взаимодействия между клиентской и серверной частями приложения',
@@ -13,49 +13,47 @@ export default {
   ],
   paths: {
 
-    '/register': {
-      post: require('./paths/register/post.js').default,
+    '/auth/register': {
+      post: require('./paths/auth/register/post.js'),
     },
-
-
-    '/auth': {
-      post: require('./paths/auth/post.js').default,
+    '/auth/login': {
+      post: require('./paths/auth/login/post.js'),
     },
 
 
     '/books': {
-      get: require('./paths/books/get.js').default,
-      post: require('./paths/books/post.js').default,
+      get: require('./paths/books/get.js'),
+      post: require('./paths/books/post.js'),
     },
     '/books/{book_id}': {
-      delete: require('./paths/books/book/delete.js').default,
+      delete: require('./paths/books/book/delete.js'),
     },
     '/books/{book_id}/info': {
-      get: require('./paths/books/book/info/get.js').default,
-      post: require('./paths/books/book/info/post.js').default,
+      get: require('./paths/books/book/info/get.js'),
+      post: require('./paths/books/book/info/post.js'),
     },
     '/books/{book_id}/content': {
-      get: require('./paths/books/book/content/get.js').default,
+      get: require('./paths/books/book/content/get.js'),
     },
 
 
     '/clipboard/base_elements': {
-      get: require('./paths/clipboard/base_elements/get.js').default,
-      post: require('./paths/clipboard/base_elements/post.js').default,
+      get: require('./paths/clipboard/base_elements/get.js'),
+      post: require('./paths/clipboard/base_elements/post.js'),
     },
     '/clipboard/base_elements/{base_element_id}': {
-      delete: require('./paths/clipboard/base_elements/base_element/delete.js').default,
+      delete: require('./paths/clipboard/base_elements/base_element/delete.js'),
     },
 
 
     '/base_elements/{base_element_id}': {
-      post: require('./paths/base_elements/base_element/post.js').default,
+      post: require('./paths/base_elements/base_element/post.js'),
     },
     '/base_elements/{base_element_id}/info': {
-      get: require('./paths/base_elements/base_element/info/get.js').default,
+      get: require('./paths/base_elements/base_element/info/get.js'),
     },
     '/base_elements/{base_element_id}/content': {
-      get: require('./paths/base_elements/base_element/content/get.js').default,
+      get: require('./paths/base_elements/base_element/content/get.js'),
     },
 
   },

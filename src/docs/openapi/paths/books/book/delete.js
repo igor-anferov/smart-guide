@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Книги'],
   summary: 'Удалить загруженную ранее книгу',
   parameters: [
@@ -17,6 +17,6 @@ export default {
     '404': {
       description: 'Книга не найдена',
     },
-    '401': require('../../../responses/401').default,
+    '401': require('../../../responses/401'),
   }
 }

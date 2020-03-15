@@ -10,28 +10,17 @@
     "@testing-library/user-event": "^7.1.2",
     "array-move": "^2.2.1",
     "codemirror": "^5.51.0",
-    "cookie-parser": "^1.4.4",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.1.6",
-    "http-proxy-middleware": "^1.0.1",
     "hyphenation.en-us": "^0.2.1",
     "hyphenation.ru": "^0.2.1",
     "hypher": "^0.2.5",
-    "json-schema-ref-parser": "^7.1.4",
-    "jsonwebtoken": "^8.5.1",
     "latex.js": "^0.12.1",
-    "material-ui": "^0.20.2",
     "morgan": "^1.9.1",
-    "multiparty": "^4.2.1",
-    "pg": "^7.18.2",
     "react": "^16.12.0",
     "react-codemirror": "^1.0.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.3.0",
+    "react-scripts": "^3.4.0",
     "react-smooth-dnd": "^0.11.1",
-    "swagger": "^0.7.5",
-    "swagger-ui": "^3.25.0",
     "swagger-ui-react": "^3.25.0"
   },
   "scripts": {
@@ -59,7 +48,14 @@
     ]
   },
   "devDependencies": {
-    "raw-loader": "^4.0.0",
-    "swagger-express-middleware": "^2.0.5"
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "express-openapi-validator": "^3.9.5",
+    "http-proxy-middleware": "^1.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "multiparty": "^4.2.1",
+    "pg": "^7.18.2",
+    "raw-loader": "^4.0.0"
   }
 }

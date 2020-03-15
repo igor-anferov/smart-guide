@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   tags: ['Буфер обмена'],
   summary: 'Добавить новый базовый элемент в буфер обмена',
   requestBody: {
@@ -59,6 +59,7 @@ export default {
   },
   responses: {
     '200': {
+      description: 'Информация о добавленном в буфер обмена базовом элементе',
       content: {
         'application/json': {
           schema: {
@@ -70,6 +71,6 @@ export default {
         }
       }
     },
-    '401': require('../../../responses/401').default,
+    '401': require('../../../responses/401'),
   }
 }

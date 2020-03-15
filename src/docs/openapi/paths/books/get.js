@@ -1,8 +1,9 @@
-export default {
+module.exports = {
   tags: ['Книги'],
   summary: 'Получить список всех книг пользователя',
   responses: {
     '200': {
+      description: 'Список всех книг пользователя',
       content: {
         'application/json': {
           schema: {
@@ -22,6 +23,6 @@ export default {
         }
       }
     },
-    '401': require('../../responses/401').default,
+    '401': require('../../responses/401'),
   }
 }
