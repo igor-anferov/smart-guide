@@ -24,32 +24,40 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', (req, res, next) => {
   var pdf = req.files.pdf
-  var title = pdf.name
+  var title = req.body.title 
+  if (!title) {
+    title = pdf.name;
+  }
   var pdf_path = String(FILES_DIR + '/' + title)
   pdf.mv(pdf_path);
-  pool.query('INSERT INTO Books_PDF (title, id_user, pdf_path) VALUES ($1, $2, $3);', [title, id_user, pdf_path], (error, results) => {
+  pool.query('INSERT INTO Books_PDF (title, id_user, pdf_path) VALUES ($1, $2, $3);',
+    [title, req.user.id, pdf_path], (error, results) => {
     if (error) {
-      res.status(500).send('error server')
+      res.status(500).send('Ошибка сервера')
     }
-    res.status(201).send(results.insertId)
+    return res.status(201).json({
+      "book_id": results.insertId
+    })
   })
 })
 
 router.delete('/:book_id', (req, res, next) => {
   const id_book = parseInt(req.params.book_id)
-  pool.query('DELETE FROM Books_PDF WHERE id_book =$1;', [id_book], (error, results) => {
+  pool.query('DELETE FROM Books_PDF WHERE id_book =$1;',
+    [id_book], (error, results) => {
     if (error) {
-      res.status(404).send('Book is not found')
+      res.status(404).send('Книга не найдена')
     }
-    res.status(200).send('OK, book deleted')
+    res.status(200).send('Книга успешно удалена')
   })
 })
 
 router.get('/:book_id/info', (req, res, next) => {
   var id_book = parseInt(req.params.book_id)
-  pool.query('SELECT title FROM Books_PDF WHERE id_book =$1;', [id_book], (error, results) => {
+  pool.query('SELECT title FROM Books_PDF WHERE id_book =$1;',
+    [id_book], (error, results) => {
     if (error) {
-      res.status(404).send('Book is not found')
+      res.status(404).send('Книга не найдена')
     }
     res.status(200).send(results.rows[0])
   })
@@ -58,24 +66,26 @@ router.get('/:book_id/info', (req, res, next) => {
 router.post('/:book_id/info', (req, res, next) => {
   var id_book = parseInt(req.params.book_id)
   const { new_title } = req.body
-  pool.query('UPDATE Books_PDF SET title = $1 WHERE id_book =$2;', [new_title, id_book], (error, results) => {
+  pool.query('UPDATE Books_PDF SET title = $1 WHERE id_book =$2;',
+    [new_title, id_book], (error, results) => {
     if (error) {
-      res.status(404).send('Book not found')
+      res.status(404).send('Книга не найдена')
     }
-    res.status(200).send('/OK, title changed')
+    res.status(200).send('Информация о книге успешно обновлена')
   })
 })
 
 router.get('/:book_id/content', (req, res, next) => {
   var id_book = parseInt(req.params.book_id)
-  pool.query('SELECT pdf_path FROM Books_PDF WHERE id_book =$1;', [id_book], (error, results) => {
+  pool.query('SELECT pdf_path FROM Books_PDF WHERE id_book =$1;',
+    [id_book], (error, results) => {
     if (error) {
-      res.status(404).send('Book is not found')
+      res.status(404).send('Книга не найдена')
     }
     var pdf = String(results.rows[0].pdf_path)
     var data = fs.readFileSync(pdf);
     res.contentType("application/pdf");
-    res.send(data);
+    res.status(200).send(data);
   })
 })
 

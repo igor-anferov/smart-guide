@@ -1,11 +1,11 @@
 BEGIN;
 set DATESTYLE to "DMY";
 CREATE TABLE IF NOT EXISTS Elements (
-  id_element int primary key,
-  title_element varchar,
-  type_element varchar,
+  id_element serial primary key,
+  title varchar,
+  type varchar,
   key_element boolean,
-  body_element bytea,
+  body bytea,
   sourse varchar,
   id_group int,
   id_author int,

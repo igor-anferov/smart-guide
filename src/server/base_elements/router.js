@@ -1,47 +1,77 @@
-var express = require('express');
-var router = express();
-var bodyParser = require('body-parser');
-var fileUpload = require('express-fileupload');
-//var multiparty = require('multiparty');
+const express = require('express');
+const fs = require('fs')
+//const multiparty = require('multiparty');
 
-var fs = require('fs')
+var router = express.Router();
 
 const pool = require('../db/pool')
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(fileUpload({
-  createParentPath: true
-}));
 
-
-router.get('/:id_element/info', (request, response) => {
-  pool.query('SELECT title_element, type_element, key_element, sourse, id_author, date_added FROM Elements WHERE id_element = $1;',
-   [id_element], (error, results) => {
+router.get('/:base_element_id/info', (req, res, next) => {
+  const id_element = parseInt(req.params.base_element_id)
+  pool.query('SELECT title, sourse, type FROM Elements WHERE id_element = $1;',
+    [id_element], (error, results) => {
     if (error) {
-      response.status(404)
+      res.status(404).send('Базовый элемент не найден')
     }
-    response.status(200).send(results.rows[0])
+    res.status(200).send(results.rows[0])
   })
 })
 
-router.get('/:id_element/content', (request, response) => {
-  pool.query('SELECT body_element FROM Elements WHERE id_element = $1;', [id_element], (error, results) => {
+router.get('/:base_element_id/content', (req, res, next) => {
+  const id_element = parseInt(req.params.base_element_id)
+  pool.query('SELECT body, type FROM Elements WHERE id_element = $1;',
+    [id_element], (error, results) => {
     if (error) {
-      response.status(404)
+      res.status(404).send('Базовый элемент не найден')
     }
-    response.status(200).send(results.rows[0])
+    if (results.rows[0].type == 'image') {
+        res.contentType("image/*");
+    }
+    if (results.rows[0].type == 'latex') {
+        res.contentType("application/x-latex");
+    }
+    res.status(200).send(results.rows[0].body)
   })
 })
 
-/*
-router.post('./:id_element', (request, response) => {
-	pool.query('UPDATE Elements SET field = new_field', [], (error,results) => {
-		if (error) {
-      response.status(404)
+router.post('/:base_element_id', (req, res, next) => {
+    const id_element = parseInt(req.params.base_element_id)
+    var title = req.body.title
+    var sourse = req.body.sourse 
+    console.log(title)
+    console.log(sourse)
+    var text_query = "UPDATE Elements SET "
+    var flag = false
+    if (title) {
+      text_query += (flag ? ", ":"") + "title = '" + title + "' "
+      flag = true
     }
-    response.status(200).send(Element сhanged)
-	})
-})*/
+    if (sourse) {
+      text_query += (flag ? ", ":"") + "sourse = '" + sourse + "' "
+      flag = true
+    }
+    if (req.files) {
+      console.log("there")
+      var latex = req.files.latex
+      if (latex) {
+        body = Buffer.from(latex)
+        text_query += (flag ? ", ":"") + "body = '" + body.toString() + "' "
+        console.log(name)
+        flag = true
+      }
+    }
+    if (!flag) {
+      res.status(400).end()
+    }
+    text_query += "WHERE id_element = " + id_element + ";"
+    console.log(text_query)
+  pool.query(text_query, (error,results) => {
+    if (error) {
+      res.status(404)
+    }
+    res.status(200).send('Базовый элемент успешно обновлён')
+  })
+}) 
 
 module.exports = router

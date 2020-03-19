@@ -1,49 +1,63 @@
-var express = require('express');
-var router = express();
-var bodyParser = require('body-parser');
-var fileUpload = require('express-fileupload');
-//var multiparty = require('multiparty');
+const express = require('express');
+const fs = require('fs')
+//const multiparty = require('multiparty');
 
-var fs = require('fs')
+var router = express.Router();
 
 const pool = require('../db/pool')
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(fileUpload({
-  createParentPath: true
-}));
-
-router.get('/base_elements', (request, response) => {
-  //const id_user = parseInt(request.params.id_user)
-  var id_user = 1;
+router.get('/base_elements', async (req, res, next) => {
   var flag = true;
-  pool.query('SELECT * FROM Elements WHERE id_user = $1 and clipboard = $2;', [id_user, flag], (error, results) => {
-    if (error) {
-      response.status(404)
-    }
-    response.status(200).send(results.rows)
-  })
+  try {
+    const results = await pool.query(
+    'SELECT id_element as base_element_id, title, sourse, type FROM Elements WHERE id_user = $1 and clipboard = $2;',
+    [req.user.id, flag]
+    )
+    res.status(200).send(results.rows)
+  } catch (e) {
+    next(e)
+  }
 })
 
-router.delete('/base_elements/:id_element', (request, response) => {
-  const id_element = parseInt(request.params.id_element)
+router.delete('/base_elements/:base_element_id', (req, res, next) => {
+  const id_element = parseInt(req.params.base_element_id)
   pool.query('DELETE FROM Elements WHERE id_element =$1;', [id_element], (error, results) => {
     if (error) {
-      response.status(404).send('Element is not found')
+      res.status(404).send('Базовый элемент не найден')
     }
-    response.status(200).send('OK, element deleted')
+    res.status(200).send('Базовый элемент успешно удалён')
   })
 })
 
-/*router.post('/base_elements', (request, response) => {
-	var {title, sourse, image}  = request.body
-  pool.query('INSERT INTO Elements (title_element, id_user, body_element, sourse) VALUES ($1, $2, $3, $4);', [title, id_user, image, sourse], (error, results) => {
+router.post('/base_elements', (req, res, next) => {
+  var title = req.body.title
+  var sourse = req.body.sourse
+  var image = req.files.image
+  var latex = req.files.latex
+  var type
+  var body
+  //typeof latex !== 'undefined'
+  if (latex) {
+    //console.log('latex')
+    type = 'latex'
+    body = Buffer.from(latex)
+  }
+  if (image) {
+    //console.log('image')
+    type = 'image' 
+    body = Buffer.from(image)
+    //body = Buffer.from(image.buffer)
+    //body = new Buffer(image.buffer.toString(), 'utf-8');
+  }
+  pool.query('INSERT INTO Elements (title, id_user, body, sourse, type) VALUES ($1, $2, $3, $4, $5);',
+    [title, req.user.id, body.toString(), sourse, type], (error, results) => {
     if (error) {
-      response.status(500).send('error server')
+      res.status(500).send('Ошибка сервера')
     }
-    response.status(201).send(results.insertId)
+    return res.status(201).json({
+      "book_id": results.insertId
+    })
   })
-})*/
+})
 
 module.exports = router
