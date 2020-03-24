@@ -10,7 +10,7 @@ router.get('/base_elements', async (req, res, next) => {
   var flag = true;
   try {
     const results = await pool.query(
-    'SELECT id_element as base_element_id, title, sourse, type FROM Elements WHERE id_user = $1 and clipboard = $2;',
+    'SELECT id_element as base_element_id, title, source, type FROM Elements WHERE id_author = $1 and clipboard = $2;',
     [req.user.id, flag]
     )
     res.status(200).send(results.rows)
@@ -31,7 +31,7 @@ router.delete('/base_elements/:base_element_id', (req, res, next) => {
 
 router.post('/base_elements', (req, res, next) => {
   var title = req.body.title
-  var sourse = req.body.sourse
+  var source = req.body.source
   var image = req.files.image
   var latex = req.files.latex
   var type
@@ -49,8 +49,8 @@ router.post('/base_elements', (req, res, next) => {
     //body = Buffer.from(image.buffer)
     //body = new Buffer(image.buffer.toString(), 'utf-8');
   }
-  pool.query('INSERT INTO Elements (title, id_user, body, sourse, type) VALUES ($1, $2, $3, $4, $5);',
-    [title, req.user.id, body.toString(), sourse, type], (error, results) => {
+  pool.query('INSERT INTO Elements (title, id_author, body, source, type) VALUES ($1, $2, $3, $4, $5);',
+    [title, req.user.id, body.toString(), source, type], (error, results) => {
     if (error) {
       res.status(500).send('Ошибка сервера')
     }

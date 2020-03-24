@@ -13,7 +13,7 @@ assert(FILES_DIR && FILES_DIR.length > 0, "Please specify FILES_DIR in environme
 router.get('/', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT id_book AS id, title FROM Books_PDF WHERE id_user = $1;',
+      'SELECT book_id, title FROM Books_PDF WHERE id_user = $1;',
       [req.user.id]
     )
     res.status(200).send(results.rows)
@@ -42,9 +42,9 @@ router.post('/', (req, res, next) => {
 })
 
 router.delete('/:book_id', (req, res, next) => {
-  const id_book = parseInt(req.params.book_id)
-  pool.query('DELETE FROM Books_PDF WHERE id_book =$1;',
-    [id_book], (error, results) => {
+  const book_id = parseInt(req.params.book_id)
+  pool.query('DELETE FROM Books_PDF WHERE book_id =$1;',
+    [book_id], (error, results) => {
     if (error) {
       res.status(404).send('Книга не найдена')
     }
@@ -53,9 +53,9 @@ router.delete('/:book_id', (req, res, next) => {
 })
 
 router.get('/:book_id/info', (req, res, next) => {
-  var id_book = parseInt(req.params.book_id)
-  pool.query('SELECT title FROM Books_PDF WHERE id_book =$1;',
-    [id_book], (error, results) => {
+  var book_id = parseInt(req.params.book_id)
+  pool.query('SELECT title FROM Books_PDF WHERE book_id =$1;',
+    [book_id], (error, results) => {
     if (error) {
       res.status(404).send('Книга не найдена')
     }
@@ -64,10 +64,10 @@ router.get('/:book_id/info', (req, res, next) => {
 })
 
 router.post('/:book_id/info', (req, res, next) => {
-  var id_book = parseInt(req.params.book_id)
-  const { new_title } = req.body
-  pool.query('UPDATE Books_PDF SET title = $1 WHERE id_book =$2;',
-    [new_title, id_book], (error, results) => {
+  var book_id = parseInt(req.params.book_id)
+  new_title = req.body.title
+  pool.query('UPDATE Books_PDF SET title = $1 WHERE book_id =$2;',
+    [new_title, book_id], (error, results) => {
     if (error) {
       res.status(404).send('Книга не найдена')
     }
@@ -76,9 +76,9 @@ router.post('/:book_id/info', (req, res, next) => {
 })
 
 router.get('/:book_id/content', (req, res, next) => {
-  var id_book = parseInt(req.params.book_id)
-  pool.query('SELECT pdf_path FROM Books_PDF WHERE id_book =$1;',
-    [id_book], (error, results) => {
+  var book_id = parseInt(req.params.book_id)
+  pool.query('SELECT pdf_path FROM Books_PDF WHERE book_id =$1;',
+    [book_id], (error, results) => {
     if (error) {
       res.status(404).send('Книга не найдена')
     }

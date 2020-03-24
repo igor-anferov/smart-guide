@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS Elements (
   type varchar,
   key_element boolean,
   body bytea,
-  sourse varchar,
+  source varchar,
   id_group int,
   id_author int,
   date_added timestamp,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS Books_PDF (
-  id_book serial primary key,
+  book_id serial primary key,
   title varchar,
   id_user int,
   pdf_path varchar
