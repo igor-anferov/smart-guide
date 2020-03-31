@@ -1,14 +1,15 @@
 const express = require('express');
-const fs = require('fs')
-//const multiparty = require('multiparty');
 
 var router = express.Router();
 
 const pool = require('../db/pool')
 
+const multer  = require("multer"); 
+var storage = multer.memoryStorage()
+var uploadmemory = multer({ storage: storage })
+
 router.get('/:base_element_id/info', (req, res, next) => {
   var id_element = parseInt(req.params.base_element_id)
-  //console.log(id_element);
   pool.query('SELECT title, source, type FROM Elements WHERE id_element = $1;',
     [id_element], (error, results) => {
     if (error) {
@@ -35,43 +36,48 @@ router.get('/:base_element_id/content', (req, res, next) => {
   })
 })
 
-router.post('/:base_element_id', (req, res, next) => {
+router.post('/:base_element_id', uploadmemory.any(), (req, res, next) => {
     const id_element = parseInt(req.params.base_element_id)
     var title = req.body.title
     var source = req.body.source 
-    console.log(title)
-    console.log(source)
+    var argument = [] 
     var text_query = "UPDATE Elements SET "
     var flag = false
+    var count = 0
     if (title) {
-      text_query += (flag ? ", ":"") + "title = '" + title + "' "
+      count ++
+      argument.push(title)
+      text_query += (flag ? ", ":"") + " title = $" + count
       flag = true
     }
     if (source) {
-      text_query += (flag ? ", ":"") + "source = '" + source + "' "
+      count ++
+      argument.push(source)
+      text_query += (flag ? ", ":"") + " source = $" + count
       flag = true
     }
+
     if (req.files) {
-      console.log("there")
-      var latex = req.files.latex
-      if (latex) {
-        body = Buffer.from(latex)
-        text_query += (flag ? ", ":"") + "body = '" + body.toString() + "' "
-        console.log(name)
+      if(req.files[0]) {
+        count++
+        argument.push(req.files[0].buffer)
+        text_query += (flag ? ", ":"") + " body = $" + count
         flag = true
       }
     }
+    
     if (!flag) {
       res.status(400).end()
     }
-    text_query += "WHERE id_element = " + id_element + ";"
-    console.log(text_query)
-  pool.query(text_query, (error,results) => {
-    if (error) {
-      res.status(404)
-    }
-    res.status(200).send('Базовый элемент успешно обновлён')
-  })
+
+    text_query += " WHERE id_element = " + id_element + "; "
+    
+    pool.query(text_query, argument, (error,results) => {
+      if (error) {
+        res.status(404)
+      }
+      res.status(200).send('Базовый элемент успешно обновлён')
+    })
 }) 
 
 module.exports = router

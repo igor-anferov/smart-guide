@@ -58,7 +58,7 @@ module.exports = {
     }
   },
   responses: {
-    '200': {
+    '201': {
       description: 'Информация о добавленном в буфер обмена базовом элементе',
       content: {
         'application/json': {

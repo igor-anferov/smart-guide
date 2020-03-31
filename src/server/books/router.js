@@ -1,7 +1,6 @@
 const assert = require('assert').strict
 const express = require('express');
 const fs = require('fs')
-//const multiparty = require('multiparty');
 
 var router = express.Router();
 
@@ -9,6 +8,8 @@ const pool = require('../db/pool')
 const FILES_DIR = process.env.FILES_DIR
 assert(FILES_DIR && FILES_DIR.length > 0, "Please specify FILES_DIR in environment")
 
+const multer  = require("multer")
+uploaddisk = multer( { dest: FILES_DIR } )
 
 router.get('/', async (req, res, next) => {
   try {
@@ -22,20 +23,19 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-router.post('/', (req, res, next) => {
-  var pdf = req.files.pdf
+router.post('/books', uploaddisk.single("pdf"), (req, res, next) => {
+  var pdf = req.file
   var title = req.body.title 
   if (!title) {
-    title = pdf.name;
+    title = pdf.filename;
   }
-  var pdf_path = String(FILES_DIR + '/' + title)
-  pdf.mv(pdf_path);
+  var pdf_path = String(pdf.path)
   pool.query('INSERT INTO Books_PDF (title, id_user, pdf_path) VALUES ($1, $2, $3);',
     [title, req.user.id, pdf_path], (error, results) => {
     if (error) {
       res.status(500).send('Ошибка сервера')
     }
-    return res.status(201).json({
+    return res.status(201).json ({
       "book_id": results.insertId
     })
   })

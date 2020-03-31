@@ -2,7 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
+//const fileUpload = require('express-fileupload');
 const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 
 const { verifyToken, refreshToken } = require('./auth/utils')
@@ -15,9 +15,9 @@ async function setupApi(path, app) {
   router.use(cookieParser())
   router.use(bodyParser.json());
   router.use(bodyParser.urlencoded({ extended: true }));
-  router.use(fileUpload({
+  /*router.use(fileUpload({
     createParentPath: true
-  }));
+  }));*/
 
   await new OpenApiValidator({
     apiSpec: require('../docs/openapi/api'),

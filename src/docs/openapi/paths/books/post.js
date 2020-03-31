@@ -24,7 +24,7 @@ module.exports = {
     },
   },
   responses: {
-    '200': {
+    '201': {
       description: 'OK',
       content: {
         'application/json': {

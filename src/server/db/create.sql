@@ -3,6 +3,7 @@ set DATESTYLE to "DMY";
 CREATE TABLE IF NOT EXISTS Elements (
   id_element serial primary key,
   title varchar,
+  category varchar,
   type varchar,
   key_element boolean,
   body bytea,
@@ -14,7 +15,7 @@ CREATE TABLE IF NOT EXISTS Elements (
 );
 
 CREATE TABLE IF NOT EXISTS Objects (
-  id_object int,
+  id_object serial,
   number_version int,
   snippet varchar,
   id_group int,
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS linked_object (
 );
 
 CREATE TABLE IF NOT EXISTS  Questions (
-  id_question int,
+  id_question serial,
   number_version int,
   text_question varchar,
   id_group int,
@@ -56,11 +57,12 @@ CREATE TABLE IF NOT EXISTS  answer (
 );
 
 CREATE TABLE IF NOT EXISTS List_questions (
-  id_list_questions int,
+  id_list_questions serial,
   number_version int,
   id_group int,
   id_author int,
   name_exam varchar,
+  name_teacher varchar,
   date_added timestamp,
   date_exam timestamp,
   primary key(id_list_questions, number_version)
@@ -91,10 +93,10 @@ CREATE TABLE IF NOT EXISTS Books_PDF (
 );
 
 CREATE TABLE IF NOT EXISTS Groups (
-  id_group int primary key,
-  name_group varchar,
+  id_group serial primary key,
+  name_group varchar null,
   id_creator int,
-  date_added int
+  date_added timestamp
 );
 
 CREATE TABLE IF NOT EXISTS group_members (
@@ -115,7 +117,7 @@ CREATE TABLE IF NOT EXISTS  Name_users (
 
 
 CREATE TABLE IF NOT EXISTS Comments (
-  id_comment int primary key,
+  id_comment serial primary key,
   text_comment varchar,
   id_object int,
   id_group int,
@@ -173,7 +175,7 @@ alter table name_users add
 	foreign key (id_user2)
 	references Users(id_user); 
 
-alter table Elements add
+/*alter table Elements add
 	foreign key (id_group, id_author)
 	references group_members(id_group, id_user);
 
@@ -203,5 +205,5 @@ alter table tags_questions add
 
 alter table tags_list_questions add
 	foreign key (id_group, id_author)
-	references group_members(id_group, id_user);
+	references group_members(id_group, id_user);*/
 COMMIT;

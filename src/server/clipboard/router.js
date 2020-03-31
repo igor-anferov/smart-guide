@@ -1,10 +1,12 @@
 const express = require('express');
-const fs = require('fs')
-//const multiparty = require('multiparty');
 
 var router = express.Router();
 
 const pool = require('../db/pool')
+
+const multer  = require("multer"); 
+var storage = multer.memoryStorage()
+var uploadmemory = multer({ storage: storage })
 
 router.get('/base_elements', async (req, res, next) => {
   var flag = true;
@@ -29,33 +31,30 @@ router.delete('/base_elements/:base_element_id', (req, res, next) => {
   })
 })
 
-router.post('/base_elements', (req, res, next) => {
+router.post('/base_elements', uploadmemory.fields([{ name: 'image', maxCount: 1 }, { name: 'latex', maxCount: 1 }]), (req, res, next) => {
   var title = req.body.title
   var source = req.body.source
-  var image = req.files.image
-  var latex = req.files.latex
+  var image = req.files['image']
+  var latex = req.files['latex']
   var type
   var body
   //typeof latex !== 'undefined'
   if (latex) {
-    //console.log('latex')
     type = 'latex'
-    body = Buffer.from(latex)
+    body = latex[0].buffer 
   }
+
   if (image) {
-    //console.log('image')
-    type = 'image' 
-    body = Buffer.from(image)
-    //body = Buffer.from(image.buffer)
-    //body = new Buffer(image.buffer.toString(), 'utf-8');
+    type = 'image'
+    body = image[0].buffer 
   }
-  pool.query('INSERT INTO Elements (title, id_author, body, source, type) VALUES ($1, $2, $3, $4, $5);',
-    [title, req.user.id, body.toString(), source, type], (error, results) => {
+  pool.query('INSERT INTO Elements (title, id_author, body, source, type, clipboard) VALUES ($1, $2, $3, $4, $5, $6);',
+    [title, req.user.id, body, source, type, true], (error, results) => {
     if (error) {
       res.status(500).send('Ошибка сервера')
     }
     return res.status(201).json({
-      "book_id": results.insertId
+      "base_element_id": results.insertId
     })
   })
 })
