@@ -19,7 +19,6 @@ yarn fill-db
 # Running dev-server
 ```sh
 JWT_SECRET='<secret used as HMAC key to sign JWT>' \
-FILES_DIR='<directory to save uploaded user files>' \
 yarn start
 ```
 ### Available endpoints
