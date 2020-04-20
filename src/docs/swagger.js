@@ -7,7 +7,32 @@ import $RefParser from "json-schema-ref-parser";
 function Api() {
   return (
     <Box height={1} style={{ 'overflowX': 'hidden', 'overflowY': 'scroll' }}>
-      <SwaggerUI spec={require('./openapi/api')} docExpansion={'list'}/>
+      <SwaggerUI
+        spec={require('./openapi/api')}
+        docExpansion={'list'}
+        requestInterceptor={(req) => {
+          if (req.body) {
+            if (req.body instanceof Object) {
+              for (let [k,v] of req.body) {
+                if (!v) {
+                  req.body.delete(k);
+                }
+              }
+            }
+            if (req.headers['Content-Type'] == 'application/x-www-form-urlencoded') {
+              req.body =
+                req.body
+                .split('&')
+                .filter(e => e.split('=')[1])
+                .join('&')
+              if (!req.body) {
+                delete req.body
+              }
+            }
+          }
+          return req;
+        }}
+      />
     </Box>
   );
 }

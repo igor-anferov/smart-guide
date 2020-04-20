@@ -1,5 +1,6 @@
-BEGIN;
 set DATESTYLE to "DMY";
+
+BEGIN;
 CREATE TABLE IF NOT EXISTS Elements (
   id_element serial primary key,
   title varchar,
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS Books_PDF (
   book_id serial primary key,
   title varchar,
   id_user int,
-  pdf_path varchar
+  content bytea
 );
 
 CREATE TABLE IF NOT EXISTS Groups (

@@ -20,11 +20,13 @@ module.exports = {
           properties: {
             'title': {
               type: 'string',
+              minLength: 1,
               description: 'Новое название базового элемента (опционально, только при изменении)',
               example: 'Теорема Лапласа (формулировка, начало)',
             },
             'source': {
               type: 'string',
+              minLength: 1,
               description: 'Новый источник (опционально, только при изменении)',
               example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
             },
@@ -38,17 +40,19 @@ module.exports = {
           properties: {
             'title': {
               type: 'string',
+              minLength: 1,
               description: 'Новое название базового элемента (опционально, только при изменении)',
               example: 'Теорема Лапласа (формулировка, начало)',
             },
             'source': {
               type: 'string',
+              minLength: 1,
               description: 'Новый источник (опционально, только при изменении)',
               example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
             },
             'latex': {
               type: 'string',
-              format: 'binary',
+              minLength: 1,
               description: 'Изменённый LaTeX',
             },
           },

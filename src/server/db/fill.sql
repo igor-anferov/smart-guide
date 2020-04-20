@@ -1,16 +1,18 @@
+SET datestyle = "ISO, DMY";
+
 BEGIN;
 
-INSERT INTO Users (login, hs256_sha256, email) VALUES 
-	('user', '1815e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c84', 'user@mail.ru'),
-	('prodolban', '3245e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c89', 'prodolban@mail.ru');
+INSERT INTO Users (id_user, login, hs256_sha256, email) VALUES 
+	(1, 'user', '1815e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c84', 'user@mail.ru'),
+	(2, 'prodolban', '3245e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c89', 'prodolban@mail.ru');
 
 INSERT INTO Groups (name_group, id_creator, date_added) VALUES
 	('me and my friend prodolban', 1, '20/04/2020 19:30:07');
 
-INSERT INTO Books_PDF (title, id_user, pdf_path) VALUES
-	('А.В.Столяров. Низкоуровневое программирование', 1, 'dir_pdf1/slolarov.pdf'),
-	('Ким, Ильин. Линейная алгебра и аналитическая геометрия', 1, 'dir_pdf1/kim.pdf'),
-	('Ильин. Садовничий. Математический анализ', 1, 'dir_pdf1/ma.pdf');
+INSERT INTO Books_PDF (title, id_user, content) VALUES
+	('А.В.Столяров. Низкоуровневое программирование', 1, decode('JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==', 'base64')),
+	('Ким, Ильин. Линейная алгебра и аналитическая геометрия', 1, decode('JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==', 'base64')),
+	('Ильин. Садовничий. Математический анализ', 1, decode('JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==', 'base64'));
 
 INSERT INTO List_questions  (number_version, id_group, id_author, name_exam, name_teacher, date_added,
 	date_exam) VALUES 

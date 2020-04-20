@@ -20,6 +20,11 @@ module.exports = {
           },
           required: ['pdf'],
         },
+        encoding: {
+          'pdf': {
+            contentType: 'application/pdf',
+          },
+        },
       },
     },
   },
@@ -32,7 +37,8 @@ module.exports = {
             type: 'object',
             properties: {
               'book_id': { type: 'integer' }
-            }
+            },
+            required: ['book_id'],
           }
         }
       }

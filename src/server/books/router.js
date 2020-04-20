@@ -1,15 +1,9 @@
-const assert = require('assert').strict
 const express = require('express');
-const fs = require('fs')
+const pdfjs = require('pdfjs-dist');
 
-var router = express.Router();
+let router = express.Router();
 
 const pool = require('../db/pool')
-const FILES_DIR = process.env.FILES_DIR
-assert(FILES_DIR && FILES_DIR.length > 0, "Please specify FILES_DIR in environment")
-
-const multer  = require("multer")
-uploaddisk = multer( { dest: FILES_DIR } )
 
 router.get('/', async (req, res, next) => {
   try {
@@ -23,70 +17,84 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-router.post('/books', uploaddisk.single("pdf"), (req, res, next) => {
-  var pdf = req.file
-  var title = req.body.title 
-  if (!title) {
-    title = pdf.filename;
-  }
-  var pdf_path = String(pdf.path)
-  pool.query('INSERT INTO Books_PDF (title, id_user, pdf_path) VALUES ($1, $2, $3);',
-    [title, req.user.id, pdf_path], (error, results) => {
-    if (error) {
-      res.status(500).send('Ошибка сервера')
+router.post('/', async (req, res, next) => {
+  try {
+    let {pdf, title} = req.body;
+    if (!title) {
+      title = pdf.originalname;
     }
-    return res.status(201).json ({
-      "book_id": results.insertId
+    try {
+      await pdfjs.getDocument({
+        data: new Uint8Array(pdf.buffer),
+        stopAtErrors: true,
+      }).promise
+    } catch (e) {
+      return next({...e, status: 400})
+    }
+    const results = await pool.query(
+      'INSERT INTO Books_PDF (title, id_user, content) VALUES ($1, $2, $3) RETURNING book_id',
+      [title, req.user.id, pdf.buffer]
+    )
+    res.status(201).json({
+      "book_id": results.rows[0].book_id
     })
-  })
+  } catch (e) {
+    next(e)
+  }
 })
 
-router.delete('/:book_id', (req, res, next) => {
-  const book_id = parseInt(req.params.book_id)
-  pool.query('DELETE FROM Books_PDF WHERE book_id =$1;',
-    [book_id], (error, results) => {
-    if (error) {
-      res.status(404).send('Книга не найдена')
-    }
-    res.status(200).send('Книга успешно удалена')
-  })
+router.delete('/:book_id', async (req, res, next) => {
+  try {
+    const book_id = parseInt(req.params.book_id)
+    const results = await pool.query(
+      'DELETE FROM Books_PDF WHERE book_id =$1;',
+      [book_id]
+    )
+    res.status(200).send()
+  } catch (e) {
+    next(e)
+  }
 })
 
-router.get('/:book_id/info', (req, res, next) => {
-  var book_id = parseInt(req.params.book_id)
-  pool.query('SELECT title FROM Books_PDF WHERE book_id =$1;',
-    [book_id], (error, results) => {
-    if (error) {
-      res.status(404).send('Книга не найдена')
-    }
+router.get('/:book_id/info', async (req, res, next) => {
+  try {
+    const book_id = parseInt(req.params.book_id)
+    const results = await pool.query(
+      'SELECT title FROM Books_PDF WHERE book_id =$1;',
+      [book_id]
+    )
     res.status(200).send(results.rows[0])
-  })
+  } catch (e) {
+    next(e)
+  }
 })
 
-router.post('/:book_id/info', (req, res, next) => {
-  var book_id = parseInt(req.params.book_id)
-  new_title = req.body.title
-  pool.query('UPDATE Books_PDF SET title = $1 WHERE book_id =$2;',
-    [new_title, book_id], (error, results) => {
-    if (error) {
-      res.status(404).send('Книга не найдена')
-    }
-    res.status(200).send('Информация о книге успешно обновлена')
-  })
+router.post('/:book_id/info', async (req, res, next) => {
+  try {
+    const book_id = parseInt(req.params.book_id)
+    const new_title = req.body.title
+    const results = await pool.query(
+      'UPDATE Books_PDF SET title = $1 WHERE book_id =$2;',
+      [new_title, book_id]
+    )
+    res.status(200).send()
+  } catch (e) {
+    next(e)
+  }
 })
 
-router.get('/:book_id/content', (req, res, next) => {
-  var book_id = parseInt(req.params.book_id)
-  pool.query('SELECT pdf_path FROM Books_PDF WHERE book_id =$1;',
-    [book_id], (error, results) => {
-    if (error) {
-      res.status(404).send('Книга не найдена')
-    }
-    var pdf = String(results.rows[0].pdf_path)
-    var data = fs.readFileSync(pdf);
+router.get('/:book_id/content', async (req, res, next) => {
+  try {
+    const book_id = parseInt(req.params.book_id)
+    const results = await pool.query(
+      'SELECT content FROM Books_PDF WHERE book_id =$1;',
+      [book_id]
+    )
     res.contentType("application/pdf");
-    res.status(200).send(data);
-  })
+    res.status(200).send(results.rows[0].content);
+  } catch (e) {
+    next(e)
+  }
 })
 
 module.exports = router

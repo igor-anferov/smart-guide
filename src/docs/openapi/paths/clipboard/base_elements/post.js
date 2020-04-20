@@ -28,7 +28,7 @@ module.exports = {
                 },
                 'latex': {
                   type: 'string',
-                  format: 'binary',
+                  minLength: 1,
                   description: 'LaTeX',
                 },
               },

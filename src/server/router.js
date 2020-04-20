@@ -1,23 +1,15 @@
-const express = require('express')
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser');
-//const fileUpload = require('express-fileupload');
 const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 
 const { verifyToken, refreshToken } = require('./auth/utils')
 
-async function setupApi(path, app) {
-  var router = express.Router()
-
+async function setupApi(router) {
   router.use(morgan('combined'))
 
   router.use(cookieParser())
-  router.use(bodyParser.json());
   router.use(bodyParser.urlencoded({ extended: true }));
-  /*router.use(fileUpload({
-    createParentPath: true
-  }));*/
 
   await new OpenApiValidator({
     apiSpec: require('../docs/openapi/api'),
@@ -29,6 +21,16 @@ async function setupApi(path, app) {
     },
   }).install(router)
 
+  router.use((req, res, next) => {
+    if (req.files) {
+      for (let file of req.files) {
+        let {fieldname, ...content} = file;
+        req.body[fieldname] = content;
+      }
+    }
+    next()
+  })
+
   router.use(refreshToken)
 
   router.use('/auth', require('./auth/router'))
@@ -37,13 +39,25 @@ async function setupApi(path, app) {
   router.use('/base_elements', require('./base_elements/router'))
 
   router.use((err, req, res, next) => {
-    res.status(err.status || 500).json({
+    const status = err.status || 500;
+    switch (Math.floor(status / 100)) {
+      case 1:
+      case 2:
+      case 3:
+        console.log(err);
+        break;
+      case 4:
+        console.warn(err);
+        break;
+      default:
+        console.error(err);
+        break;
+    }
+    res.status(status).json({
       message: err.message,
       errors: err.errors,
     });
   })
-
-  app.use(path, router)
 }
 
 module.exports = setupApi

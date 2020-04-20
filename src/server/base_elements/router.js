@@ -1,83 +1,63 @@
 const express = require('express');
+const sharp = require('sharp');
 
-var router = express.Router();
+let router = express.Router();
 
 const pool = require('../db/pool')
 
-const multer  = require("multer"); 
-var storage = multer.memoryStorage()
-var uploadmemory = multer({ storage: storage })
-
-router.get('/:base_element_id/info', (req, res, next) => {
-  var id_element = parseInt(req.params.base_element_id)
-  pool.query('SELECT title, source, type FROM Elements WHERE id_element = $1;',
-    [id_element], (error, results) => {
-    if (error) {
-      res.status(404).send('Базовый элемент не найден')
-    }
-    res.status(200).send(results.rows[0])
-  })
-})
-
-router.get('/:base_element_id/content', (req, res, next) => {
-  const id_element = parseInt(req.params.base_element_id)
-  pool.query('SELECT body, type FROM Elements WHERE id_element = $1;',
-    [id_element], (error, results) => {
-    if (error) {
-      res.status(404).send('Базовый элемент не найден')
-    }
-    if (results.rows[0].type == 'image') {
-        res.contentType("image/*");
-    }
-    if (results.rows[0].type == 'latex') {
-        res.contentType("application/x-latex");
-    }
-    res.status(200).send(results.rows[0].body)
-  })
-})
-
-router.post('/:base_element_id', uploadmemory.any(), (req, res, next) => {
+router.get('/:base_element_id/info', async (req, res, next) => {
+  try {
     const id_element = parseInt(req.params.base_element_id)
-    var title = req.body.title
-    var source = req.body.source 
-    var argument = [] 
-    var text_query = "UPDATE Elements SET "
-    var flag = false
-    var count = 0
-    if (title) {
-      count ++
-      argument.push(title)
-      text_query += (flag ? ", ":"") + " title = $" + count
-      flag = true
-    }
-    if (source) {
-      count ++
-      argument.push(source)
-      text_query += (flag ? ", ":"") + " source = $" + count
-      flag = true
-    }
+    const results = await pool.query(
+      'SELECT title, source, type FROM Elements WHERE id_element = $1;',
+      [id_element]
+    )
+    res.status(200).send(results.rows[0])
+  } catch (e) {
+    next(e)
+  }
+})
 
-    if (req.files) {
-      if(req.files[0]) {
-        count++
-        argument.push(req.files[0].buffer)
-        text_query += (flag ? ", ":"") + " body = $" + count
-        flag = true
-      }
+router.get('/:base_element_id/content', async (req, res, next) => {
+  try {
+    const id_element = parseInt(req.params.base_element_id)
+    const results = await pool.query(
+      'SELECT body, type FROM Elements WHERE id_element = $1;',
+      [id_element]
+    )
+    const result = results.rows[0]
+    switch (result.type) {
+      case 'image':
+        res.contentType(`image/${(await sharp(result.body).metadata()).format}`);
+        break;
+      case 'latex':
+        res.contentType("application/x-latex");
+        break;
+      default:
+        throw Error('Unexpected base element type: ' + result.type)
     }
-    
-    if (!flag) {
-      res.status(400).end()
-    }
+    res.status(200).send(result.body)
+  } catch (e) {
+    next(e)
+  }
+})
 
-    text_query += " WHERE id_element = " + id_element + "; "
-    
-    pool.query(text_query, argument, (error,results) => {
-      if (error) {
-        res.status(404)
-      }
-      res.status(200).send('Базовый элемент успешно обновлён')
-    })
-}) 
+router.post('/:base_element_id', async (req, res, next) => {
+  try {
+    const id_element = parseInt(req.params.base_element_id)
+    const args = req.body
+    await pool.query(
+      `UPDATE Elements SET ${
+        Object.keys(args)
+          .map((k, i) => k + ` = $${i + 1}`)
+          .join()
+      } WHERE id_element = $${Object.entries(args).length + 1}`,
+      [...Object.values(args), id_element]
+    )
+    res.status(200).send()
+  } catch (e) {
+    next(e)
+  }
+})
 
 module.exports = router
