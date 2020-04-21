@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Box from '@material-ui/core/Box';
 import SwaggerUI from "swagger-ui-react"
 import "swagger-ui-react/swagger-ui.css"
-import $RefParser from "json-schema-ref-parser";
 
 function Api() {
   return (
@@ -19,7 +18,7 @@ function Api() {
                 }
               }
             }
-            if (req.headers['Content-Type'] == 'application/x-www-form-urlencoded') {
+            if (req.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
               req.body =
                 req.body
                 .split('&')

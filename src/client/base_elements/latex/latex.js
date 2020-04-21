@@ -61,7 +61,6 @@ const useStyles = makeStyles(theme => ({
 
 function DrawerContent() {
   const classes = useStyles();
-  const commonStyles = useCommonStyles();
 
   return (
     <Box p={2}>
@@ -200,6 +199,7 @@ function compile(latex, iframe) {
         newDoc.head.appendChild(linkScript)
 
         // don't reload all the styles and fonts if not needed!
+        // eslint-disable-next-line
         if (doc.head.innerHTML == newDoc.head.innerHTML) {
             var newBody = doc.adoptNode(newDoc.body)
             doc.documentElement.replaceChild(newBody, doc.body)
@@ -252,12 +252,15 @@ function excerpt(txt, o) {
     var extract = function (txt, pos, len) {
         return txt.substr(pos, len)
         .replace(/\\/g,   "\\\\")
+        // eslint-disable-next-line
         .replace(/\x08/g, "\\b")
         .replace(/\t/g,   "\\t")
         .replace(/\n/g,   "\\n")
         .replace(/\f/g,   "\\f")
         .replace(/\r/g,   "\\r")
+        // eslint-disable-next-line
         .replace(/[\x00-\x07\x0B\x0E\x0F]/g, function(ch) { return "\\x0" + hex(ch); })
+        // eslint-disable-next-line
         .replace(/[\x10-\x1F\x80-\xFF]/g,    function(ch) { return "\\x"  + hex(ch); })
         .replace(/[\u0100-\u0FFF]/g,         function(ch) { return "\\u0" + hex(ch); })
         .replace(/[\u1000-\uFFFF]/g,         function(ch) { return "\\u"  + hex(ch); });
@@ -277,9 +280,7 @@ function errorMessage(e, noFinalNewline) {
     var prefix2 = "";
     for (var i = 0; i < prefix1.length + l.prolog.length; i++)
         prefix2 += "-";
-    var msg = prefix1 + l.prolog + l.token + l.epilog + "\n" +
-        prefix2 + "^" + "\n" +
-        e.message + (noFinalNewline ? "" : "\n");
+    var msg = prefix1 + l.prolog + l.token + l.epilog + "\n" + prefix2 + "^\n" + e.message + (noFinalNewline ? "" : "\n");
 
     return msg;
 };

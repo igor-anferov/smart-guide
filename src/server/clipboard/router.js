@@ -38,7 +38,7 @@ router.post('/base_elements', async (req, res, next) => {
     try {
       assert(image || latex);
       if (image) {
-        metadata = await sharp(image.buffer).metadata()
+        const metadata = await sharp(image.buffer).metadata()
         assert(
           ['gif', 'jpeg', 'png', 'svg', 'tiff'].indexOf(metadata.format) > -1,
           'Unsupported image format'

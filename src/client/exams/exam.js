@@ -19,10 +19,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import { Container, Draggable } from "react-smooth-dnd";
 import arrayMove from "array-move";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -117,7 +114,6 @@ const useStyles = makeStyles(theme => ({
 
 function LeftDrawerContent() {
   const classes = useStyles();
-  const commonStyles = useCommonStyles();
 
   return (
     <Box p={2}>

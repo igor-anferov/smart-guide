@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 
 import Main from './main';
 

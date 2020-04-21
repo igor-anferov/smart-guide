@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Box from '@material-ui/core/Box';
-import Input from '@material-ui/core/Input';
 
 class FileUploadButton extends React.Component {
   constructor(props) {

@@ -29,7 +29,8 @@ router.post('/', async (req, res, next) => {
         stopAtErrors: true,
       }).promise
     } catch (e) {
-      return next({...e, status: 400})
+      e.status = 400
+      return next(e)
     }
     const results = await pool.query(
       'INSERT INTO Books_PDF (title, id_user, content) VALUES ($1, $2, $3) RETURNING book_id',
@@ -46,7 +47,7 @@ router.post('/', async (req, res, next) => {
 router.delete('/:book_id', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
-    const results = await pool.query(
+    await pool.query(
       'DELETE FROM Books_PDF WHERE book_id =$1;',
       [book_id]
     )
@@ -73,7 +74,7 @@ router.post('/:book_id/info', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
     const new_title = req.body.title
-    const results = await pool.query(
+    await pool.query(
       'UPDATE Books_PDF SET title = $1 WHERE book_id =$2;',
       [new_title, book_id]
     )
