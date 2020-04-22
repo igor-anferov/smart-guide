@@ -56,6 +56,41 @@ module.exports = {
       get: require('./paths/base_elements/base_element/content/get.js'),
     },
 
+    
+    '/materials': {
+      get: require('./paths/materials/get.js'),
+    },
+    
+    '/materials/{id_material}/{number_version}/info': {
+      get: require('./paths/materials/material/info/get.js'),
+    },
+    '/materials/{id_material}/{number_version}/content': {
+      get: require('./paths/materials/material/content/get.js'),
+    },
+
+
+    '/questions': {
+      get: require('./paths/questions/get.js'),
+    },
+    '/questions/{id_question}/{number_version}/info': {
+      get: require('./paths/questions/question/info/get.js'),
+    },
+    '/questions/{id_question}/{number_version}/content': {
+      get: require('./paths/questions/question/content/get.js'),
+    },
+    
+
+    '/exams': {
+      get: require('./paths/exams/get.js'),
+    },
+    
+    '/exams/{id_exam}/{number_version}/info': {
+      get: require('./paths/exams/exam/info/get.js'),
+    },
+    '/exams/{id_exam}/{number_version}/content': {
+      get: require('./paths/exams/exam/content/get.js'),
+    },
+
   },
   components: {
     securitySchemes: {

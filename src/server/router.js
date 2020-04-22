@@ -37,6 +37,9 @@ async function setupApi(router) {
   router.use('/books', require('./books/router'))
   router.use('/clipboard', require('./clipboard/router'))
   router.use('/base_elements', require('./base_elements/router'))
+  /*router.use('/materials', require('./materials/router'))
+  router.use('/questions', require('./questions/router'))*/
+  router.use('/exams', require('./exams/router'))
 
   router.use((err, req, res, next) => {
     const status = err.status || 500;
