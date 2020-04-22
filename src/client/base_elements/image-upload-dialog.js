@@ -2,9 +2,9 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
@@ -12,7 +12,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardActionArea from '@material-ui/core/CardActionArea';
 
 import FileUploadButton from './file-upload-button';
-
 
 export default function ({ image, onImageUpdate, onClose }) {
   if (image === null)
@@ -41,10 +40,10 @@ export default function ({ image, onImageUpdate, onClose }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
-          Cancel
+          Отмена
         </Button>
-        <Button onClick={onClose} color="primary">
-          Subscribe
+        <Button onClick={onClose} color="primary" variant="contained">
+          Сохранить
         </Button>
       </DialogActions>
     </Dialog>

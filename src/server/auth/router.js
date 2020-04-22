@@ -50,7 +50,7 @@ router.post('/register', async (req, res, next) => {
     return res.status(400).end()
   }
   try {
-    var results = await pool.query(
+    let results = await pool.query(
       'SELECT COUNT(1) from Users WHERE login = $1;',
       [ login ]
     )
@@ -71,13 +71,9 @@ router.post('/register', async (req, res, next) => {
     const hash = crypto.createHash('sha256')
     hash.update(hs256)
     const hs256_sha256 = hash.digest('hex')
-    await pool.query(
-      'INSERT INTO Users (login, email, hs256_sha256) VALUES($1, $2, $3);',
-      [ login, email, hs256_sha256 ]
-    )
     results = await pool.query(
-      'SELECT id_user from Users WHERE login = $1;',
-      [ login ]
+      'INSERT INTO Users (login, email, hs256_sha256) VALUES($1, $2, $3) RETURNING id_user',
+      [ login, email, hs256_sha256 ]
     )
     updateTokenCookie(res, {
       user: {

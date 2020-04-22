@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Elements (
 );
 
 CREATE TABLE IF NOT EXISTS Objects (
-  id_object serial,
+  id_object serial unique,
   number_version int,
   snippet varchar,
   id_group int,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS linked_object (
 );
 
 CREATE TABLE IF NOT EXISTS  Questions (
-  id_question serial,
+  id_question serial unique,
   number_version int,
   text_question varchar,
   id_group int,
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS  answer (
 );
 
 CREATE TABLE IF NOT EXISTS List_questions (
-  id_list_questions serial,
+  id_list_questions serial unique,
   number_version int,
   id_group int,
   id_author int,

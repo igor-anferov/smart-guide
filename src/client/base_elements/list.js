@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -10,31 +10,14 @@ import Typography from '@material-ui/core/Typography';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Link, useRouteMatch } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+import ApiContext from '../api';
 import ImageUploadDialog from './image-upload-dialog';
 import FileUploadButton from './file-upload-button';
 
 
-const elements = [
-  {
-    id: 1,
-    title: 'Теорема Лапласа (формулировка)',
-    source: 'Ильин, Ким. — Линейная алгебра и аналитическая геометрия',
-  },
-  {
-    id: 2,
-    title: 'Теорема Лапласа (доказательство)',
-    source: 'Ильин, Ким. — Линейная алгебра и аналитическая геометрия',
-  },
-  {
-    id: 3,
-    title: 'Архитектура фон Неймана',
-    source: 'Баула. — Архитектура ЭВМ и язык Ассемблера',
-  },
-]
-
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   flex: {
     display: 'flex',
     flex: 1,
@@ -42,76 +25,103 @@ const useStyles = makeStyles(theme => ({
   flexBox: {
     display: 'flex',
   },
-}))
+})
 
-export default function Elements({spacing, breakpoints}) {
-  let match = useRouteMatch();
-  const classes = useStyles();
+class Elements extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleAddClick = this.handleAddClick.bind(this)
+    this.handleCloseAdd = this.handleCloseAdd.bind(this)
+    this.handleImageUpload = this.handleImageUpload.bind(this)
+    this.handleImageUploadDialogClose = this.handleImageUploadDialogClose.bind(this)
+    this.fetch = this.fetch.bind(this)
+  }
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  state = {
+    elements: [],
+    anchorEl: null,
+    imageToUpload: null,
+  }
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
+  handleAddClick(event) {
+    this.setState({ anchorEl: event.currentTarget });
+  }
+
+  handleCloseAdd() {
+    this.setState({ anchorEl: null });
+  }
+
+  handleImageUpload(image) {
+    this.setState({
+      anchorEl: null,
+      imageToUpload: image,
+    })
+  }
+
+  handleImageUploadDialogClose() {
+    this.setState({ imageToUpload: null })
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  async fetch() {
+    let API = this.context;
+    const results = await API.request('/clipboard/base_elements')
+    this.setState({ elements: await results.json() })
+  }
 
-  const [imageToUpload, setImageToUpload] = React.useState(null);
-  const handleImageUpload = (image) => {
-    setAnchorEl(null);
-    setImageToUpload(image);
-  };
-  const handleImageUploadDialogClose = () => {
-    setImageToUpload(null);
-  };
+  componentDidMount() {
+    this.fetch()
+  }
 
-
-  return (
-    <Box>
-      <Menu
-        id="add-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem component={Link} to={`${match.url}/latex/new`}>Добавить LaTeX</MenuItem>
-        <MenuItem component={FileUploadButton} accept="image/*" onClick={handleClose} onSuccess={handleImageUpload}>Добавить фото</MenuItem>
-        <MenuItem onClick={handleClose}>Добавить фрагмент PDF</MenuItem>
-      </Menu>
-      <ImageUploadDialog image={imageToUpload} onImageUpdate={handleImageUpload} onClose={handleImageUploadDialogClose} />
-      <Grid container spacing={spacing}>
-        <Grid container direction='column' item xs={12}>
-          <TextField label="Поиск" variant="outlined" />
-        </Grid>
-        {elements.map(({ id, title, source }) => (
-          <Grid container item key={id} {...breakpoints}>
-            <Card className={classes.flex}>
-              <CardActionArea>
-                <CardContent>
-                  <Typography gutterBottom variant="h5">
-                    { title }
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    { source }
-                  </Typography>
+  render() {
+    return (
+      <Box>
+        <Menu
+          id="add-menu"
+          anchorEl={this.state.anchorEl}
+          keepMounted
+          open={Boolean(this.state.anchorEl)}
+          onClose={this.handleCloseAdd}
+        >
+          <MenuItem component={Link} to={'/base_elements/latex/new'}>Добавить LaTeX</MenuItem>
+          <MenuItem component={FileUploadButton} accept="image/*" onClick={this.handleCloseAdd} onSuccess={this.handleImageUpload}>Добавить фото</MenuItem>
+          <MenuItem onClick={this.handleCloseAdd}>Добавить фрагмент PDF</MenuItem>
+        </Menu>
+        <ImageUploadDialog image={this.state.imageToUpload} onImageUpdate={this.handleImageUpload} onClose={this.handleImageUploadDialogClose} />
+        <Grid container spacing={this.props.spacing}>
+          <Grid container direction='column' item xs={12}>
+            <TextField label="Поиск" variant="outlined" />
+          </Grid>
+          {this.state.elements.map(({ base_element_id, title, source }) => (
+            <Grid container item key={base_element_id} {...this.props.breakpoints}>
+              <Card className={this.props.classes.flex}>
+                <CardActionArea>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5">
+                      { title }
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      { source }
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
+          <Grid container item {...this.props.breakpoints}>
+            <Card className={this.props.classes.flex}>
+              <CardActionArea aria-controls="add-menu" aria-haspopup="true" onClick={this.handleAddClick}>
+                <CardContent className={this.props.classes.flexBox}>
+                  <AddCircleIcon className={this.props.classes.flex} color="disabled" style={{ fontSize: 120 }}/>
                 </CardContent>
               </CardActionArea>
             </Card>
           </Grid>
-        ))}
-        <Grid container item {...breakpoints}>
-          <Card className={classes.flex}>
-            <CardActionArea aria-controls="add-menu" aria-haspopup="true" onClick={handleClick}>
-              <CardContent className={classes.flexBox}>
-                <AddCircleIcon className={classes.flex} color="disabled" style={{ fontSize: 120 }}/>
-              </CardContent>
-            </CardActionArea>
-          </Card>
         </Grid>
-      </Grid>
-    </Box>
-  );
+      </Box>
+    );
+  }
 }
+
+Elements.contextType = ApiContext;
+
+export default withStyles(styles, { withTheme: true })(Elements)

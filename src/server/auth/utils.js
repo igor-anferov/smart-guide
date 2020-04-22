@@ -13,7 +13,7 @@ function makeToken(props) {
 
 function updateTokenCookie(res, props) {
   return res.cookie('token', makeToken(props), {
-    expires: new Date(Date.now() + expiration),
+    expires: new Date(Date.now() + expiration * 1000),
     secure: process.env.HTTPS === 'true',
     httpOnly: true,
   })

@@ -26,6 +26,7 @@ class FileUploadButton extends React.Component {
         <Box display='none'>
           <input ref='input' type="file" accept={accept} onChange={(event) => {
             event.target.files.length && onSuccess && onSuccess(event.target.files[0])
+            event.target.value = null
           }} />
         </Box>
         { children }
