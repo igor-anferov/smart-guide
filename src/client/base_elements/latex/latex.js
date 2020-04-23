@@ -68,7 +68,7 @@ function DrawerContent() {
         <TextField fullWidth className={classes.flex} id="title" required={true} multiline={true} label="Название элемента" />
       </Box>
       <Box py={2}>
-        <TextField fullWidth className={classes.flex} id="source" multiline={true} label="Источник" />
+        <TextField fullWidth className={classes.flex} id="source" required={true} multiline={true} label="Источник" />
       </Box>
     </Box>
   );

@@ -5,6 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -22,8 +24,18 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
   },
+  flexColumn: {
+    display: 'flex',
+    'flex-direction': 'column',
+    'justify-content': 'stretch',
+    flex: 1,
+  },
   flexBox: {
     display: 'flex',
+  },
+  flexBoxRight: {
+    display: 'flex',
+    'justify-content': 'flex-end',
   },
 })
 
@@ -32,15 +44,18 @@ class Elements extends React.Component {
     super(props)
     this.handleAddClick = this.handleAddClick.bind(this)
     this.handleCloseAdd = this.handleCloseAdd.bind(this)
-    this.handleImageUpload = this.handleImageUpload.bind(this)
+    this.handleImageUploadFileSelected = this.handleImageUploadFileSelected.bind(this)
+    this.handleImageUploadDialogChange = this.handleImageUploadDialogChange.bind(this)
     this.handleImageUploadDialogClose = this.handleImageUploadDialogClose.bind(this)
+    this.handleImageUploadDialogSubmit = this.handleImageUploadDialogSubmit.bind(this)
+    this.handleRemove = this.handleRemove.bind(this)
     this.fetch = this.fetch.bind(this)
   }
 
   state = {
     elements: [],
     anchorEl: null,
-    imageToUpload: null,
+    imageUploadDialog: null,
   }
 
   handleAddClick(event) {
@@ -51,19 +66,49 @@ class Elements extends React.Component {
     this.setState({ anchorEl: null });
   }
 
-  handleImageUpload(image) {
+  handleImageUploadFileSelected(image) {
     this.setState({
       anchorEl: null,
-      imageToUpload: image,
+      imageUploadDialog: { image },
     })
   }
 
-  handleImageUploadDialogClose() {
-    this.setState({ imageToUpload: null })
+  handleImageUploadDialogChange(imageUploadDialog) {
+    this.setState({ imageUploadDialog: imageUploadDialog })
   };
 
+  handleImageUploadDialogClose() {
+    this.setState({ imageUploadDialog: null })
+  };
+
+  async handleImageUploadDialogSubmit({ title, source, image }) {
+    const API = this.context;
+    let body = new FormData()
+    body.append('title', title);
+    body.append('source', source);
+    body.append('image', image, image.name);
+    const results = await API.request('/clipboard/base_elements', {
+      method: 'POST',
+      body: body,
+    })
+    if (!results.ok)
+      throw Error(`Unexpected image upload status ${results.status}`);
+    await this.fetch()
+    this.setState({ imageUploadDialog: null })
+  }
+
+  async handleRemove(base_element_id) {
+    const API = this.context;
+    const results = await API.request(`/clipboard/base_elements/${base_element_id}`, {
+      method: 'DELETE'
+    })
+    if (!results.ok)
+      throw Error(`Unexpected base element delete status ${results.status}`);
+    await this.fetch()
+  }
+
   async fetch() {
-    let API = this.context;
+    const API = this.context;
     const results = await API.request('/clipboard/base_elements')
     this.setState({ elements: await results.json() })
   }
@@ -83,18 +128,22 @@ class Elements extends React.Component {
           onClose={this.handleCloseAdd}
         >
           <MenuItem component={Link} to={'/base_elements/latex/new'}>Добавить LaTeX</MenuItem>
-          <MenuItem component={FileUploadButton} accept="image/*" onClick={this.handleCloseAdd} onSuccess={this.handleImageUpload}>Добавить фото</MenuItem>
+          <MenuItem component={FileUploadButton} accept="image/*" onClick={this.handleCloseAdd} onSuccess={this.handleImageUploadFileSelected}>Добавить фото</MenuItem>
           <MenuItem onClick={this.handleCloseAdd}>Добавить фрагмент PDF</MenuItem>
         </Menu>
-        <ImageUploadDialog image={this.state.imageToUpload} onImageUpdate={this.handleImageUpload} onClose={this.handleImageUploadDialogClose} />
+        {this.state.imageUploadDialog ? (
+          <ImageUploadDialog state={this.state.imageUploadDialog} onChange={this.handleImageUploadDialogChange} onClose={this.handleImageUploadDialogClose} onSubmit={this.handleImageUploadDialogSubmit} />
+        ) : (
+          <div/>
+        )}
         <Grid container spacing={this.props.spacing}>
           <Grid container direction='column' item xs={12}>
             <TextField label="Поиск" variant="outlined" />
           </Grid>
           {this.state.elements.map(({ base_element_id, title, source }) => (
             <Grid container item key={base_element_id} {...this.props.breakpoints}>
-              <Card className={this.props.classes.flex}>
-                <CardActionArea>
+              <Card className={this.props.classes.flexColumn}>
+                <CardActionArea className={this.props.classes.flexColumn}>
                   <CardContent>
                     <Typography gutterBottom variant="h5">
                       { title }
@@ -104,6 +153,11 @@ class Elements extends React.Component {
                     </Typography>
                   </CardContent>
                 </CardActionArea>
+                <CardActions className={this.props.classes.flexBoxRight}>
+                  <Button size="small" color="secondary" onClick={()=>this.handleRemove(base_element_id)}>
+                    Удалить
+                  </Button>
+                </CardActions>
               </Card>
             </Grid>
           ))}

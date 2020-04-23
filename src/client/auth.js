@@ -6,8 +6,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
 import sha256 from 'js-sha256'
+
+import VerifiedTextField from './verified-text-field';
 
 const useStyles = makeStyles(theme => ({
   blur: {
@@ -28,22 +29,6 @@ export default function ({ API, succeeded }) {
       )}
     </Dialog>
   );
-}
-
-function changed(setNewValue, setError, checker) {
-  return (event) => {
-    setNewValue(event.target.value);
-    if (setError) {
-      if (event.target.validationMessage)
-        return setError(event.target.validationMessage)
-      if (checker) {
-        const error = checker(event.target.value)
-        if (error)
-          return setError(error)
-      }
-      return setError('')
-    }
-  }
 }
 
 function Login({ API, succeeded, swapToRegistration }) {
@@ -86,24 +71,24 @@ function Login({ API, succeeded, swapToRegistration }) {
       </DialogTitle>
       <DialogContent>
         <Box pr={2}>
-          <TextField
+          <VerifiedTextField
             margin="dense"
             label="Логин"
             required
             fullWidth
-            onChange={changed(setLogin, setLoginError)}
-            error={loginError.length > 0}
-            helperText={loginError}
+            onChange={setLogin}
+            onErrorChange={setLoginError}
+            error={loginError}
             autoFocus
           />
-          <TextField
+          <VerifiedTextField
             margin="dense"
             label="Пароль"
             required
             fullWidth
-            onChange={changed(setPassword, setPasswordError)}
-            error={passwordError.length > 0}
-            helperText={passwordError}
+            onChange={setPassword}
+            onErrorChange={setPasswordError}
+            error={passwordError}
             type="password"
           />
         </Box>
@@ -175,46 +160,48 @@ function Registration({ API, succeeded, swapToLogin }) {
       </DialogTitle>
       <DialogContent>
         <Box pr={2}>
-          <TextField
+          <VerifiedTextField
             margin="dense"
             label="Логин"
             required
             fullWidth
-            onChange={changed(setLogin, setLoginError)}
-            error={loginError.length > 0}
-            helperText={loginError}
+            onChange={setLogin}
+            onErrorChange={setLoginError}
+            error={loginError}
             autoFocus
           />
-          <TextField
+          <VerifiedTextField
             margin="dense"
             label="Пароль"
             required
             fullWidth
-            onChange={changed(setPassword, setPasswordError, (value) => {
+            onChange={setPassword}
+            onErrorChange={setPasswordError}
+            checker={(value) => {
               passwordConfirmation && value !== passwordConfirmation && setPasswordConfirmationError('Пароли не совпадают')
-            })}
-            error={passwordError.length > 0}
-            helperText={passwordError}
+            }}
+            error={passwordError}
             type="password"
           />
-          <TextField
+          <VerifiedTextField
             margin="dense"
             label="Подтверждение пароля"
             required
             fullWidth
-            onChange={changed(setPasswordConfirmation, setPasswordConfirmationError, (value) => password === value ? '' : 'Пароли не совпадают')}
-            error={passwordConfirmationError.length > 0}
-            helperText={passwordConfirmationError}
+            onChange={setPasswordConfirmation}
+            onErrorChange={setPasswordConfirmationError}
+            checker={(value) => password === value ? '' : 'Пароли не совпадают'}
+            error={passwordConfirmationError}
             type="password"
           />
-          <TextField
+          <VerifiedTextField
             margin="dense"
             label="E-mail"
             required
             fullWidth
-            onChange={changed(setEmail, setEmailError)}
-            error={emailError.length > 0}
-            helperText={emailError}
+            onChange={setEmail}
+            onErrorChange={setEmailError}
+            error={emailError}
             type="email"
           />
         </Box>

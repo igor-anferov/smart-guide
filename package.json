@@ -27,6 +27,7 @@
     "create-db": "createdb smart-guide && psql smart-guide -qf src/server/db/create.sql -c \\\\dt",
     "fill-db": "psql smart-guide -ef src/server/db/fill.sql",
     "drop-db": "dropdb smart-guide",
+    "reset-db": "yarn drop-db; yarn create-db && yarn fill-db",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -1,4 +1,5 @@
 import React from 'react';
+import Box from '@material-ui/core/Box';
 
 import Auth from './auth';
 
@@ -52,7 +53,7 @@ class ApiProvider extends React.Component {
 
   render() {
     return (
-      <div>
+      <Box height={1} overflow='hidden'>
         {this.state.needAuth ? (
           <Auth
             API={{request}}
@@ -64,7 +65,7 @@ class ApiProvider extends React.Component {
         <Provider value={{request: this.authenticatedRequest}}>
           {this.props.children}
         </Provider>
-      </div>
+      </Box>
     );
   }
 }

@@ -1,5 +1,4 @@
 const express = require('express');
-const sharp = require('sharp');
 
 let router = express.Router();
 
