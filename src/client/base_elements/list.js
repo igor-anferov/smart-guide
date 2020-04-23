@@ -28,6 +28,7 @@ const styles = theme => ({
     display: 'flex',
     'flex-direction': 'column',
     'justify-content': 'stretch',
+    'align-items': 'stretch',
     flex: 1,
   },
   flexBox: {

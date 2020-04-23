@@ -18,8 +18,9 @@ export default function({
     onChange && onChange(event.target.value);
     const err =
       event.target.validationMessage ||
-      (checker && checker(event.target.value));
-    err && onErrorChange && onErrorChange(err);
+      (checker && checker(event.target.value)) ||
+      '';
+    onErrorChange && onErrorChange(err);
     err || (onValidChange && onValidChange(err));
     setLocalErr(err);
   }
