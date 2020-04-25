@@ -3,7 +3,7 @@ module.exports = {
   summary: 'Получить содержимое базового элемента',
   parameters: [
     {
-      name: 'base_element_id',
+      name: 'element_id',
       description: 'Идентификатор базового элемента',
       in: 'path',
       schema: { type: 'integer' },

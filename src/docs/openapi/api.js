@@ -41,41 +41,50 @@ module.exports = {
       get: require('./paths/clipboard/base_elements/get.js'),
       post: require('./paths/clipboard/base_elements/post.js'),
     },
-    '/clipboard/base_elements/{base_element_id}': {
+    '/clipboard/base_elements/{element_id}': {
       delete: require('./paths/clipboard/base_elements/base_element/delete.js'),
     },
 
 
-    '/base_elements/{base_element_id}': {
+    '/clipboard/materials': {
+      get: require('./paths/clipboard/materials/get.js'),
+    },
+    '/clipboard/materials/{material_id}': {
+      delete: require('./paths/clipboard/materials/material/delete.js'),
+    },
+
+    
+    '/clipboard/questions': {
+      get: require('./paths/clipboard/questions/get.js'),
+    },
+    '/clipboard/questions/{question_id}': {
+      delete: require('./paths/clipboard/questions/question/delete.js'),
+    },
+
+
+    '/base_elements/{element_id}': {
       post: require('./paths/base_elements/base_element/post.js'),
     },
-    '/base_elements/{base_element_id}/info': {
+    '/base_elements/{element_id}/info': {
       get: require('./paths/base_elements/base_element/info/get.js'),
     },
-    '/base_elements/{base_element_id}/content': {
+    '/base_elements/{element_id}/content': {
       get: require('./paths/base_elements/base_element/content/get.js'),
     },
 
     
-    '/materials': {
-      get: require('./paths/materials/get.js'),
-    },
-    
-    '/materials/{id_material}/{number_version}/info': {
+    '/materials/{id_material}/info': {
       get: require('./paths/materials/material/info/get.js'),
     },
-    '/materials/{id_material}/{number_version}/content': {
+    '/materials/{id_material}/content': {
       get: require('./paths/materials/material/content/get.js'),
     },
 
 
-    '/questions': {
-      get: require('./paths/questions/get.js'),
-    },
-    '/questions/{id_question}/{number_version}/info': {
+    '/questions/{question_id}/info': {
       get: require('./paths/questions/question/info/get.js'),
     },
-    '/questions/{id_question}/{number_version}/content': {
+    '/questions/{question_id}/content': {
       get: require('./paths/questions/question/content/get.js'),
     },
     
@@ -84,10 +93,10 @@ module.exports = {
       get: require('./paths/exams/get.js'),
     },
     
-    '/exams/{id_exam}/{number_version}/info': {
+    '/exams/{exam_id}/info': {
       get: require('./paths/exams/exam/info/get.js'),
     },
-    '/exams/{id_exam}/{number_version}/content': {
+    '/exams/{exam_id}/content': {
       get: require('./paths/exams/exam/content/get.js'),
     },
 

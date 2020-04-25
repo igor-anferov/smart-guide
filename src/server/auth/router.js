@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
   }
   try {
     var results = await pool.query(
-      'SELECT id_user, hs256_sha256 from Users WHERE login = $1;',
+      'SELECT user_id, hs256_sha256 from Users WHERE login = $1;',
       [ login ]
     )
     if (results.rows.length === 0) {
@@ -34,7 +34,7 @@ router.post('/login', async (req, res, next) => {
     }
     updateTokenCookie(res, {
       user: {
-        id: results.rows[0].id_user
+        id: results.rows[0].user_id
       }
     }).status(200).end()
   } catch (e) {
@@ -72,12 +72,12 @@ router.post('/register', async (req, res, next) => {
     hash.update(hs256)
     const hs256_sha256 = hash.digest('hex')
     results = await pool.query(
-      'INSERT INTO Users (login, email, hs256_sha256) VALUES($1, $2, $3) RETURNING id_user',
+      'INSERT INTO Users (login, email, hs256_sha256) VALUES($1, $2, $3) RETURNING user_id',
       [ login, email, hs256_sha256 ]
     )
     updateTokenCookie(res, {
       user: {
-        id: results.rows[0].id_user
+        id: results.rows[0].user_id
       }
     }).status(200).end()
   } catch (e) {

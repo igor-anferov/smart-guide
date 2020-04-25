@@ -1,9 +1,9 @@
 module.exports = {
-  tags: ['Вопросы'],
-  summary: 'Получить иформацию обо всех вопросах пользователя',
+  tags: ['Буфер обмена'],
+  summary: 'Получить иформацию о вопросах, находящихся в буфере обмена',
   responses: {
     '200': {
-      description: 'Список всех вопросов пользователя',
+      description: 'Список всех вопросов, находящихся в буфере обмена',
       content: {
         'application/json': {
           schema: {
@@ -11,20 +11,19 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'id_question': { type: 'integer' },
-                'number_version': {type: 'integer'},
-                'text_question': {
+                'question_id': { type: 'integer' },
+                'text': {
                   type: 'string',
                   description: 'Формулировка вопроса',
                   example: 'Отыскание точек локального экстремума функции. Достаточные условия экстремума',
                 },
               },
-              required: ['id_question', 'number_version', 'text_question']
+              required: ['question_id', 'text']
             }
           }
         }
       }
     },
-    '401': require('../../responses/401'),
+    '401': require('../../../responses/401'),
   }
 }

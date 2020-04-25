@@ -3,19 +3,12 @@ module.exports = {
   summary: 'Получить информацию о вопросе',
   parameters: [
     {
-      name: 'id_question',
+      name: 'question_id',
       description: 'Идентификатор вопроса',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
     },
-    {
-      name: 'number_version',
-      description: 'Номер версии',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
   ],
   responses: {
     '200': {
@@ -25,18 +18,13 @@ module.exports = {
           schema: {
             type: 'object',
             properties: {
-              'text_question': {
+              'text': {
                 type: 'string',
                 description: 'Название экзамена',
                 example: 'Архитектура ЭВМ и язык Ассемблера',
               },
-              'date_added': {
-                type: 'string',
-                format: 'date',
-                description: 'дата создания',
-              },
             },
-            required: ['text_question', 'date_added']
+            required: ['text']
           }
         }
       }

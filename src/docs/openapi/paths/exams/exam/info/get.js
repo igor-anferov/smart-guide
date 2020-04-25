@@ -3,19 +3,12 @@ module.exports = {
   summary: 'Получить информацию об экзамене',
   parameters: [
     {
-      name: 'id_exam',
+      name: 'exam_id',
       description: 'Идентификатор экзамена',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
     },
-    {
-      name: 'number_version',
-      description: 'Номер версии',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
   ],
   responses: {
     '200': {
@@ -25,12 +18,12 @@ module.exports = {
           schema: {
             type: 'object',
             properties: {
-              'name_exam': {
+              'title': {
                 type: 'string',
                 description: 'Название экзамена',
                 example: 'Архитектура ЭВМ и язык Ассемблера',
               },
-              'name_teacher': {
+              'teacher': {
                 type: 'string',
                 description: 'Преподаватель',
                 example: 'Столяров Андрей Викторович',
@@ -41,7 +34,7 @@ module.exports = {
                 description: 'дата сдачи',
               },*/
             },
-            required: ['name_exam', 'name_teacher']
+            required: ['title', 'teacher']
           }
         }
       }

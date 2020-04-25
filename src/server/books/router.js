@@ -8,7 +8,7 @@ const pool = require('../db/pool')
 router.get('/', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT book_id, title FROM Books_PDF WHERE id_user = $1;',
+      'SELECT book_id, title FROM Books WHERE user_id = $1;',
       [req.user.id]
     )
     res.status(200).send(results.rows)
@@ -33,7 +33,7 @@ router.post('/', async (req, res, next) => {
       return next(e)
     }
     const results = await pool.query(
-      'INSERT INTO Books_PDF (title, id_user, content) VALUES ($1, $2, $3) RETURNING book_id',
+      'INSERT INTO Books (title, user_id, content) VALUES ($1, $2, $3) RETURNING book_id',
       [title, req.user.id, pdf.buffer]
     )
     res.status(201).json({
@@ -48,7 +48,7 @@ router.delete('/:book_id', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
     await pool.query(
-      'DELETE FROM Books_PDF WHERE book_id =$1;',
+      'DELETE FROM Books WHERE book_id =$1;',
       [book_id]
     )
     res.status(200).send()
@@ -61,7 +61,7 @@ router.get('/:book_id/info', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
     const results = await pool.query(
-      'SELECT title FROM Books_PDF WHERE book_id =$1;',
+      'SELECT title FROM Books WHERE book_id =$1;',
       [book_id]
     )
     res.status(200).send(results.rows[0])
@@ -75,7 +75,7 @@ router.post('/:book_id/info', async (req, res, next) => {
     const book_id = parseInt(req.params.book_id)
     const new_title = req.body.title
     await pool.query(
-      'UPDATE Books_PDF SET title = $1 WHERE book_id =$2;',
+      'UPDATE Books SET title = $1 WHERE book_id =$2;',
       [new_title, book_id]
     )
     res.status(200).send()
@@ -88,7 +88,7 @@ router.get('/:book_id/content', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
     const results = await pool.query(
-      'SELECT content FROM Books_PDF WHERE book_id =$1;',
+      'SELECT content FROM Books WHERE book_id =$1;',
       [book_id]
     )
     res.contentType("application/pdf");

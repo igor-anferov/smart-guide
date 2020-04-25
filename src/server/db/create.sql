@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS Materials (
   author_id int,
   created timestamp,
   forks_count int,
-  views_count int
+  views_count int,
+  clipboard boolean
 );
 
 CREATE TABLE IF NOT EXISTS MaterialBaseElements (
@@ -41,7 +42,8 @@ CREATE TABLE IF NOT EXISTS Questions (
   text varchar,
   group_id int,
   author_id int,
-  created timestamp
+  created timestamp,
+  clipboard boolean
 );
 
 CREATE TABLE IF NOT EXISTS QuestionMaterials (

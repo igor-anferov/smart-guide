@@ -5,12 +5,12 @@ let router = express.Router();
 
 const pool = require('../db/pool')
 
-router.get('/:base_element_id/info', async (req, res, next) => {
+router.get('/:element_id/info', async (req, res, next) => {
   try {
-    const id_element = parseInt(req.params.base_element_id)
+    const element_id = parseInt(req.params.element_id)
     const results = await pool.query(
-      'SELECT title, source, type FROM Elements WHERE id_element = $1;',
-      [id_element]
+      'SELECT title, source, type FROM BaseElements WHERE element_id = $1;',
+      [element_id]
     )
     res.status(200).send(results.rows[0])
   } catch (e) {
@@ -18,12 +18,12 @@ router.get('/:base_element_id/info', async (req, res, next) => {
   }
 })
 
-router.get('/:base_element_id/content', async (req, res, next) => {
+router.get('/:element_id/content', async (req, res, next) => {
   try {
-    const id_element = parseInt(req.params.base_element_id)
+    const element_id = parseInt(req.params.element_id)
     const results = await pool.query(
-      'SELECT body, type FROM Elements WHERE id_element = $1;',
-      [id_element]
+      'SELECT body, type FROM Elements WHERE element_id = $1;',
+      [element_id]
     )
     const result = results.rows[0]
     switch (result.type) {
@@ -42,9 +42,9 @@ router.get('/:base_element_id/content', async (req, res, next) => {
   }
 })
 
-router.post('/:base_element_id', async (req, res, next) => {
+router.post('/:element_id', async (req, res, next) => {
   try {
-    const id_element = parseInt(req.params.base_element_id)
+    const element_id = parseInt(req.params.element_id)
     const args = req.body
     await pool.query(
       `UPDATE Elements SET ${
@@ -52,7 +52,7 @@ router.post('/:base_element_id', async (req, res, next) => {
           .map((k, i) => k + ` = $${i + 1}`)
           .join()
       } WHERE id_element = $${Object.entries(args).length + 1}`,
-      [...Object.values(args), id_element]
+      [...Object.values(args), element_id]
     )
     res.status(200).send()
   } catch (e) {

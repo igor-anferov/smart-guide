@@ -10,7 +10,7 @@ const pool = require('../db/pool')
 router.get('/base_elements', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT id_element as base_element_id, title, source, type FROM Elements WHERE id_author = $1 and clipboard = $2;',
+      'SELECT element_id, title, source, type FROM BaseElements WHERE author_id = $1 and clipboard = $2;',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)
@@ -19,12 +19,12 @@ router.get('/base_elements', async (req, res, next) => {
   }
 })
 
-router.delete('/base_elements/:base_element_id', async (req, res, next) => {
+router.delete('/base_elements/:element_id', async (req, res, next) => {
   try {
-    const id_element = parseInt(req.params.base_element_id)
+    const element_id = parseInt(req.params.element_id)
     await pool.query(
-      'DELETE FROM Elements WHERE id_element = $1;',
-      [id_element]
+      'DELETE FROM BaseElements WHERE element_id = $1;',
+      [element_id]
     )
     res.status(200).send()
   } catch (e) {
@@ -53,11 +53,11 @@ router.post('/base_elements', async (req, res, next) => {
     }
     const [type, body] = image ? ['image', image.buffer] : ['latex', Buffer.from(latex)];
     const results = await pool.query(
-      'INSERT INTO Elements (title, id_author, body, source, type, clipboard) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_element',
+      'INSERT INTO BaseElements (title, author_id, body, source, type, clipboard) VALUES ($1, $2, $3, $4, $5, $6) RETURNING element_id',
       [title, req.user.id, body, source, type, true]
     )
     res.status(201).json({
-      "base_element_id": results.rows[0].id_element
+      "element_id": results.rows[0].element_id
     })
   } catch (e) {
     next(e)
@@ -65,3 +65,4 @@ router.post('/base_elements', async (req, res, next) => {
 })
 
 module.exports = router
+

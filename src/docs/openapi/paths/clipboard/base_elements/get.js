@@ -11,7 +11,7 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'base_element_id': { type: 'integer' },
+                'element_id': { type: 'integer' },
                 'title': {
                   type: 'string',
                   description: 'Название базового элемента',
@@ -28,7 +28,7 @@ module.exports = {
                   enum: ['image', 'latex'],
                 },
               },
-              required: ['base_element_id', 'title', 'source', 'type']
+              required: ['element_id', 'title', 'source', 'type']
             }
           }
         }

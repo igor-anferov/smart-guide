@@ -3,19 +3,12 @@ module.exports = {
   summary: 'Получить cписок базовых элементов, входящих в состав учебного элемента',
   parameters: [
     {
-      name: 'id_material',
+      name: 'material_id',
       description: 'Идентификатор учебного элемента',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
     },
-    {
-      name: 'number_version',
-      description: 'Номер версии',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
   ],
   responses: {
     '200': {
@@ -27,14 +20,14 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'id_base_element': { type: 'integer' },
+                'element_id': { type: 'integer' },
                 'title': {
                   type: 'string',
                   description: 'Название учебного элемента',
                   example: 'Теорема Лапласа (формулировка)',
                 },
               },
-              required: ['id_base_element', 'number_version', 'title']
+              required: ['element_id', 'title']
             }
           }
         }

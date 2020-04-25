@@ -3,19 +3,12 @@ module.exports = {
   summary: 'Получить cписок учебных элементов, формирующих ответ на вопрос',
   parameters: [
     {
-      name: 'id_question',
+      name: 'question_id',
       description: 'Идентификатор вопроса',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
     },
-    {
-      name: 'number_version',
-      description: 'Номер версии',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
   ],
   responses: {
     '200': {
@@ -27,15 +20,14 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'id_materials': { type: 'integer' },
-                'number_version': {type: 'integer'},
+                'materials_id': { type: 'integer' },
                 'snippet': {
                   type: 'string',
                   description: 'Заголовок учебного элемента',
                   example: 'Теорема Лапласа, доказательство, примеры применения',
                 },
               },
-              required: ['id_materials', 'number_version', 'snippet']
+              required: ['materials_id', 'snippet']
             }
           }
         }

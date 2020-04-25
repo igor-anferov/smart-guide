@@ -1,21 +1,14 @@
 module.exports = {
   tags: ['Учебные элементы'],
-  summary: 'Получить информацию об экзамене',
+  summary: 'Получить информацию об учебном элементе',
   parameters: [
     {
-      name: 'id_exam',
+      name: 'exam_id',
       description: 'Идентификатор экзамена',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
     },
-    {
-      name: 'number_version',
-      description: 'Номер версии',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
   ],
   responses: {
     '200': {
@@ -25,23 +18,18 @@ module.exports = {
           schema: {
             type: 'object',
             properties: {
-              'exam_name': {
+              'title': {
                 type: 'string',
                 description: 'Название экзамена',
                 example: 'Архитектура ЭВМ и язык Ассемблера',
               },
-              'name_teacher': {
+              'teacher': {
                 type: 'string',
                 description: 'Преподаватель',
                 example: 'Столяров Андрей Викторович',
               },
-              'date_exam': {
-                type: 'string',
-                format: 'date',
-                description: 'дата сдачи',
-              },
             },
-            required: ['exam_name', 'name_teacher', 'date_exam']
+            required: ['title', 'teacher']
           }
         }
       }

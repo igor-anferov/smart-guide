@@ -1,9 +1,9 @@
 module.exports = {
-  tags: ['Учебные элементы'],
-  summary: 'Получить информацию обо всех учебных элементах',
+  tags: ['Буфер обмена'],
+  summary: 'Получить информацию об учебных элементах, находящихся в буфере обмена',
   responses: {
     '200': {
-      description: 'Список всех учебных элементов пользователя',
+      description: 'Список всех учебных элементов, находящихся в буфере обмена',
       content: {
         'application/json': {
           schema: {
@@ -11,20 +11,19 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'id_material': { type: 'integer' },
-                'number_version': {type: 'integer'},
+                'material_id': { type: 'integer' },
                 'snippet': {
                   type: 'string',
                   description: 'Заголовок учебного элемента',
                   example: 'Теорема Лапласа, доказательство, примеры применения',
                 },
               },
-              required: ['id_material', 'number_version', 'snippet']
+              required: ['material_id', 'snippet']
             }
           }
         }
       }
     },
-    '401': require('../../responses/401'),
+    '401': require('../../../responses/401'),
   }
 }

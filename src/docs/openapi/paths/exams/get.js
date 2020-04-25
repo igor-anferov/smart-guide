@@ -11,20 +11,19 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'id_exam': { type: 'integer' },
-                'number_version': {type: 'integer'},
-                'name_exam': {
+                'exam_id': { type: 'integer' },
+                'title': {
                   type: 'string',
                   description: 'Название экзамена',
                   example: 'Архитектура ЭВМ и язык Ассемблера',
                 },
-                'name_teacher': {
+                'teacher': {
                   type: 'string',
                   description: 'Преподаватель',
                   example: 'Столяров Андрей Викторович',
                 },
               },
-              required: ['id_exam', 'number_version', 'name_exam', 'name_teacher']
+              required: ['exam_id', 'title', 'teacher']
             }
           }
         }

@@ -3,19 +3,12 @@ module.exports = {
   summary: 'Получить cписок вопросов к экзамену',
   parameters: [
     {
-      name: 'id_exam',
+      name: 'exam_id',
       description: 'Идентификатор экзамена',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
     },
-    {
-      name: 'number_version',
-      description: 'Номер версии',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
   ],
   responses: {
     '200': {
@@ -27,15 +20,14 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'id_question': { type: 'integer' },
-                'number_version': {type: 'integer'},
-                'text_question': {
+                'question_id': { type: 'integer' },
+                'text': {
                   type: 'string',
                   description: 'Формулировка вопроса',
                   example: 'Отыскание точек локального экстремума функции. Достаточные условия экстремума',
                 },
               },
-              required: ['id_question', 'number_version', 'text_question']
+              required: ['question_id','text']
             }
           }
         }
