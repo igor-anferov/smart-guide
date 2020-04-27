@@ -20,14 +20,14 @@ module.exports = {
             items: {
               type: 'object',
               properties: {
-                'materials_id': { type: 'integer' },
+                'material_id': { type: 'integer' },
                 'snippet': {
                   type: 'string',
                   description: 'Заголовок учебного элемента',
                   example: 'Теорема Лапласа, доказательство, примеры применения',
                 },
               },
-              required: ['materials_id', 'snippet']
+              required: ['material_id', 'snippet']
             }
           }
         }

@@ -20,8 +20,8 @@ module.exports = {
             properties: {
               'text': {
                 type: 'string',
-                description: 'Название экзамена',
-                example: 'Архитектура ЭВМ и язык Ассемблера',
+                description: 'Формулировка вопроса',
+                example: 'Отыскание точек локального экстремума функции. Достаточные условия экстремума',
               },
             },
             required: ['text']

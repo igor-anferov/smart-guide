@@ -48,6 +48,7 @@ module.exports = {
 
     '/clipboard/materials': {
       get: require('./paths/clipboard/materials/get.js'),
+      post: require('./paths/clipboard/materials/post.js'),
     },
     '/clipboard/materials/{material_id}': {
       delete: require('./paths/clipboard/materials/material/delete.js'),
@@ -71,17 +72,35 @@ module.exports = {
     '/base_elements/{element_id}/content': {
       get: require('./paths/base_elements/base_element/content/get.js'),
     },
+    '/base_elements/{element_id}/copy_to_material': {
+      post: require('./paths/base_elements/base_element/copy_to_material/post.js'),
+    },
 
-    
-    '/materials/{id_material}/info': {
+    /*'/materials/{material_id}/info': {
       get: require('./paths/materials/material/info/get.js'),
     },
-    '/materials/{id_material}/content': {
+    '/materials/{material_id}/content': {
       get: require('./paths/materials/material/content/get.js'),
+    },*/
+    '/materials/{material_id}': {
+      get: require('./paths/materials/material/get.js'),
+      post: require('./paths/materials/material/post.js'),
+    },
+    '/materials/{material_id}/base_elements': {
+      post: require('./paths/materials/material/base_elements/post.js'),
+    },
+    '/materials/{material_id}/base_elements/{element_id}': {
+      delete: require('./paths/materials/material/base_elements/base_element/delete.js'),
+    },
+    '/materials/{material_id}/base_elements/{element_id}/move': {
+      post: require('./paths/materials/material/base_elements/base_element/move/post.js'),
+    },
+    '/materials/{material_id}/base_elements/{element_id}/copy_to_clipboard': {
+      post: require('./paths/materials/material/base_elements/base_element/copy_to_clipboard/post.js'),
     },
 
 
-    '/questions/{question_id}/info': {
+    /*'/questions/{question_id}/info': {
       get: require('./paths/questions/question/info/get.js'),
     },
     '/questions/{question_id}/content': {
@@ -98,7 +117,7 @@ module.exports = {
     },
     '/exams/{exam_id}/content': {
       get: require('./paths/exams/exam/content/get.js'),
-    },
+    },*/
 
   },
   components: {
