@@ -70,4 +70,21 @@ router.post('/:base_element_id', image_checker, latex_checker, async (req, res, 
   }
 })
 
+router.post('/:base_element_id/:material_id/copy_to_material', async (req, res, next) => {
+  try {
+    const base_element_id = parseInt(req.params.base_element_id)
+    const material_id = parseInt(req.params.material_id)
+    const position = parseInt(req.body.position)
+    const results = await pool.query('INSERT INTO MaterialBaseElements (material_id, position, base_element_id) VALUES ($1, $2, $3) RETURNING position',
+      [material_id, position, base_element_id]
+    )
+    await pool.query('UPDATE MaterialBaseElements SET position = position + 1 WHERE material_id = $1 AND position >= $2 AND base_element_id != $3',
+      [material_id, parseInt(results.rows[0].position), base_element_id]
+    )
+  res.status(200).send()
+  } catch (e) {
+    next(e)
+  }
+})
+
 module.exports = router

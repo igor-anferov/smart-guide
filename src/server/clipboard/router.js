@@ -38,7 +38,7 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
     assert(Boolean(image) !== Boolean(latex))
     const [type, body] = image ? ['image', image.buffer] : ['latex', Buffer.from(latex)];
     const results = await pool.query(
-      'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING base_element_id',
+      'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard, created) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING base_element_id',
       [title, req.user.id, body, source, type, is_pivotal, true]
     )
     res.status(201).json({
