@@ -11,7 +11,7 @@ router.get('/:base_element_id/info', async (req, res, next) => {
   try {
     const base_element_id = parseInt(req.params.base_element_id)
     const results = await pool.query(
-      'SELECT title, source, type FROM BaseElements WHERE base_element_id = $1;',
+      'SELECT title, source, type, is_pivotal FROM BaseElements WHERE base_element_id = $1;',
       [base_element_id]
     )
     res.status(200).send(results.rows[0])
