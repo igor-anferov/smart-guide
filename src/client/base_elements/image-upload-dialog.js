@@ -9,6 +9,8 @@ import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardActionArea from '@material-ui/core/CardActionArea';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import FileUploadButton from './file-upload-button';
 import VerifiedTextField from '../verified-text-field';
@@ -22,7 +24,7 @@ export default function ({ state, onChange, onClose, onSubmit }) {
   return (
     <Dialog open={true} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
-        Новый базовый элемент
+        {state.dialog_title}
       </DialogTitle>
       <DialogContent>
         <Grid container wrap="nowrap" spacing={2}>
@@ -50,6 +52,16 @@ export default function ({ state, onChange, onClose, onSubmit }) {
                 onChange={(newSource) => onChange({ ...state, source: newSource })}
                 error={sourceError}
                 onErrorChange={setSourceError}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.is_pivotal || false}
+                    onChange={(event) => onChange({ ...state, is_pivotal: event.target.checked })}
+                    color="primary"
+                  />
+                }
+                label="Отображать в теормине"
               />
             </Box>
           </Grid>

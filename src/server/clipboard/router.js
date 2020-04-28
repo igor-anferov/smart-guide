@@ -1,7 +1,7 @@
 const assert = require('assert').strict;
 const express = require('express');
-const sharp = require('sharp');
-const {parse, HtmlGenerator} = require('esm')(module)('latex.js').default;
+
+const { image_checker, latex_checker } = require('../base_elements/utils')
 
 let router = express.Router();
 
@@ -32,29 +32,14 @@ router.delete('/base_elements/:base_element_id', async (req, res, next) => {
   }
 })
 
-router.post('/base_elements', async (req, res, next) => {
+router.post('/base_elements', image_checker, latex_checker, async (req, res, next) => {
   try {
-    const {image, latex, source, title} = req.body;
-    try {
-      assert(image || latex);
-      if (image) {
-        const metadata = await sharp(image.buffer).metadata()
-        assert(
-          ['gif', 'jpeg', 'png', 'svg', 'tiff'].indexOf(metadata.format) > -1,
-          'Unsupported image format'
-        );
-      }
-      if (latex) {
-        parse(latex, {generator: new HtmlGenerator()});
-      }
-    } catch (e) {
-      e.status = 400
-      return next(e)
-    }
+    const {image, latex, source, title, is_pivotal} = req.body;
+    assert(Boolean(image) !== Boolean(latex))
     const [type, body] = image ? ['image', image.buffer] : ['latex', Buffer.from(latex)];
     const results = await pool.query(
-      'INSERT INTO BaseElements (title, author_id, body, source, type, clipboard) VALUES ($1, $2, $3, $4, $5, $6) RETURNING base_element_id',
-      [title, req.user.id, body, source, type, true]
+      'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING base_element_id',
+      [title, req.user.id, body, source, type, is_pivotal, true]
     )
     res.status(201).json({
       "base_element_id": results.rows[0].base_element_id

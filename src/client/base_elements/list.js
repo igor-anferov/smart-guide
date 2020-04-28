@@ -40,9 +40,11 @@ const styles = theme => ({
   },
 })
 
-class Elements extends React.Component {
+class BaseElements extends React.Component {
   constructor(props) {
     super(props)
+    this.handleItemClick = this.handleItemClick.bind(this)
+    this.handleImageItemClick = this.handleImageItemClick.bind(this)
     this.handleAddClick = this.handleAddClick.bind(this)
     this.handleCloseAdd = this.handleCloseAdd.bind(this)
     this.handleImageUploadFileSelected = this.handleImageUploadFileSelected.bind(this)
@@ -59,6 +61,34 @@ class Elements extends React.Component {
     imageUploadDialog: null,
   }
 
+  handleItemClick({type, ...item}) {
+    switch (type) {
+      case 'image':
+        return this.handleImageItemClick(item)
+      case 'latex':
+        return;
+      default:
+        throw Error(`Unexpected base element type: ${type}`)
+    }
+  }
+
+  async handleImageItemClick(imageItem) {
+    const API = this.context;
+    const results = await API.request(`/base_elements/${imageItem.base_element_id}/content`)
+    if (!results.ok)
+      throw Error(`Unexpected base element content getting status ${results.status}`);
+    const image = new File([await results.blob()], "image")
+    const imageUploadDialog = {
+      dialog_title: 'Изменение базового элемента',
+      image,
+      ...imageItem,
+    }
+    this.setState({
+      imageUploadDialog,
+      oldItem: imageUploadDialog,
+    })
+  }
+
   handleAddClick(event) {
     this.setState({ anchorEl: event.currentTarget });
   }
@@ -70,7 +100,11 @@ class Elements extends React.Component {
   handleImageUploadFileSelected(image) {
     this.setState({
       anchorEl: null,
-      imageUploadDialog: { image },
+      imageUploadDialog: {
+        dialog_title: 'Новый базовый элемент',
+        image,
+      },
+      oldItem: {}
     })
   }
 
@@ -82,19 +116,26 @@ class Elements extends React.Component {
     this.setState({ imageUploadDialog: null })
   };
 
-  async handleImageUploadDialogSubmit({ title, source, image }) {
-    const API = this.context;
-    let body = new FormData()
-    body.append('title', title);
-    body.append('source', source);
-    body.append('image', image, image.name);
-    const results = await API.request('/clipboard/base_elements', {
-      method: 'POST',
-      body: body,
-    })
-    if (!results.ok)
-      throw Error(`Unexpected image upload status ${results.status}`);
-    await this.fetch()
+  async handleImageUploadDialogSubmit(res) {
+    let state = { ...res }
+    for (const [k, v] of Object.entries(this.state.oldItem))
+      if (v === state[k])
+        delete state[k]
+    if (Object.entries(state).length) {
+      const API = this.context;
+      let body = new FormData()
+      state.title !== undefined && body.append('title', state.title);
+      state.source !== undefined && body.append('source', state.source);
+      state.is_pivotal !== undefined && body.append('is_pivotal', Boolean(state.is_pivotal));
+      state.image !== undefined && body.append('image', state.image, state.image.name);
+      const results = await API.request(this.state.oldItem.base_element_id ? `/base_elements/${this.state.oldItem.base_element_id}` : '/clipboard/base_elements', {
+        method: 'POST',
+        body: body,
+      })
+      if (!results.ok)
+        throw Error(`Unexpected image upload status ${results.status}`);
+      await this.fetch()
+    }
     this.setState({ imageUploadDialog: null })
   }
 
@@ -141,21 +182,21 @@ class Elements extends React.Component {
           <Grid container direction='column' item xs={12}>
             <TextField label="Поиск" variant="outlined" />
           </Grid>
-          {this.state.elements.map(({ base_element_id, title, source }) => (
-            <Grid container item key={base_element_id} {...this.props.breakpoints}>
+          {this.state.elements.map((item) => (
+            <Grid container item key={item.base_element_id} {...this.props.breakpoints}>
               <Card className={this.props.classes.flexColumn}>
-                <CardActionArea className={this.props.classes.flexColumn}>
+                <CardActionArea className={this.props.classes.flexColumn} onClick={()=>this.handleItemClick(item)}>
                   <CardContent>
                     <Typography gutterBottom variant="h5">
-                      { title }
+                      { item.title }
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      { source }
+                      { item.source }
                     </Typography>
                   </CardContent>
                 </CardActionArea>
                 <CardActions className={this.props.classes.flexBoxRight}>
-                  <Button size="small" color="secondary" onClick={()=>this.handleRemove(base_element_id)}>
+                  <Button size="small" color="secondary" onClick={()=>this.handleRemove(item.base_element_id)}>
                     Удалить
                   </Button>
                 </CardActions>
@@ -177,6 +218,6 @@ class Elements extends React.Component {
   }
 }
 
-Elements.contextType = ApiContext;
+BaseElements.contextType = ApiContext;
 
-export default withStyles(styles, { withTheme: true })(Elements)
+export default withStyles(styles, { withTheme: true })(BaseElements)
