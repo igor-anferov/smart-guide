@@ -9,7 +9,7 @@ router.get('/:element_id/info', async (req, res, next) => {
   try {
     const element_id = parseInt(req.params.element_id)
     const results = await pool.query(
-      'SELECT title, source, type FROM BaseElements WHERE element_id = $1;',
+      'SELECT title, source, type, is_pivotal FROM BaseElements WHERE element_id = $1;',
       [element_id]
     )
     res.status(200).send(results.rows[0])
@@ -22,7 +22,7 @@ router.get('/:element_id/content', async (req, res, next) => {
   try {
     const element_id = parseInt(req.params.element_id)
     const results = await pool.query(
-      'SELECT body, type FROM Elements WHERE element_id = $1;',
+      'SELECT body, type FROM BaseElements WHERE element_id = $1;',
       [element_id]
     )
     const result = results.rows[0]
@@ -47,11 +47,11 @@ router.post('/:element_id', async (req, res, next) => {
     const element_id = parseInt(req.params.element_id)
     const args = req.body
     await pool.query(
-      `UPDATE Elements SET ${
+      `UPDATE BaseElements SET ${
         Object.keys(args)
           .map((k, i) => k + ` = $${i + 1}`)
           .join()
-      } WHERE id_element = $${Object.entries(args).length + 1}`,
+      } WHERE element_id = $${Object.entries(args).length + 1}`,
       [...Object.values(args), element_id]
     )
     res.status(200).send()

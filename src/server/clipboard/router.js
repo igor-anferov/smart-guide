@@ -10,7 +10,7 @@ const pool = require('../db/pool')
 router.get('/base_elements', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT element_id, title, source, type FROM BaseElements WHERE author_id = $1 and clipboard = $2;',
+      'SELECT title, source, type, is_pivotal FROM BaseElements WHERE author_id = $1 and clipboard = $2;',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)
@@ -23,8 +23,8 @@ router.delete('/base_elements/:element_id', async (req, res, next) => {
   try {
     const element_id = parseInt(req.params.element_id)
     await pool.query(
-      'DELETE FROM BaseElements WHERE element_id = $1;',
-      [element_id]
+      'DELETE FROM BaseElements WHERE element_id = $1 and author_id = $2;',
+      [element_id, req.user.id]
     )
     res.status(200).send()
   } catch (e) {
