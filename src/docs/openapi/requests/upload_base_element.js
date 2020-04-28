@@ -67,7 +67,7 @@ module.exports = {
           schema: {
             type: 'object',
             properties: {
-              'element_id': { type: 'integer' }
+              'base_element_id': { type: 'integer' }
             }
           }
         }

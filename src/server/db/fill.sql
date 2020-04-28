@@ -480,7 +480,7 @@ INSERT INTO BaseElements (title, category,  type, is_pivotal, source, clipboard,
 	Состав регистров общего назначения существенно зависит от архитектуры конкретного
 	компьютера.');
 
-INSERT INTO MaterialBaseElements (material_id, position, element_id) VALUES
+INSERT INTO MaterialBaseElements (material_id, position, base_element_id) VALUES
 	(1, 1, 1),
 	(1, 2, 2),
 	(2, 1, 3),

@@ -6,10 +6,7 @@ module.exports = {
       description: 'Список всех базовых элементов, находящихся в буфере обмена',
       content: {
         'application/json': {
-          schema: {
-            type: 'array',
-            items: require('../../../schemas/base_element/info.js'),
-          }
+          schema: require('../../../schemas/base_elements.js'),
         }
       }
     },

@@ -10,7 +10,7 @@ module.exports = {
       required: true,
     },
     {
-      name: 'element_id',
+      name: 'base_element_id',
       description: 'Идентификатор базового элемента',
       in: 'path',
       schema: { type: 'integer' },
