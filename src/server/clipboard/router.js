@@ -10,7 +10,7 @@ const pool = require('../db/pool')
 router.get('/base_elements', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT base_element_id, title, source, type FROM BaseElements WHERE author_id = $1 and clipboard = $2;',
+      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements WHERE author_id = $1 and clipboard = $2;',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)

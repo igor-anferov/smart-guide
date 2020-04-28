@@ -199,7 +199,7 @@ INSERT INTO QuestionMaterials (question_id, position, material_id) VALUES
 	(21, 1, 20);
 
 
-INSERT INTO BaseElements (title, category,  type, key_element, source, clipboard, body, author_id/* id_group, created*/) VALUES
+INSERT INTO BaseElements (title, category,  type, is_pivotal, source, clipboard, body, author_id/* id_group, created*/) VALUES
 -- 1
 	('линейное пространство над произвольным полем', 'определение', 'latex', true, 'Ким, Ильин. Линейная алгебра и аналитическая геометрия', true,
 	'Пусть  дано  поле  Р.  Непустое  мн‒во  V называется  линейным или  векторным
@@ -224,7 +224,7 @@ INSERT INTO BaseElements (title, category,  type, key_element, source, clipboard
 	независимая  подсистема  системы  векторов,  через  которую  линейно  выражается  ∀
 	вектор  системы,  называется  базой этой системы  векторов', 1);
 
-INSERT INTO BaseElements (title, category,  type, key_element, source, clipboard, body/* group_id, author_id, created*/) VALUES
+INSERT INTO BaseElements (title, category,  type, is_pivotal, source, clipboard, body/* group_id, author_id, created*/) VALUES
 -- 4
 	('база системы векторов', 'свойства', 'latex', true,'Ким, Ильин. Линейная алгебра и аналитическая геометрия', false,
 	'С1. Все  базы  одной  системы  векторов  состоят  из  одинакового  числа  векторов,

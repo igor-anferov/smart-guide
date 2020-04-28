@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS BaseElements (
   title varchar,
   category varchar,
   type varchar,
-  key_element boolean,
+  is_pivotal boolean,
   body bytea,
   source varchar,
   group_id int,
