@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Materials (
   group_id int,
   author_id int,
   created timestamp,
-  forks_count int,
+  forks_from int,
   views_count int,
   clipboard boolean
 );
