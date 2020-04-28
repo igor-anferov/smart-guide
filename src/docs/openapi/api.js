@@ -41,7 +41,7 @@ module.exports = {
       get: require('./paths/clipboard/base_elements/get.js'),
       post: require('./paths/clipboard/base_elements/post.js'),
     },
-    '/clipboard/base_elements/{element_id}': {
+    '/clipboard/base_elements/{base_element_id}': {
       delete: require('./paths/clipboard/base_elements/base_element/delete.js'),
     },
 
@@ -63,16 +63,16 @@ module.exports = {
     },
 
 
-    '/base_elements/{element_id}': {
+    '/base_elements/{base_element_id}': {
       post: require('./paths/base_elements/base_element/post.js'),
     },
-    '/base_elements/{element_id}/info': {
+    '/base_elements/{base_element_id}/info': {
       get: require('./paths/base_elements/base_element/info/get.js'),
     },
-    '/base_elements/{element_id}/content': {
+    '/base_elements/{base_element_id}/content': {
       get: require('./paths/base_elements/base_element/content/get.js'),
     },
-    '/base_elements/{element_id}/copy_to_material': {
+    '/base_elements/{base_element_id}/copy_to_material': {
       post: require('./paths/base_elements/base_element/copy_to_material/post.js'),
     },
 
@@ -89,13 +89,13 @@ module.exports = {
     '/materials/{material_id}/base_elements': {
       post: require('./paths/materials/material/base_elements/post.js'),
     },
-    '/materials/{material_id}/base_elements/{element_id}': {
+    '/materials/{material_id}/base_elements/{base_element_id}': {
       delete: require('./paths/materials/material/base_elements/base_element/delete.js'),
     },
-    '/materials/{material_id}/base_elements/{element_id}/move': {
+    '/materials/{material_id}/base_elements/{base_element_id}/move': {
       post: require('./paths/materials/material/base_elements/base_element/move/post.js'),
     },
-    '/materials/{material_id}/base_elements/{element_id}/copy_to_clipboard': {
+    '/materials/{material_id}/base_elements/{base_element_id}/copy_to_clipboard': {
       post: require('./paths/materials/material/base_elements/base_element/copy_to_clipboard/post.js'),
     },
 

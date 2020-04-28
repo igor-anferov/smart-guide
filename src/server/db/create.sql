@@ -2,7 +2,7 @@ set DATESTYLE to "DMY";
 
 BEGIN;
 CREATE TABLE IF NOT EXISTS BaseElements (
-  element_id serial primary key,
+  base_element_id serial primary key,
   title varchar,
   category varchar,
   type varchar,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS Materials (
 CREATE TABLE IF NOT EXISTS MaterialBaseElements (
   material_id int,
   position int,
-  element_id int
+  base_element_id int
 );
 
 CREATE TABLE IF NOT EXISTS RelatedMaterials (

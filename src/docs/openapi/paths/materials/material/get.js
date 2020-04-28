@@ -23,10 +23,7 @@ module.exports = {
                 description: 'Заголовок учебного материала',
                 example: 'Теорема Лапласа, доказательство, примеры применения',
               },
-              'body': {
-                type: 'array',
-                items: require('../../../schemas/base_element/info.js'),
-              }
+              'body': require('../../../schemas/base_elements.js'),
             },
             required: ['title', 'body']
           }

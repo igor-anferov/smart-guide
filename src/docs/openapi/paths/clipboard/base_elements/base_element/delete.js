@@ -3,7 +3,7 @@ module.exports = {
   summary: 'Удалить базовый элемент из буфера обмена',
   parameters: [
     {
-      name: 'element_id',
+      name: 'base_element_id',
       description: 'Идентификатор базового элемента',
       in: 'path',
       schema: { type: 'integer' },
