@@ -9,8 +9,8 @@ export default function () {
   return (
     <Switch>
       <Route exact path={`${match.url}/`} component={ Main } />
-      <Route exact path={`${match.url}/latex/new`} component={ LaTeX } />
-      <Route exact path={`${match.url}/latex/:elemId`} component={ LaTeX } />
+      <Route exact path={`${match.url}/new/latex`} component={ LaTeX } />
+      <Route exact path={`${match.url}/:base_element_id/latex/edit`} component={ LaTeX } />
     </Switch>
   );
 }

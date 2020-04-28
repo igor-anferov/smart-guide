@@ -21,6 +21,7 @@ import { parse, HtmlGenerator } from 'latex.js';
 import useCommonStyles from '../../styles';
 import LatexEditor from './editor';
 
+
 const drawerWidth = 320;
 
 const useStyles = makeStyles(theme => ({
@@ -190,7 +191,37 @@ function compile(latex, iframe) {
 
     try {
         generator.reset()
-        var newDoc = parse(latex, { generator: generator }).htmlDocument()
+        const gen = parse(latex, { generator: generator })
+        let newDoc = document.implementation.createHTMLDocument(gen.documentTitle);
+        let charset = document.createElement("meta")
+        charset.setAttribute("charset", "UTF-8")
+        newDoc.head.appendChild(charset)
+        let el = document.createDocumentFragment()
+        for (let s of [
+          // eslint-disable-next-line import/no-webpack-loader-syntax
+          require('!!css-loader!latex.js/dist/css/article.css').toString(),
+          // eslint-disable-next-line import/no-webpack-loader-syntax
+          require('!!css-loader!latex.js/dist/css/katex.css').toString(),
+        ]) {
+          let style = document.createElement("style")
+          style.innerHTML = s
+          style.type = "text/css"
+          el.appendChild(style)
+        }
+
+        for (let s of [
+          // eslint-disable-next-line import/no-webpack-loader-syntax
+          require('!!raw-loader!latex.js/dist/js/base.js').default,
+        ]) {
+          let script = document.createElement("script")
+          script.innerHTML = s
+          el.appendChild(script)
+        }
+
+        newDoc.head.appendChild(el)
+
+        newDoc.body.appendChild(gen.domFragment())
+        gen.applyLengthsAndGeometryToDom(newDoc.documentElement)
 
         // we need to disable normal processing of same-page links in the iframe
         // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame

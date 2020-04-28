@@ -169,7 +169,7 @@ class BaseElements extends React.Component {
           open={Boolean(this.state.anchorEl)}
           onClose={this.handleCloseAdd}
         >
-          <MenuItem component={Link} to={'/base_elements/latex/new'}>Добавить LaTeX</MenuItem>
+          <MenuItem component={Link} to={'/base_elements/new/latex'}>Добавить LaTeX</MenuItem>
           <MenuItem component={FileUploadButton} accept="image/*" onClick={this.handleCloseAdd} onSuccess={this.handleImageUploadFileSelected}>Добавить фото</MenuItem>
           <MenuItem onClick={this.handleCloseAdd}>Добавить фрагмент PDF</MenuItem>
         </Menu>
@@ -185,7 +185,7 @@ class BaseElements extends React.Component {
           {this.state.elements.map((item) => (
             <Grid container item key={item.base_element_id} {...this.props.breakpoints}>
               <Card className={this.props.classes.flexColumn}>
-                <CardActionArea className={this.props.classes.flexColumn} onClick={()=>this.handleItemClick(item)}>
+                <CardActionArea component={item.type === 'latex' ? Link : 'button'} to={`/base_elements/${item.base_element_id}/latex/edit`} className={this.props.classes.flexColumn} onClick={()=>this.handleItemClick(item)}>
                   <CardContent>
                     <Typography gutterBottom variant="h5">
                       { item.title }

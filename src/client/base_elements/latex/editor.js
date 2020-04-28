@@ -46,7 +46,6 @@ class LatexEditor extends React.Component {
       indentUnit: 4,
       readOnly: false,
     };
-    console.log(classes)
     return (
       <CodeMirror className={classes.full_height}
         value={this.state.code}
