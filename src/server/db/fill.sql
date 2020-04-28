@@ -149,7 +149,7 @@ INSERT INTO ExamQuestions (exam_id, position, question_id) VALUES
 	(1, 19, 59),
 	(1, 20, 60);
 
-INSERT INTO Materials (snippet,/* group_id, author_id, created*/ forks_count, views_count) VALUES
+INSERT INTO Materials (title,/* group_id, author_id, created*/ forks_count, views_count) VALUES
 -- (1 - 10)
 	('Линейнoе пространсво над произвольным полем', 1, 2),
 	('База системы векторов', 1, 2),

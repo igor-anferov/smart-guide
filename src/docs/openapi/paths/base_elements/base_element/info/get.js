@@ -15,27 +15,7 @@ module.exports = {
       description: 'Информация о базовом элементе',
       content: {
         'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              'title': {
-                type: 'string',
-                description: 'Название базового элемента',
-                example: 'Теорема Лапласа (формулировка, начало)',
-              },
-              'source': {
-                type: 'string',
-                description: 'Источник',
-                example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
-              },
-              'type': {
-                type: 'string',
-                description: 'Тип базового элемента: image или latex',
-                enum: ['image', 'latex'],
-              },
-            },
-            required: ['title', 'source', 'type']
-          }
+          schema: require('../../../../schemas/base_element/info.js'),
         }
       }
     },

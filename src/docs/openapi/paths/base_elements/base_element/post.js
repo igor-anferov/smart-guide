@@ -12,51 +12,55 @@ module.exports = {
   ],
   requestBody: {
     required: true,
-    description: 'Content-Type: multipart/form-data следует использовать только если форматом базового элемента является LaTeX, и LaTeX-код был изменён',
     content: {
-      'application/x-www-form-urlencoded': {
-        schema: {
-          type: 'object',
-          properties: {
-            'title': {
-              type: 'string',
-              minLength: 1,
-              description: 'Новое название базового элемента (опционально, только при изменении)',
-              example: 'Теорема Лапласа (формулировка, начало)',
-            },
-            'source': {
-              type: 'string',
-              minLength: 1,
-              description: 'Новый источник (опционально, только при изменении)',
-              example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
-            },
-          },
-          minProperties: 1,
-        },
-      },
       'multipart/form-data': {
         schema: {
-          type: 'object',
-          properties: {
-            'title': {
-              type: 'string',
-              minLength: 1,
-              description: 'Новое название базового элемента (опционально, только при изменении)',
-              example: 'Теорема Лапласа (формулировка, начало)',
+          allOf: [
+            {
+              type: 'object',
+              properties: {
+                'title': {
+                  type: 'string',
+                  minLength: 1,
+                  description: 'Новое название базового элемента (опционально, только при изменении)',
+                  example: 'Теорема Лапласа (формулировка, начало)',
+                },
+                'source': {
+                  type: 'string',
+                  minLength: 1,
+                  description: 'Новый источник (опционально, только при изменении)',
+                  example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
+                },
+                'is_pivotal': {
+                  type: 'boolean',
+                  description: 'Включать элемент в теормин (опционально, только при изменении)',
+                },
+                'image': {
+                  type: 'string',
+                  format: 'binary',
+                  description: 'Новое изображение. Может быть передано только в случае, если тип базового элемента "image"',
+                },
+                'latex': {
+                  type: 'string',
+                  minLength: 1,
+                  description: 'Изменённый LaTeX. Может быть передано только в случае, если тип базового элемента "latex"',
+                },
+              },
+              minProperties: 1,
             },
-            'source': {
-              type: 'string',
-              minLength: 1,
-              description: 'Новый источник (опционально, только при изменении)',
-              example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
-            },
-            'latex': {
-              type: 'string',
-              minLength: 1,
-              description: 'Изменённый LaTeX',
-            },
-          },
-          required: ['latex'],
+            {
+              not: {
+                allOf: [
+                  {
+                    required: ['image'],
+                  },
+                  {
+                    required: ['latex'],
+                  },
+                ]
+              }
+            }
+          ]
         },
       },
     },

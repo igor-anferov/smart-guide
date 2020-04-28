@@ -1,6 +1,6 @@
 module.exports = {
   tags: ['Буфер обмена'],
-  summary: 'Получить информацию об учебных элементах, находящихся в буфере обмена',
+  summary: 'Получить информацию об учебных материалах, находящихся в буфере обмена',
   responses: {
     '200': {
       description: 'Список всех учебных элементов, находящихся в буфере обмена',
@@ -12,13 +12,13 @@ module.exports = {
               type: 'object',
               properties: {
                 'material_id': { type: 'integer' },
-                'snippet': {
+                'title': {
                   type: 'string',
-                  description: 'Заголовок учебного элемента',
+                  description: 'Заголовок учебного материала',
                   example: 'Теорема Лапласа, доказательство, примеры применения',
                 },
               },
-              required: ['material_id', 'snippet']
+              required: ['material_id', 'title']
             }
           }
         }

@@ -1,6 +1,6 @@
 module.exports = {
   tags: ['Базовые элементы'],
-  summary: 'Скопировать базовый элемент в учебный элемент',
+  summary: 'Скопировать базовый элемент в учебный материал',
   parameters: [
     {
       name: 'element_id',
@@ -11,7 +11,7 @@ module.exports = {
     },
     {
       name: 'material_id',
-      description: 'Идентификатор учебного элемента',
+      description: 'Идентификатор учебного материала',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
@@ -26,20 +26,20 @@ module.exports = {
           properties: {
             'position': {
               type: 'integer',
-              description: 'Позиция базового элемента внутри учебного элемента',
+              description: 'Позиция базового элемента внутри учебного материала',
             },
           },
-          minProperties: 1,
+          required: ['position'],
         },
       },
     },
   },
   responses: {
     '200': {
-      description: 'Базовый элемент успешно скопирован в учебный элемент',
+      description: 'Базовый элемент успешно скопирован в учебный материал',
     },
     '404': {
-      description: 'Учебный элемент не найден',
+      description: 'Учебный материал не найден',
     },
     '401': require('../../../../responses/401'),
   }

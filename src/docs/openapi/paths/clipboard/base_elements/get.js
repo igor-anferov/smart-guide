@@ -8,28 +8,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'element_id': { type: 'integer' },
-                'title': {
-                  type: 'string',
-                  description: 'Название базового элемента',
-                  example: 'Теорема Лапласа (формулировка, начало)',
-                },
-                'source': {
-                  type: 'string',
-                  description: 'Источник',
-                  example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
-                },
-                'type': {
-                  type: 'string',
-                  description: 'Тип базового элемента: image или latex',
-                  enum: ['image', 'latex'],
-                },
-              },
-              required: ['element_id', 'title', 'source', 'type']
-            }
+            items: require('../../../schemas/base_element/info.js'),
           }
         }
       }

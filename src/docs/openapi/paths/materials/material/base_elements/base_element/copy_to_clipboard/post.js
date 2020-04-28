@@ -1,10 +1,10 @@
 module.exports = {
-  tags: ['Учебные элементы'],
+  tags: ['Учебные материалы'],
   summary: 'Скопировать базовый элемент из учебного материала в буфер обмена',
   parameters: [
     {
       name: 'material_id',
-      description: 'Идентификатор учебного элемента',
+      description: 'Идентификатор учебного материала',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
@@ -22,7 +22,7 @@ module.exports = {
       description: 'Базовый элемент успешно скопирован в буфер обмена',
     },
     '404': {
-      description: 'Учебный элемент не найден',
+      description: 'Учебный материал не найден',
     },
     '401': require('../../../../../../responses/401'),
   }

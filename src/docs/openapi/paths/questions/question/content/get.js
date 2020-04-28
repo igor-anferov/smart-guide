@@ -21,13 +21,13 @@ module.exports = {
               type: 'object',
               properties: {
                 'material_id': { type: 'integer' },
-                'snippet': {
+                'title': {
                   type: 'string',
-                  description: 'Заголовок учебного элемента',
+                  description: 'Заголовок учебного материала',
                   example: 'Теорема Лапласа, доказательство, примеры применения',
                 },
               },
-              required: ['material_id', 'snippet']
+              required: ['material_id', 'title']
             }
           }
         }

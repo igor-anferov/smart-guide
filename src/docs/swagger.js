@@ -11,8 +11,8 @@ function Api() {
         docExpansion={'list'}
         requestInterceptor={(req) => {
           if (req.body) {
-            if (req.body instanceof Object) {
-              for (let [k,v] of req.body) {
+            if (req.body instanceof FormData) {
+              for (let [k,v] of Array.from(req.body.entries())) {
                 if (!v) {
                   req.body.delete(k);
                 }

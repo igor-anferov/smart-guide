@@ -1,10 +1,10 @@
 module.exports = {
   tags: ['Буфер обмена'],
-  summary: 'Удалить учебный элемент из буфера обмена',
+  summary: 'Удалить учебный материал из буфера обмена',
   parameters: [
     {
       name: 'material_id',
-      description: 'Идентификатор учебного элемента',
+      description: 'Идентификатор учебного материала',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
@@ -12,10 +12,10 @@ module.exports = {
   ],
   responses: {
     '200': {
-      description: 'Учебный элемент успешно удалён',
+      description: 'Учебный материал успешно удалён',
     },
     '404': {
-      description: 'Учебный элемент не найден',
+      description: 'Учебный материал не найден',
     },
     '401': require('../../../../responses/401'),
   }

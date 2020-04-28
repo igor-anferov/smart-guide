@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS BaseElements (
 
 CREATE TABLE IF NOT EXISTS Materials (
   material_id serial primary key,
-  snippet varchar,
+  title varchar,
   group_id int,
   author_id int,
   created timestamp,

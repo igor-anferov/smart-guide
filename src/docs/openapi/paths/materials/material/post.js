@@ -1,10 +1,10 @@
 module.exports = {
-  tags: ['Учебные элементы'],
-  summary: 'Отредактировать информацию об учебном элементе',
+  tags: ['Учебные материалы'],
+  summary: 'Отредактировать информацию об учебном материале',
   parameters: [
     {
       name: 'material_id',
-      description: 'Идентификатор учебного элемента',
+      description: 'Идентификатор учебного материала',
       in: 'path',
       schema: { type: 'integer' },
       required: true,
@@ -17,9 +17,9 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
-            'snippet': {
+            'title': {
               type: 'string',
-              description: 'Новый заголовок учебного элемента',
+              description: 'Новый заголовок учебного материала',
               example: 'Теорема Лапласа, доказательство, примеры применения',
             },
           },
@@ -30,10 +30,10 @@ module.exports = {
   },
 	responses: {
 	  '200': {
-	    description: 'Учебный элемент успешно обновлён',
+	    description: 'Учебный материал успешно обновлён',
 	  },
 	  '404': {
-	    description: 'Учебный элемент не найден',
+	    description: 'Учебный материал не найден',
 	  },
 	  '401': require('../../../responses/401'),
 	}

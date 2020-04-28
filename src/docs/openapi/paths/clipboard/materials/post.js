@@ -1,6 +1,6 @@
 module.exports = {
   tags: ['Буфер обмена'],
-  summary: 'Создать и добавить новый учебный элемент в буфер обмена',
+  summary: 'Создать и добавить новый учебный материал в буфер обмена',
   requestBody: {
     required: true,
     content: {
@@ -8,9 +8,9 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
-            'snippet': {
+            'title': {
               type: 'string',
-              description: 'Заголовок учебного элемента',
+              description: 'Заголовок учебного материала',
               example: 'Теорема Лапласа, доказательство, примеры применения',
             },
           },
@@ -21,7 +21,7 @@ module.exports = {
   },
   responses: {
     '201': {
-      description: 'Информация о добавленном в буфер обмена учебном элементе',
+      description: 'Информация о добавленном в буфер обмена учебном материале',
       content: {
         'application/json': {
           schema: {
