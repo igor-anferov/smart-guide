@@ -252,7 +252,7 @@ function compile(latex, iframe) {
         // save scrolling position and restore on next successful compile
         if (!scrollY)
             scrollY = iframe.contentWindow.pageYOffset
-/*
+
         var error = {
             line:     definedOrElse(e.location.start.line, 0),
             column:   definedOrElse(e.location.start.column, 0),
@@ -263,7 +263,6 @@ function compile(latex, iframe) {
         };
 
         doc.body.innerHTML = '<pre class="error">ERROR: Parsing failure:\n\n' + errorMessage(error, true) + '</pre>'
-*/
     }
 }
 
