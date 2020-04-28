@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 
 const { verifyToken, refreshToken } = require('./auth/utils')
+const { ClientError } = require('./utils')
 
 async function setupApi(router) {
   router.use(morgan('combined'))
@@ -41,7 +42,7 @@ async function setupApi(router) {
   //router.use('/exams', require('./exams/router'))
 
   router.use((err, req, res, next) => {
-    const status = err.status || 500;
+    const status = err.status || (err instanceof ClientError && 400) || 500;
     switch (Math.floor(status / 100)) {
       case 1:
       case 2:
