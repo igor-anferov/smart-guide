@@ -72,7 +72,7 @@ module.exports = {
     '/base_elements/{base_element_id}/content': {
       get: require('./paths/base_elements/base_element/content/get.js'),
     },
-    '/base_elements/{base_element_id}/copy_to_material': {
+    '/base_elements/{base_element_id}/{material_id}/copy_to_material': {
       post: require('./paths/base_elements/base_element/copy_to_material/post.js'),
     },
 
