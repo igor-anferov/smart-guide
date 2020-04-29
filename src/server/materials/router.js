@@ -1,5 +1,4 @@
 const express = require('express');
-const sharp = require('sharp');
 
 let router = express.Router();
 
@@ -31,7 +30,7 @@ router.post('/:material_id', async (req, res, next) => {
   try {
     const material_id = parseInt(req.params.material_id)
     const title = req.body.title
-    const results = await pool.query(
+    await pool.query(
       'UPDATE Materials SET title = $1 WHERE material_id = $2 AND author_id = $3',
       [title, material_id, req.user.id]
     )
@@ -110,7 +109,7 @@ router.post('/:material_id/base_elements/:base_element_id/move', async (req, res
 router.post('/:material_id/base_elements/:base_element_id/copy_to_clipboard', async (req, res, next) => {
   try {
     const base_element_id = parseInt(req.params.base_element_id)
-    const results = await pool.query('INSERT INTO BaseElements (title, category, type, is_pivotal, body, source, author_id, created, clipboard) SELECT title, category, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3', 
+    await pool.query('INSERT INTO BaseElements (title, category, type, is_pivotal, body, source, author_id, created, clipboard) SELECT title, category, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3',
       [req.user.id, true, base_element_id]
     )
     res.status(200).send()
