@@ -1,6 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles(theme => ({
+export default theme => ({
   fullWidth: {
     width: '100%',
     maxWidth: '100%',
@@ -38,6 +36,4 @@ const useStyles = makeStyles(theme => ({
   hide: {
     display: 'none',
   },
-}));
-
-export default useStyles
+});

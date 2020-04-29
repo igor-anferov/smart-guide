@@ -27,7 +27,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 
-import useCommonStyles from '../styles';
+import commonStyles from '../styles';
 import Questions from '../questions/list'
 
 const drawerWidth = 320;
@@ -111,6 +111,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const useCommonStyles = makeStyles(commonStyles)
 
 function LeftDrawerContent() {
   const classes = useStyles();

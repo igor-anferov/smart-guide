@@ -30,39 +30,45 @@ export default function ({ state, onChange, onClose, onSubmit }) {
         <Grid container wrap="nowrap" spacing={2}>
           <Grid item xs={4}>
             <Box pr={2}>
-              <VerifiedTextField
-                autoFocus
-                margin="dense"
-                label="Название элемента"
-                required
-                multiline
-                fullWidth
-                value={state.title}
-                onChange={(newTitle) => onChange({ ...state, title: newTitle })}
-                error={titleError}
-                onErrorChange={setTitleError}
-              />
-              <VerifiedTextField
-                margin="dense"
-                label="Источник"
-                required
-                multiline
-                fullWidth
-                value={state.source}
-                onChange={(newSource) => onChange({ ...state, source: newSource })}
-                error={sourceError}
-                onErrorChange={setSourceError}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={state.is_pivotal || false}
-                    onChange={(event) => onChange({ ...state, is_pivotal: event.target.checked })}
-                    color="primary"
-                  />
-                }
-                label="Отображать в теормине"
-              />
+              <Box py={2}>
+                <VerifiedTextField
+                  autoFocus
+                  margin="dense"
+                  label="Название элемента"
+                  required
+                  multiline
+                  fullWidth
+                  value={state.title}
+                  onChange={(newTitle) => onChange({ ...state, title: newTitle })}
+                  error={titleError}
+                  onErrorChange={setTitleError}
+                />
+              </Box>
+              <Box py={2}>
+                <VerifiedTextField
+                  margin="dense"
+                  label="Источник"
+                  required
+                  multiline
+                  fullWidth
+                  value={state.source}
+                  onChange={(newSource) => onChange({ ...state, source: newSource })}
+                  error={sourceError}
+                  onErrorChange={setSourceError}
+                />
+              </Box>
+              <Box py={2}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={state.is_pivotal || false}
+                      onChange={(event) => onChange({ ...state, is_pivotal: event.target.checked })}
+                      color="primary"
+                    />
+                  }
+                  label="Отображать в теормине"
+                />
+              </Box>
             </Box>
           </Grid>
           <Grid item xs={8}>

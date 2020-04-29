@@ -118,9 +118,10 @@ class BaseElements extends React.Component {
 
   async handleImageUploadDialogSubmit(res) {
     let state = { ...res }
-    for (const [k, v] of Object.entries(this.state.oldItem))
-      if (v === state[k])
-        delete state[k]
+    if (this.state.oldItem)
+      for (const [k, v] of Object.entries(this.state.oldItem))
+        if (v === state[k])
+          delete state[k]
     if (Object.entries(state).length) {
       const API = this.context;
       let body = new FormData()
