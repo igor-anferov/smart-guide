@@ -48,16 +48,15 @@ const styles = theme => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   },
-  mainExpanded: {
+  mainLeftClosed: {
     marginLeft: 0,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  mainReduced: {
+  mainLeftOpened: {
     marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -247,7 +246,7 @@ class LaTeX extends React.Component {
           }}
         >
           <div className={classes.drawerHeader}>
-            <IconButton onClick={this.state.handleDrawer}>
+            <IconButton onClick={this.handleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
           </div>
@@ -295,16 +294,17 @@ class LaTeX extends React.Component {
           </Box>
         </Drawer>
         <Box
-          className={clsx(classes.flexCol, classes.mainExpanded, {
-            [classes.mainReduced]: this.state.open,
-          })}
+        className={clsx(classes.flexCol, {
+          [classes.mainLeftClosed]: !this.state.open,
+          [classes.mainLeftOpened]: this.state.open,
+        })}
         >
           <AppBar position="relative">
             <Toolbar>
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
-                onClick={this.state.handleDrawer}
+                onClick={this.handleDrawer}
                 edge="start"
                 className={clsx(classes.menuButton, this.state.open && classes.hide)}
               >
