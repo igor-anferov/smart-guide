@@ -170,9 +170,15 @@ class LaTeX extends React.Component {
 
   async submit() {
     if (!this.state.title)
-      this.setState({ titleError: 'Заполните это поле'})
+      this.setState({
+        open: true,
+        titleError: 'Заполните это поле'
+      })
     if (!this.state.source)
-      this.setState({ sourceError: 'Заполните это поле'})
+      this.setState({
+        open: true,
+        sourceError: 'Заполните это поле'
+      })
     if (!this.state.latex)
       this.showCodeErrorMessage('Нельзя сохранить пустой базовый элемент')
     if (!this.doRender())
