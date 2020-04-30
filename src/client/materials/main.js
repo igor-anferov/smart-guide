@@ -11,7 +11,7 @@ export default function () {
       <CssBaseline/>
       <TopMenu/>
       <Box p={8}>
-        <MaterialsList spacing={3} breakpoints={{ xs:12, md:6, lg:4, xl:3 }}/>
+        <MaterialsList spacing={3} breakpoints={{ xs:12, sm:6, md:4, lg:3, xl:2 }}/>
       </Box>
     </React.Fragment>
   );

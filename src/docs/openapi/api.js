@@ -54,7 +54,7 @@ module.exports = {
       delete: require('./paths/clipboard/materials/material/delete.js'),
     },
 
-    
+
     '/clipboard/questions': {
       get: require('./paths/clipboard/questions/get.js'),
     },
@@ -106,12 +106,12 @@ module.exports = {
     '/questions/{question_id}/content': {
       get: require('./paths/questions/question/content/get.js'),
     },
-    
+
 
     '/exams': {
       get: require('./paths/exams/get.js'),
     },
-    
+
     '/exams/{exam_id}/info': {
       get: require('./paths/exams/exam/info/get.js'),
     },
