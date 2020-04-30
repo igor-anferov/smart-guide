@@ -12,8 +12,8 @@ import VerifiedTextField from './verified-text-field';
 
 const useStyles = makeStyles(theme => ({
   blur: {
-    'backdrop-filter': 'blur(5px)'
-  }
+    'backdrop-filter': 'blur(5px)',
+  },
 }))
 
 export default function ({ API, succeeded }) {
@@ -21,7 +21,14 @@ export default function ({ API, succeeded }) {
   const [login, swap] = useState(true);
 
   return (
-    <Dialog BackdropProps={{classes: {root: classes.blur}}} open={true} fullWidth maxWidth="sm" disableBackdropClick={true} disableEscapeKeyDown={true}>
+    <Dialog
+      BackdropProps={{classes: {root: classes.blur}}}
+      open
+      fullWidth
+      maxWidth="sm"
+      disableBackdropClick
+      disableEscapeKeyDown
+    >
       {login ? (
         <Login succeeded={succeeded} API={API} swapToRegistration={()=>swap(false)} />
       ) : (

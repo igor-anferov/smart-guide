@@ -300,10 +300,10 @@ class LaTeX extends React.Component {
           </Box>
         </Drawer>
         <Box
-        className={clsx(classes.flexCol, {
-          [classes.mainLeftClosed]: !this.state.open,
-          [classes.mainLeftOpened]: this.state.open,
-        })}
+          className={clsx(classes.flexCol, {
+            [classes.mainLeftClosed]: !this.state.open,
+            [classes.mainLeftOpened]: this.state.open,
+          })}
         >
           <AppBar position="relative">
             <Toolbar>

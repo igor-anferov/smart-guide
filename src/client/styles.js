@@ -31,7 +31,6 @@ export default theme => ({
     position: 'absolute',
     bottom: theme.spacing(2),
     right: theme.spacing(2),
-    'z-index': 10000,
   },
   hide: {
     display: 'none',
