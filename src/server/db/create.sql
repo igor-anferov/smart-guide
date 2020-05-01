@@ -117,6 +117,16 @@ CREATE TABLE IF NOT EXISTS MaterialComments (
   created timestamp
 );
 
+
+CREATE TABLE IF NOT EXISTS BaseElementTags (
+  base_element_id int,
+  tag varchar,
+  group_id int,
+  author_id int,
+  created timestamp,
+  primary key(base_element_id, tag)
+);
+
 CREATE TABLE IF NOT EXISTS MaterialTags (
   material_id int,
   tag varchar,

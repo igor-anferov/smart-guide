@@ -33,6 +33,24 @@ module.exports = {
                   minLength: 1,
                   description: 'LaTeX',
                 },
+                /*'tags': {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      'tag' : {
+                      type :  'string',
+                      },
+                    },
+                  },*/
+                'tags': {
+                  type: 'array',
+
+                  items: {
+                    type: 'string',
+                  },
+                  description : 'Теги к базовому элементу',
+                },
               },
               required: ['title', 'source', 'is_pivotal'],
             },
@@ -54,6 +72,10 @@ module.exports = {
           },
           'latex': {
             contentType: 'application/x-latex',
+          },
+          'tags': {       
+            style: form,
+            explode: false,
           },
         },
       }

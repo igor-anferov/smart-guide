@@ -24,6 +24,18 @@ module.exports = {
                 example: 'Теорема Лапласа, доказательство, примеры применения',
               },
               'body': require('../../../schemas/base_elements.js'),
+              'tags': {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    'tag': {
+                      type: 'string',
+                    },
+                  },
+                },
+                description : 'Теги к учебному элементу',
+              },
             },
             required: ['title', 'body']
           }

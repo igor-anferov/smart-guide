@@ -34,17 +34,27 @@ router.delete('/base_elements/:base_element_id', async (req, res, next) => {
 
 router.post('/base_elements', image_checker, latex_checker, async (req, res, next) => {
   try {
-    const {image, latex, source, title, is_pivotal} = req.body;
+    const {image, latex, source, title, is_pivotal, tags} = req.body;
     assert(Boolean(image) !== Boolean(latex))
+    await pool.query('BEGIN')
     const [type, body] = image ? ['image', image.buffer] : ['latex', Buffer.from(latex)];
     const results = await pool.query(
       'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard, created) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING base_element_id',
       [title, req.user.id, body, source, type, is_pivotal, true]
     )
+    for (var tag in tags) {
+      if (tags.hasOwnProperty(tag)) {
+        await pool.query('INSERT INTO BaseElementTags (tag, base_element_id, author_id, created) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
+          [tags[tag], results.rows[0].base_element_id, req.user.id]
+        )
+      }
+    }
+    await pool.query('COMMIT')
     res.status(201).json({
       "base_element_id": results.rows[0].base_element_id
     })
   } catch (e) {
+    await pool.query('ROLLBACK')
     next(e)
   }
 })
@@ -77,14 +87,25 @@ router.delete('/materials/:material_id', async (req, res, next) => {
 router.post('/materials', async (req, res, next) => {
   try {
     const title = req.body.title
+    const tags = req.body.tags
+    await pool.query('BEGIN')
     const results = await pool.query(
       'INSERT INTO Materials (title, author_id, clipboard, created) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING material_id',
       [title, req.user.id, true]
     )
+    for (var tag in tags) {
+      if (tags.hasOwnProperty(tag)) {
+        await pool.query('INSERT INTO MaterialTags (tag, material_id, author_id, created) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
+          [tags[tag], results.rows[0].material_id, req.user.id]
+        )
+      }
+    }
+    await pool.query('COMMIT')
     res.status(201).json({
       "material_id": results.rows[0].material_id
     })
   } catch (e) {
+    await pool.query('ROLLBACK')
     next(e)
   }
 })

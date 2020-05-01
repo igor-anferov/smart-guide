@@ -20,6 +20,18 @@ module.exports = {
       type: 'boolean',
       description: 'Включать элемент в теормин',
     },
+    'tags': {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          'tag': {
+            type: 'string',
+          },
+        },
+      },
+    description : 'Теги к базовому элементу',
+    },   
   },
   required: ['title', 'source', 'type', 'is_pivotal']
 }
