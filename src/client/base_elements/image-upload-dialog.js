@@ -14,6 +14,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import FileUploadButton from './file-upload-button';
 import VerifiedTextField from '../verified-text-field';
+import Tags from '../tags';
 
 export default function ({ state, onChange, onClose, onSubmit }) {
   const [titleError, setTitleError] = React.useState('');
@@ -55,6 +56,12 @@ export default function ({ state, onChange, onClose, onSubmit }) {
                   onChange={(newSource) => onChange({ ...state, source: newSource })}
                   error={sourceError}
                   onErrorChange={setSourceError}
+                />
+              </Box>
+              <Box py={2}>
+                <Tags
+                  value={state.tags || []}
+                  onChange={(newValue) => onChange({ ...state, tags: newValue })}
                 />
               </Box>
               <Box py={2}>
