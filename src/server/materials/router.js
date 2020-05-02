@@ -22,8 +22,8 @@ router.get('/:material_id', async (req, res, next) => {
     )
     res.status(200).json({
       "title": results_title.rows[0].title,
-      "body": results.rows,
       "tags": results_tags.rows,
+      "base_elements": results.rows
     })
   } catch (e) {
     next(e)
