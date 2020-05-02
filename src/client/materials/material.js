@@ -13,7 +13,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
 import Fab from '@material-ui/core/Fab';
 import DoneIcon from '@material-ui/icons/Done';
 import { Container, Draggable } from "react-smooth-dnd";
@@ -27,10 +26,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 
-import Questions from '../questions/list'
+import BaseElements from '../base_elements/list'
 
 import commonStyles from '../styles';
+import VerifiedTextField from '../verified-text-field';
 import ApiContext from '../api';
+import Tags from '../tags';
 
 const drawerWidth = 320;
 
@@ -121,6 +122,8 @@ class Material extends React.Component {
     leftOpen: true,
     rightOpen: true,
     title: '',
+    titleError: '',
+    tags: [],
     base_elements: [],
   }
 
@@ -187,10 +190,24 @@ class Material extends React.Component {
           <Box className={classes.drawerContent}>
             <Box p={2}>
               <Box py={2}>
-                <TextField fullWidth className={classes.flex} id="title" required={true} multiline={true} label="Название экзамена" />
+                <VerifiedTextField
+                  autoFocus
+                  margin="dense"
+                  label="Название учебного материала"
+                  required
+                  multiline
+                  fullWidth
+                  value={this.state.title}
+                  onChange={title => this.setState({title})}
+                  error={this.state.titleError}
+                  onErrorChange={titleError => this.setState({titleError})}
+                />
               </Box>
               <Box py={2}>
-                <TextField fullWidth className={classes.flex} id="professor" multiline={true} label="Преподаватель" />
+                <Tags
+                  value={this.state.tags}
+                  onChange={(newValue) => this.setState({ tags: newValue })}
+                />
               </Box>
             </Box>
           </Box>
@@ -278,7 +295,7 @@ class Material extends React.Component {
           <Divider />
           <Box className={classes.drawerContent}>
             <Box p={2}>
-              <Questions spacing={2}/>
+              <BaseElements spacing={2}/>
             </Box>
           </Box>
         </Drawer>
