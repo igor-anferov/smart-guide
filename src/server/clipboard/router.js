@@ -10,7 +10,7 @@ const pool = require('../db/pool')
 router.get('/base_elements', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements WHERE author_id = $1 and clipboard = $2;',
+      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements WHERE author_id = $1 and clipboard = $2 ORDER BY created;',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)
@@ -44,8 +44,8 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
     )
     for (var tag in tags) {
       if (tags.hasOwnProperty(tag)) {
-        await pool.query('INSERT INTO BaseElementTags (tag, base_element_id, author_id, created) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
-          [tags[tag], results.rows[0].base_element_id, req.user.id]
+        await pool.query('INSERT INTO BaseElementTags (tag, base_element_id) VALUES ($1, $2)',
+          [tags[tag], results.rows[0].base_element_id]
         )
       }
     }
@@ -62,7 +62,7 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
 router.get('/materials', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT material_id, title FROM Materials WHERE author_id = $1 and clipboard = $2;',
+      'SELECT material_id, title FROM Materials WHERE author_id = $1 and clipboard = $2 ORDER BY created;',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)
@@ -73,13 +73,19 @@ router.get('/materials', async (req, res, next) => {
 
 router.delete('/materials/:material_id', async (req, res, next) => {
   try {
+    await pool.query('BEGIN')
     const material_id = parseInt(req.params.material_id)
     await pool.query(
       'DELETE FROM Materials WHERE material_id = $1 AND author_id = $2 and clipboard= $3;',
       [material_id, req.user.id, true]
     )
+    await pool.query('DELETE FROM MaterialBaseElements WHERE material_id = $1',
+      [material_id]
+    )
+    await pool.query('COMMIT')
     res.status(200).send()
   } catch (e) {
+    await pool.query('ROLLBACK')
     next(e)
   }
 })
@@ -95,8 +101,8 @@ router.post('/materials', async (req, res, next) => {
     )
     for (var tag in tags) {
       if (tags.hasOwnProperty(tag)) {
-        await pool.query('INSERT INTO MaterialTags (tag, material_id, author_id, created) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
-          [tags[tag], results.rows[0].material_id, req.user.id]
+        await pool.query('INSERT INTO MaterialTags (tag, material_id) VALUES ($1, $2)',
+          [tags[tag], results.rows[0].material_id]
         )
       }
     }
@@ -110,5 +116,38 @@ router.post('/materials', async (req, res, next) => {
   }
 })
 
+router.get('/questions', async (req, res, next) => {
+  try {
+    const results = await pool.query(
+      'SELECT question_id, text FROM Questions WHERE author_id = $1 and clipboard = $2 ORDER BY created;',
+      [req.user.id, true]
+    )
+    res.status(200).send(results.rows)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.delete('/questions/:question_id', async (req, res, next) => {
+  try {
+    await pool.query('BEGIN')
+    const question_id = parseInt(req.params.question_id)
+    await pool.query(
+      'DELETE FROM Questions WHERE question_id = $1 AND author_id = $2 and clipboard= $3;',
+      [question_id, req.user.id, true]
+    )
+    await pool.query('DELETE FROM QuestionMaterials WHERE question_id = $1',
+      [question_id]
+    )
+    await pool.query('COMMIT')
+    res.status(200).send()
+  } catch (e) {
+    await pool.query('ROLLBACK')
+    next(e)
+  }
+})
+
 module.exports = router
+
+
 

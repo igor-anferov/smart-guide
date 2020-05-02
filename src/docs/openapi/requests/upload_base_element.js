@@ -74,7 +74,7 @@ module.exports = {
             contentType: 'application/x-latex',
           },
           'tags': {       
-            style: form,
+            style: 'spaceDelimited',
             explode: false,
           },
         },

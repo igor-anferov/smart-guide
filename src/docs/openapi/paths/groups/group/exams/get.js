@@ -1,9 +1,18 @@
 module.exports = {
   tags: ['Экзамены'],
-  summary: 'Получить список своих экзаменов',
+  summary: 'Получить список экзаменов группы',
+  parameters: [
+    {
+      name: 'group_id',
+      description: 'Идентификатор группы',
+      in: 'path',
+      schema: { type: 'integer' },
+      required: true,
+    }
+  ],
   responses: {
     '200': {
-      description: 'Список всех экзаменов пользователя',
+      description: 'Список всех экзаменов группы',
       content: {
         'application/json': {
           schema: {
@@ -29,6 +38,6 @@ module.exports = {
         }
       }
     },
-    '401': require('../../responses/401'),
+    '401': require('../../../../responses/401'),
   }
 }

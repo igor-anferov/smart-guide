@@ -14,7 +14,7 @@ router.get('/:material_id', async (req, res, next) => {
       [material_id]
     )
     const results = await pool.query(
-      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements INNER JOIN MaterialBaseElements USING(base_element_id) WHERE material_id = $1;',
+      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements INNER JOIN MaterialBaseElements USING(base_element_id) WHERE material_id = $1 ORDER BY position;',
       [material_id]
     )
     const results_tags = await pool.query('SELECT tag FROM MaterialTags WHERE material_id = $1',
@@ -62,8 +62,8 @@ router.post('/:material_id/base_elements', image_checker, latex_checker, async (
     )
     for (var tag in tags) {
       if (tags.hasOwnProperty(tag)) {
-        await pool.query('INSERT INTO BaseElementTags (tag, author_id, created) VALUES ($1, $2, CURRENT_TIMESTAMP)',
-          [tags[tag], author_id]
+        await pool.query('INSERT INTO BaseElementTags (tag, base_element_id) VALUES ($1, $2)',
+          [tags[tag], base_element_id]
         )
       }
     }
@@ -128,8 +128,9 @@ router.post('/:material_id/base_elements/:base_element_id/move', async (req, res
 
 router.post('/:material_id/base_elements/:base_element_id/copy_to_clipboard', async (req, res, next) => {
   try {
+    const material_id = parseInt(req.params.material_id)
     const base_element_id = parseInt(req.params.base_element_id)
-    await pool.query('INSERT INTO BaseElements (title, category, type, is_pivotal, body, source, author_id, created, clipboard) SELECT title, category, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3',
+    const results = await pool.query('INSERT INTO BaseElements (title, category, type, is_pivotal, body, source, author_id, created, clipboard) SELECT title, category, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3',
       [req.user.id, true, base_element_id]
     )
     res.status(200).send()

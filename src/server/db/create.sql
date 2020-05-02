@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS BaseElements (
   is_pivotal boolean,
   body bytea,
   source varchar,
-  group_id int,
   author_id int,
   created timestamp,
   clipboard boolean
@@ -18,7 +17,6 @@ CREATE TABLE IF NOT EXISTS BaseElements (
 CREATE TABLE IF NOT EXISTS Materials (
   material_id serial primary key,
   title varchar,
-  group_id int,
   author_id int,
   created timestamp,
   forks_from int,
@@ -40,7 +38,6 @@ CREATE TABLE IF NOT EXISTS RelatedMaterials (
 CREATE TABLE IF NOT EXISTS Questions (
   question_id serial primary key,
   text varchar,
-  group_id int,
   author_id int,
   created timestamp,
   clipboard boolean
@@ -72,7 +69,6 @@ CREATE TABLE IF NOT EXISTS Users (
   login varchar unique,
   hs256_sha256 char(64),
   email varchar unique,
-  name varchar,
   university varchar,
   faculty varchar,
   created timestamp
@@ -121,36 +117,24 @@ CREATE TABLE IF NOT EXISTS MaterialComments (
 CREATE TABLE IF NOT EXISTS BaseElementTags (
   base_element_id int,
   tag varchar,
-  group_id int,
-  author_id int,
-  created timestamp,
   primary key(base_element_id, tag)
 );
 
 CREATE TABLE IF NOT EXISTS MaterialTags (
   material_id int,
   tag varchar,
-  group_id int,
-  author_id int,
-  created timestamp,
   primary key(material_id, tag)
 );
 
 CREATE TABLE IF NOT EXISTS QuestionTags (
   question_id int,
   tag varchar,
-  group_id int,
-  author_id int,
-  created timestamp,
   primary key(question_id, tag)
 );
 
 CREATE TABLE IF NOT EXISTS ExamTags (
   exam_id int,
   tag varchar,
-  group_id int,
-  author_id int,
-  created timestamp,
   primary key(exam_id, tag)
 );
 

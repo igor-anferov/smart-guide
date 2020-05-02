@@ -21,6 +21,17 @@ module.exports = {
     },
 
 
+    '/self' : {
+      get: require('./paths/self/get.js'),
+      post: require('./paths/self/post.js'),
+    },
+
+
+    '/users/search': {
+      post: require('./paths/users/search/post.js'),
+    },
+
+
     '/books': {
       get: require('./paths/books/get.js'),
       post: require('./paths/books/post.js'),
@@ -43,6 +54,9 @@ module.exports = {
     },
     '/clipboard/base_elements/{base_element_id}': {
       delete: require('./paths/clipboard/base_elements/base_element/delete.js'),
+    },
+    '/clipboard/base_elements/search': {
+      post: require('./paths/clipboard/base_elements/search/post.js'),
     },
 
 
@@ -76,12 +90,10 @@ module.exports = {
       post: require('./paths/base_elements/base_element/copy_to_material/post.js'),
     },
 
-    /*'/materials/{material_id}/info': {
-      get: require('./paths/materials/material/info/get.js'),
+
+    '/materials/search': {
+      post: require('./paths/materials/search/post.js'),
     },
-    '/materials/{material_id}/content': {
-      get: require('./paths/materials/material/content/get.js'),
-    },*/
     '/materials/{material_id}': {
       get: require('./paths/materials/material/get.js'),
       post: require('./paths/materials/material/post.js'),
@@ -99,25 +111,18 @@ module.exports = {
       post: require('./paths/materials/material/base_elements/base_element/copy_to_clipboard/post.js'),
     },
 
-
-    /*'/questions/{question_id}/info': {
-      get: require('./paths/questions/question/info/get.js'),
-    },
-    '/questions/{question_id}/content': {
-      get: require('./paths/questions/question/content/get.js'),
-    },
-
-
     '/exams': {
       get: require('./paths/exams/get.js'),
     },
-
-    '/exams/{exam_id}/info': {
-      get: require('./paths/exams/exam/info/get.js'),
+    '/exams/{exam_id}': {
+      delete: require('./paths/exams/exam/delete.js'),
     },
-    '/exams/{exam_id}/content': {
-      get: require('./paths/exams/exam/content/get.js'),
-    },*/
+    '/groups/{group_id}/exams': {
+      get: require('./paths/groups/group/exams/get.js'),
+    },
+    '/groups/{group_id}/exams/{exam_id}': {
+      delete: require('./paths/groups/group/exams/exam/delete.js'),
+    },
 
   },
   components: {

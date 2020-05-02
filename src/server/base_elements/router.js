@@ -89,6 +89,9 @@ router.post('/:base_element_id/:material_id/copy_to_material', async (req, res, 
     const results = await pool.query('INSERT INTO MaterialBaseElements (material_id, position, base_element_id) VALUES ($1, $2, $3) RETURNING position',
       [material_id, position, base_element_id]
     )
+    await pool.query('UPDATE BaseElements SET clipboard = $1 WHERE base_element_id = $2',
+      [false, base_element_id]
+    )
     await pool.query('UPDATE MaterialBaseElements SET position = position + 1 WHERE material_id = $1 AND position >= $2 AND base_element_id != $3',
       [material_id, parseInt(results.rows[0].position), base_element_id]
     )
