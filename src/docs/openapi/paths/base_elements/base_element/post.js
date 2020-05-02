@@ -45,6 +45,13 @@ module.exports = {
                   minLength: 1,
                   description: 'Изменённый LaTeX. Может быть передано только в случае, если тип базового элемента "latex"',
                 },
+                'tags': {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                  description : 'Новые теги к базовому элементу',
+                }, 
               },
               minProperties: 1,
             },

@@ -28,23 +28,26 @@ module.exports = {
       content: {
         'application/json': {
           schema: {
-            type: 'object',
-            properties: {
-              'user_id': { 
-                type: 'integer',
-              },
-              'login': {
-                type: 'string',
-              },
-              'email': {
-                type: 'string',
-                format: 'email',
-              },
-              'university': {
-                type: 'string',
-              },
-              'faculty': {
-                type: 'string',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                'user_id': { 
+                  type: 'integer',
+                },
+                'login': {
+                  type: 'string',
+                },
+                'email': {
+                  type: 'string',
+                  format: 'email',
+                },
+                'university': {
+                  type: 'string',
+                },
+                'faculty': {
+                  type: 'string',
+                },
               },
             },
           },
