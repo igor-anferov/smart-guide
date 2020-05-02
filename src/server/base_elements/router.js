@@ -69,18 +69,21 @@ router.post('/:base_element_id', image_checker, latex_checker, async (req, res, 
       if (body)
         args.body = body
       let arg_num = 0;
-      await client.query(
-        `UPDATE BaseElements SET ${
-          Object.keys(args)
-            .map((k) => k + ` = $${++arg_num}`)
-            .join()
-        } WHERE base_element_id = $${++arg_num} AND type IN (${
-          allowed_types
-            .map(() => `$${++arg_num}`)
-            .join()
-        })`,
-        [...Object.values(args), base_element_id, ...allowed_types]
-      )
+      console.log(args)
+      if(args.title || args.source || args.is_pivotal || args.body) {
+        await client.query(
+          `UPDATE BaseElements SET ${
+            Object.keys(args)
+              .map((k) => k + ` = $${++arg_num}`)
+              .join()
+          } WHERE base_element_id = $${++arg_num} AND type IN (${
+            allowed_types
+              .map(() => `$${++arg_num}`)
+              .join()
+          })`,
+          [...Object.values(args), base_element_id, ...allowed_types]
+        )
+      }
       if(tags) {
         await client.query(
           'DELETE FROM BaseElementTags WHERE base_element_id = $1',
