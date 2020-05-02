@@ -24,6 +24,7 @@ import commonStyles from '../../styles';
 import LatexEditor from './editor';
 import VerifiedTextField from '../../verified-text-field';
 import ApiContext from '../../api';
+import Tags from '../../tags';
 
 
 const drawerWidth = 320;
@@ -70,6 +71,7 @@ class LaTeX extends React.Component {
     titleError: '',
     source: '',
     sourceError: '',
+    tags: [],
     is_pivotal: false,
     latex: '',
     latexError: false,
@@ -156,6 +158,7 @@ class LaTeX extends React.Component {
     const state = {
       title: json.title,
       source: json.source,
+      tags: json.tags,
       is_pivotal: json.is_pivotal,
       latex: body,
     }
@@ -191,6 +194,7 @@ class LaTeX extends React.Component {
     let to_be_uploaded = {
       title: this.state.title,
       source: this.state.source,
+      tags: this.state.tags,
       is_pivotal: this.state.is_pivotal,
       latex: this.state.latex,
     }
@@ -283,6 +287,12 @@ class LaTeX extends React.Component {
                 onChange={source => this.setState({source})}
                 error={this.state.sourceError}
                 onErrorChange={sourceError => this.setState({sourceError})}
+              />
+            </Box>
+            <Box py={2}>
+              <Tags
+                value={this.state.tags}
+                onChange={(newValue) => this.setState({ tags: newValue })}
               />
             </Box>
             <Box py={2}>
