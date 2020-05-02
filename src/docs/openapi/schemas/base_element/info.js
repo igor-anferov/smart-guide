@@ -23,12 +23,7 @@ module.exports = {
     'tags': {
       type: 'array',
       items: {
-        type: 'object',
-        properties: {
-          'tag': {
-            type: 'string',
-          },
-        },
+        type: 'string',
       },
     description : 'Теги к базовому элементу',
     },   

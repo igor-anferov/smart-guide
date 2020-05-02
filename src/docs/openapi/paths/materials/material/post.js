@@ -22,6 +22,13 @@ module.exports = {
               description: 'Новый заголовок учебного материала',
               example: 'Теорема Лапласа, доказательство, примеры применения',
             },
+            'tags': {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description : 'Новые теги к учебному элементу',
+            }, 
           },
           minProperties: 1,
         },
