@@ -63,7 +63,7 @@ router.post('/:material_id/base_elements', image_checker, latex_checker, async (
     for (var tag in tags) {
       if (tags.hasOwnProperty(tag)) {
         await pool.query('INSERT INTO BaseElementTags (tag, base_element_id) VALUES ($1, $2)',
-          [tags[tag], base_element_id]
+          [tags[tag], results.rows[0].base_element_id]
         )
       }
     }

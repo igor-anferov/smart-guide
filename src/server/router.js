@@ -15,6 +15,7 @@ async function setupApi(router) {
   await new OpenApiValidator({
     apiSpec: require('../docs/openapi/api'),
     validateResponses: true,
+    coerceTypes: 'array',
     validateSecurity: {
       handlers: {
         'Аутентификационный токен': verifyToken
@@ -23,6 +24,9 @@ async function setupApi(router) {
   }).install(router)
 
   router.use((req, res, next) => {
+    for (let [k, v] of Object.entries(req.body))
+      if (v instanceof Array && v.length === 1)
+        req.body[k] = v[0].split(',').filter(s=>s)
     if (req.files) {
       for (let file of req.files) {
         let {fieldname, ...content} = file;

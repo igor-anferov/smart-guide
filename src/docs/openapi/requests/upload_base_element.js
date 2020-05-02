@@ -33,19 +33,8 @@ module.exports = {
                   minLength: 1,
                   description: 'LaTeX',
                 },
-                /*'tags': {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      'tag' : {
-                      type :  'string',
-                      },
-                    },
-                  },*/
                 'tags': {
                   type: 'array',
-
                   items: {
                     type: 'string',
                   },
@@ -73,8 +62,8 @@ module.exports = {
           'latex': {
             contentType: 'application/x-latex',
           },
-          'tags': {       
-            style: 'spaceDelimited',
+          'tags': {
+            style: 'form',
             explode: false,
           },
         },
