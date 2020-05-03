@@ -8,7 +8,7 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
-            'text_search': {
+            'query': {
               type: 'string',
               description: 'Поисковая стока',
             },
