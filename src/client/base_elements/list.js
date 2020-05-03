@@ -74,14 +74,20 @@ class BaseElements extends React.Component {
 
   async handleImageItemClick(imageItem) {
     const API = this.context;
-    const results = await API.request(`/base_elements/${imageItem.base_element_id}/content`)
-    if (!results.ok)
-      throw Error(`Unexpected base element content getting status ${results.status}`);
-    const image = new File([await results.blob()], "image")
+    const [info, content] = await Promise.all([
+      API.request(`/base_elements/${imageItem.base_element_id}/info`),
+      API.request(`/base_elements/${imageItem.base_element_id}/content`),
+    ])
+    if (!info.ok)
+      throw Error(`Unexpected base element info getting status ${info.status}`);
+    if (!content.ok)
+      throw Error(`Unexpected base element content getting status ${content.status}`);
+    const [json, body] = await Promise.all([info.json(), content.blob()])
     const imageUploadDialog = {
       dialog_title: 'Изменение базового элемента',
-      image,
+      image: new File([body], "image"),
       ...imageItem,
+      ...json,
     }
     this.setState({
       imageUploadDialog,
@@ -127,6 +133,7 @@ class BaseElements extends React.Component {
       let body = new FormData()
       state.title !== undefined && body.append('title', state.title);
       state.source !== undefined && body.append('source', state.source);
+      state.tags !== undefined && body.append('tags', state.tags);
       state.is_pivotal !== undefined && body.append('is_pivotal', Boolean(state.is_pivotal));
       state.image !== undefined && body.append('image', state.image, state.image.name);
       const results = await API.request(this.state.oldItem.base_element_id ? `/base_elements/${this.state.oldItem.base_element_id}` : '/clipboard/base_elements', {
