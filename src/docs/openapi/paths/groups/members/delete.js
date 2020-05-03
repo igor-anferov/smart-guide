@@ -1,21 +1,13 @@
+const group = require('../../../schemas/group')
+const user = require('../../../schemas/user')
+
+
 module.exports = {
   tags: ['Группы'],
   summary: 'Удалить пользователя из группы',
   parameters: [
-    {
-      name: 'group_id',
-      description: 'Идентификатор группы',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    },
-    {
-      name: 'user_id',
-      description: 'Идентификатор пользователя',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    group.parameters.group_id,
+    user.parameters.user_id,
   ],
   responses: {
     '200': {

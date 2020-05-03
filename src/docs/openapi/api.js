@@ -75,7 +75,6 @@ module.exports = {
       post: require('./paths/clipboard/base_elements/search/post.js'),
     },
 
-
     '/clipboard/materials': {
       get: require('./paths/clipboard/materials/get.js'),
       post: require('./paths/clipboard/materials/post.js'),
@@ -83,7 +82,6 @@ module.exports = {
     '/clipboard/materials/{material_id}': {
       delete: require('./paths/clipboard/materials/material/delete.js'),
     },
-
 
     '/clipboard/questions': {
       get: require('./paths/clipboard/questions/get.js'),
@@ -126,6 +124,7 @@ module.exports = {
     '/materials/{material_id}/base_elements/{base_element_id}/copy_to_clipboard': {
       post: require('./paths/materials/material/base_elements/base_element/copy_to_clipboard/post.js'),
     },
+
 
     '/exams': {
       get: require('./paths/exams/get.js'),

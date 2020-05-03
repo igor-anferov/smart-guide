@@ -1,3 +1,6 @@
+const group = require('../../schemas/group')
+
+
 module.exports = {
   tags: ['Группы'],
   summary: 'Создать новую группу',
@@ -5,23 +8,7 @@ module.exports = {
     required: true,
     content: {
       'application/x-www-form-urlencoded': {
-        schema: {
-          type: 'object',
-          properties: {
-            'name': {
-              type: 'string',
-              description: 'Название группы'
-            },
-            'users': {
-              type: 'array',
-              items: {
-                type: 'integer',
-              },
-              description: 'список user_id',
-            },
-          },
-          required: ['name'],
-        },
+        schema: group.create.request,
         encoding: {
           'users': {
             style: 'form',
@@ -36,13 +23,7 @@ module.exports = {
       description: 'OK',
       content: {
         'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              'group_id': { type: 'integer' }
-            },
-            required: ['group_id'],
-          }
+          schema: group.create.response,
         }
       }
     },

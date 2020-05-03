@@ -1,14 +1,11 @@
+const group = require('../../../../schemas/group')
+
+
 module.exports = {
   tags: ['Группы'],
   summary: 'покинуть группу',
   parameters: [
-    {
-      name: 'group_id',
-      description: 'Идентификатор группы',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    group.parameters.group_id,
   ],
   responses: {
     '200': {

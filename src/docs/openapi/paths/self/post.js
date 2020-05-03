@@ -1,3 +1,6 @@
+const user = require('../../schemas/user')
+
+
 module.exports = {
   tags: ['Профиль'],
   summary: 'Изменить информацию о себе',
@@ -5,30 +8,7 @@ module.exports = {
     required: true,
     content: {
       'application/x-www-form-urlencoded': {
-        schema: {
-          type: 'object',
-          properties: {
-            'login': {
-              type: 'string',
-              description: 'новый логин пользователя',
-              example: 'margo',
-            },
-            'email': {
-              type: 'string',
-              description: 'новый Email пользователя',
-              format: 'email',
-              example: 'margo@mail.ru',
-            },
-            'university': {
-              type: 'string',
-              example: 'МГУ им.Ломоносова'
-            },
-            'faculty': {
-              type: 'string',
-              example: 'ВМК'
-            },
-          },
-        },
+        schema: user.edit,
       },
     },
   },

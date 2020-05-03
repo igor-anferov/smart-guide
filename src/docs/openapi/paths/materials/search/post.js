@@ -1,3 +1,9 @@
+const material = require('../../../schemas/material')
+const question = require('../../../schemas/question')
+const exam = require('../../../schemas/exam')
+const group = require('../../../schemas/group')
+
+
 module.exports = {
   tags: ['Учебные материалы'],
   summary: 'Поиск по всем учебным материалам',
@@ -12,8 +18,23 @@ module.exports = {
               type: 'string',
               description: 'Поисковая стока',
             },
+            'own_exams': {
+              type: 'boolean',
+              description: 'Искать в своих экзаменах',
+              default: false,
+            },
+            'groups_exams': {
+              type: 'boolean',
+              description: 'Искать в экзаменах групп, в которых состоит пользователь',
+              default: false,
+            },
+            'global': {
+              type: 'boolean',
+              description: 'Искать по экзаменам всех пользователей и групп',
+              default: false,
+            },
           },
-          minProperties: 1,
+          required: ['query'],
         },
       },
     },
@@ -24,192 +45,42 @@ module.exports = {
       content: {
         'application/json': {
           schema: {
-            type: 'object', 
-            properties: {
-              'my_materials': {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    'material_id': {
-                      type: 'integer',
-                    },
-                    'title': {
-                      type: 'string',
-                    },
-                    'keywords': {
-                      type: 'array',
-                      items: {
-                        type: 'string',
-                      },
-                    },
-                    'question' : {
-                      type: 'object',
-                      properties: {
-                        'question_id': { 
-                          type: 'integer',
-                        },
-                        'text': {
-                          type: 'string',
-                        },
-                      },
-                    },
-                    'exam' : {
-                      type: 'object', 
-                      properties: {
-                        'exam_id': {
-                          type: 'integer',
-                        },
-                        'title': {
-                          type: 'string',
-                        },
-                        'teacher': {
-                          type: 'string',
-                        },                       
-                      },
-                    },
-                  },
-                },
-              },
-              'my_groups_materials': {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    'material_id': {
-                      type: 'integer',
-                    },
-                    'title': {
-                      type: 'string',
-                    },
-                    'keywords': {
-                      type: 'array',
-                      items: {
-                        type: 'string',
-                      },
-                    },
-                    'question' : {
-                      type: 'object',
-                      properties: {
-                        'question_id': { 
-                          type: 'integer',
-                        },
-                        'text': {
-                          type: 'string',
-                        },
-                      },
-                    },
-                    'exam' : {
-                      type: 'object', 
-                      properties: {
-                        'exam_id': {
-                          type: 'integer',
-                        },
-                        'title': {
-                          type: 'string',
-                        },
-                        'teacher': {
-                          type: 'string',
-                        },  
-                        'group': {
-                          type: 'object',
-                          properties: {
-                            'group_id': {
-                              type: 'integer',
-                            },
-                            'name': {
-                              type: 'string',
-                            },
-                          },
-                        },                      
-                      },
-                    },
-                  },
-                },
-              },              
-              'global_materials': {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    'material_id': {
-                      type: 'integer',
-                    },
-                    'title': {
-                      type: 'string',
-                    },
-                    'keywords': {
-                      type: 'array',
-                      items: {
-                        type: 'string',
-                      },
-                    },
-                    'question' : {
-                      type: 'object',
-                      properties: {
-                        'question_id': { 
-                          type: 'integer',
-                        },
-                        'text': {
-                          type: 'string',
-                        },
-                      },
-                    },
-                    'exam' : {
-                      type: 'object', 
-                      properties: {
-                        'exam_id': {
-                          type: 'integer',
-                        },
-                        'title': {
-                          type: 'string',
-                        },
-                        'teacher': {
-                          type: 'string',
-                        }, 
-                        'author': {
-                          type: 'object',
-                          properties: {
-                            'author_id': {
-                              type: 'integer',
-                            },
-                            'login': {
-                              type: 'string',
-                            },
-                            'university': {
-                              type: 'string',
-                            },
-                            'faculty': {
-                              type: 'string',
-                            },
-                          },
-                        },                   
-                      },
-                    },
-                  },
-                },
-              }, 
-
-            },
-            /*type: 'array',
+            type: 'array',
             items: {
-              type: 'object',
-              properties: {
-                'base_element_id': { 
-                  type: 'integer',
-                },
-                'title': {
-                  type: 'string',
-                },
-                'keywords': {
-                  type: 'array',
-                  items: {
-                    type: 'string',
+              oneOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    'material': material.list,
+                    'matches': {
+                      type: 'array',
+                      minItems: 1,
+                      items: { type: 'string' },
+                      example: ['Лапласа', 'формулировка'],
+                    },
+                    'matched_tags': material.properties.tags,
                   },
+                  required: ['material', 'matches']
                 },
-              },
-              required: ['base_element_id', 'title', 'keywords'],
-            },*/
+                {
+                  type: 'object',
+                  properties: {
+                    'material': material.list,
+                    'question': question.list,
+                    'exam': exam.list,
+                    'group': group.list,
+                    'matches': {
+                      type: 'array',
+                      minItems: 1,
+                      items: { type: 'string' },
+                      example: ['Лапласа', 'формулировка'],
+                    },
+                    'matched_tags': material.properties.tags,
+                  },
+                  required: ['material', 'question', 'exam', 'matches']
+                }
+              ]
+            },
           },
         },
       },

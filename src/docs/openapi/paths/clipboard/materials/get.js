@@ -1,3 +1,6 @@
+const material = require('../../../schemas/material')
+
+
 module.exports = {
   tags: ['Буфер обмена'],
   summary: 'Получить информацию об учебных материалах, находящихся в буфере обмена',
@@ -8,18 +11,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'material_id': { type: 'integer' },
-                'title': {
-                  type: 'string',
-                  description: 'Заголовок учебного материала',
-                  example: 'Теорема Лапласа, доказательство, примеры применения',
-                },
-              },
-              required: ['material_id', 'title']
-            }
+            items: material.list,
           }
         }
       }

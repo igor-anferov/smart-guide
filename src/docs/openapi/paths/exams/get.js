@@ -1,3 +1,6 @@
+const exam = require('../../schemas/exam')
+
+
 module.exports = {
   tags: ['Экзамены'],
   summary: 'Получить список своих экзаменов',
@@ -8,23 +11,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'exam_id': { type: 'integer' },
-                'title': {
-                  type: 'string',
-                  description: 'Название экзамена',
-                  example: 'Архитектура ЭВМ и язык Ассемблера',
-                },
-                'teacher': {
-                  type: 'string',
-                  description: 'Преподаватель',
-                  example: 'Столяров Андрей Викторович',
-                },
-              },
-              required: ['exam_id', 'title', 'teacher']
-            }
+            items: exam.list,
           }
         }
       }

@@ -1,47 +1,28 @@
+const material = require('../../../schemas/material')
+
+
 module.exports = {
   tags: ['Учебные материалы'],
   summary: 'Отредактировать информацию об учебном материале',
   parameters: [
-    {
-      name: 'material_id',
-      description: 'Идентификатор учебного материала',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    material.parameters.material_id,
   ],
   requestBody: {
     required: true,
+    description: 'Необходимо передать только изменившиеся поля',
     content: {
       'application/x-www-form-urlencoded': {
-        schema: {
-          type: 'object',
-          properties: {
-            'title': {
-              type: 'string',
-              description: 'Новый заголовок учебного материала',
-              example: 'Теорема Лапласа, доказательство, примеры применения',
-            },
-            'tags': {
-              type: 'array',
-              items: {
-                type: 'string',
-              },
-              description : 'Новые теги к учебному элементу',
-            }, 
-          },
-          minProperties: 1,
-        },
+        schema: material.edit,
       },
     },
   },
-	responses: {
-	  '200': {
-	    description: 'Учебный материал успешно обновлён',
-	  },
-	  '404': {
-	    description: 'Учебный материал не найден',
-	  },
-	  '401': require('../../../responses/401'),
-	}
+  responses: {
+    '200': {
+      description: 'Учебный материал успешно обновлён',
+    },
+    '404': {
+      description: 'Учебный материал не найден',
+    },
+    '401': require('../../../responses/401'),
+  }
 }

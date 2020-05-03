@@ -1,3 +1,6 @@
+const group = require('../../schemas/group')
+
+
 module.exports = {
   tags: ['Группы'],
   summary: 'Получить список своих групп',
@@ -8,17 +11,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'group_id': { type: 'integer' },
-                'name': {
-                  type: 'string',
-                  description: 'Название группы',
-                },
-              },
-              required: ['group_id', 'name']
-            }
+            items: group.list,
           }
         }
       }
