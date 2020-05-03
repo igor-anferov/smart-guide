@@ -34,12 +34,6 @@ module.exports = {
                 'title': {
                   type: 'string',
                 },
-                'keywords': {
-                  type: 'array',
-                  items: {
-                    type: 'string',
-                  },
-                },
               },
               required: ['base_element_id', 'title', 'keywords'],
             },

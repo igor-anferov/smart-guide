@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS Questions (
   text varchar,
   author_id int,
   created timestamp,
+  forks_from int,
   clipboard boolean
 );
 
@@ -55,7 +56,9 @@ CREATE TABLE IF NOT EXISTS Exams (
   author_id int,
   title varchar,
   teacher varchar,
-  created timestamp
+  created timestamp,
+  forks_from int,
+  delete_mark boolean default false
 );
 
 CREATE TABLE IF NOT EXISTS ExamQuestions (
@@ -102,7 +105,6 @@ CREATE TABLE IF NOT EXISTS Contacts (
   alias varchar,
   primary key(user_id, contact_id)
 );
-
 
 CREATE TABLE IF NOT EXISTS MaterialComments (
   comment_id serial primary key,
@@ -157,35 +159,57 @@ alter table Contacts add
 	foreign key (contact_id)
 	references Users(user_id);
 
-/*alter table BaseElements add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table MaterialBaseElements add
+  foreign key (base_element_id)
+  references BaseElements(base_element_id) ON DELETE CASCADE,
+    add
+  foreign key (material_id)
+  references Materials(material_id) ON DELETE CASCADE;
 
-alter table Materials add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table QuestionMaterials add
+  foreign key (question_id)
+  references Questions(question_id) ON DELETE CASCADE,
+    add
+  foreign key (material_id)
+  references Materials(material_id) ON DELETE CASCADE;
 
-alter table questions add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table ExamQuestions add
+  foreign key (question_id)
+  references Questions(question_id) ON DELETE CASCADE,
+    add
+  foreign key (exam_id)
+  references Exams(exam_id) ON DELETE CASCADE;
 
-alter table list_questions add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table BaseElementTags add
+  foreign key (base_element_id)
+  references BaseElements(base_element_id) ON DELETE CASCADE;
 
-alter table comments add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table MaterialTags add
+  foreign key (material_id)
+  references Materials(material_id) ON DELETE CASCADE;
 
-alter table tags_objects add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table QuestionTags add
+  foreign key (question_id)
+  references Questions(question_id) ON DELETE CASCADE;
 
-alter table tags_questions add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);
+alter table ExamTags add
+  foreign key (exam_id)
+  references Exams(exam_id) ON DELETE CASCADE;
 
-alter table tags_list_questions add
-	foreign key (group_id, author_id)
-	references group_members(group_id, user_id);*/
+alter table MaterialComments add 
+  foreign key (material_id)
+  references Materials(material_id) ON DELETE CASCADE;
+
+alter table RelatedMaterials add 
+  foreign key (material_id)
+  references Materials(material_id) ON DELETE CASCADE,
+    add
+  foreign key (related_material_id) 
+  references Materials(material_id) ON DELETE CASCADE;
+
+CREATE INDEX title_base_element_index ON BaseElements USING GIN (to_tsvector('russian', title));
+CREATE INDEX title_material_index ON Materials USING GIN (to_tsvector('russian', title));
+CREATE INDEX text_questions_index ON Questions USING GIN (to_tsvector('russian', text));
+CREATE INDEX title_exam_index ON Exams USING GIN (to_tsvector('russian', title));
+
 COMMIT;

@@ -9,13 +9,17 @@ INSERT INTO Users (login, hs256_sha256, email) VALUES
 INSERT INTO Groups (name, creator_id, created) VALUES
 	('me and my friend prodolban', 1, '20/04/2020 19:30:07');
 
+INSERT INTO GroupMembers(group_id, user_id) VALUES
+	(1, 1),
+	(1, 2);
+
 INSERT INTO Books (title, user_id, content) VALUES
 	('А.В.Столяров. Низкоуровневое программирование', 1, decode('JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==', 'base64')),
 	('Ким, Ильин. Линейная алгебра и аналитическая геометрия', 1, decode('JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==', 'base64')),
 	('Ильин. Садовничий. Математический анализ', 1, decode('JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==', 'base64'));
 
 INSERT INTO Exams (group_id, author_id, title, teacher, created) VALUES
-	(1, 1, 'Линейная алгебра и аналитическая геометрия', 'Ким Галина Динховна', '20/04/2020 21:03:57'),
+	(null, 1, 'Линейная алгебра и аналитическая геометрия', 'Ким Галина Динховна', '20/04/2020 21:03:57'),
 	(1, 1, 'Математический анализ', 'Фомичёв Василий Владимирович', '20/05/2020 20:37:01'),
 	(1, 1, 'Архитектура ЭВМ и язык ассемблера', 'Столяров Андрей Викторович', '27/05/2020 17:56:31');
 
@@ -1243,8 +1247,8 @@ INSERT INTO MaterialBaseElements (material_id, position, base_element_id) VALUES
 	(18, 1, 28),
 	(18, 2, 29),
 	(19, 1, 30),
-	(21, 1, 31),
-	(21, 2, 32),
-	(21, 3, 33);
+	(20, 1, 31),
+	(20, 2, 32),
+	(20, 3, 33);
 
 COMMIT;

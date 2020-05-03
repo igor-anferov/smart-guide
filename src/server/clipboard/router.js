@@ -64,6 +64,18 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
   }
 })
 
+router.post('/base_elements/search', async (req, res, next) => {
+  const query = res.body.query
+  try {
+    const results = await pool.query(
+      'SELECT base_element_id, ts_headline('russian', title, to_tsquery($1), 'HighlightAll=TRUE') as title FROM BaseElements WHERE to_tsvector(title) @@ to_tsquery('$1')', 
+      [query, req.user.id, true]
+    )
+  } catch (e) {
+    next(e)
+  }
+})
+
 router.get('/materials', async (req, res, next) => {
   try {
     const results = await pool.query(
