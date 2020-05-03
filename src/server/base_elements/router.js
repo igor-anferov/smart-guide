@@ -69,7 +69,6 @@ router.post('/:base_element_id', image_checker, latex_checker, async (req, res, 
       if (body)
         args.body = body
       let arg_num = 0;
-      console.log(args)
       if(args.title || args.source || args.is_pivotal || args.body) {
         await client.query(
           `UPDATE BaseElements SET ${

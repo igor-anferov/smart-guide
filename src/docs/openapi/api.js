@@ -32,6 +32,22 @@ module.exports = {
     },
 
 
+    '/groups': {
+      get: require('./paths/groups/get.js'),
+      post: require('./paths/groups/post.js'),
+    },
+    '/groups/{group_id}/leave': {
+      post: require('./paths/groups/group/leave/post.js'),
+    },
+    '/groups/{group_id}/members': {
+      get: require('./paths/groups/members/get.js'),
+      post: require('./paths/groups/members/post.js'),
+    },
+    '/groups/{group_id}/members/{user_id}': {
+      delete: require('./paths/groups/members/delete.js'),
+    },
+
+
     '/books': {
       get: require('./paths/books/get.js'),
       post: require('./paths/books/post.js'),
