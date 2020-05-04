@@ -55,7 +55,7 @@ module.exports = {
                     'matches': {
                       type: 'array',
                       minItems: 1,
-                      items: { type: 'string' },
+                      items: { type: 'string', minLength: 1 },
                       example: ['Лапласа', 'формулировка'],
                     },
                     'matched_tags': material.properties.tags,
