@@ -1,14 +1,11 @@
+const exam = require('../../../schemas/exam')
+
+
 module.exports = {
   tags: ['Экзамены'],
   summary: 'Удалить личный экзамен',
   parameters: [
-    {
-      name: 'exam_id',
-      description: 'Идентификатор экзамена',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    exam.parameters.exam_id,
   ],
   responses: {
     '200': {

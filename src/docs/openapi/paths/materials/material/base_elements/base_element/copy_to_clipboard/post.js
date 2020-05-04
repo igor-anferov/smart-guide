@@ -1,21 +1,13 @@
+const base_element = require('../../../../../../schemas/base_element')
+const material = require('../../../../../../schemas/material')
+
+
 module.exports = {
   tags: ['Учебные материалы'],
   summary: 'Скопировать базовый элемент из учебного материала в буфер обмена',
   parameters: [
-    {
-      name: 'material_id',
-      description: 'Идентификатор учебного материала',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    },
-    {
-      name: 'base_element_id',
-      description: 'Идентификатор базового элемента',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    material.parameters.material_id,
+    base_element.parameters.base_element_id,
   ],
   responses: {
     '200': {

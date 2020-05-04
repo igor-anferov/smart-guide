@@ -1,21 +1,13 @@
+const exam = require('../../../../../schemas/exam')
+const group = require('../../../../../schemas/group')
+
+
 module.exports = {
   tags: ['Экзамены'],
   summary: 'Удалить экзамен из группы',
   parameters: [
-    {
-      name: 'exam_id',
-      description: 'Идентификатор экзамена',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    },
-    {
-      name: 'group_id',
-      description: 'Идентификатор группы',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    group.parameters.group_id,
+    exam.parameters.exam_id,
   ],
   responses: {
     '200': {

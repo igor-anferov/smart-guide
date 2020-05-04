@@ -1,14 +1,11 @@
+const question = require('../../../../schemas/question')
+
+
 module.exports = {
   tags: ['Буфер обмена'],
   summary: 'Удалить вопрос из буфера обмена',
   parameters: [
-    {
-      name: 'question_id',
-      description: 'Идентификатор вопросв',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    question.parameters.question_id,
   ],
   responses: {
     '200': {

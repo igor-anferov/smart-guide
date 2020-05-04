@@ -65,12 +65,37 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
 })
 
 router.post('/base_elements/search', async (req, res, next) => {
-  const query = res.body.query
+  var query = req.body.query
+  query = query.replace(/ /g, '|');
   try {
-    const results = await pool.query(
-      'SELECT base_element_id, ts_headline('russian', title, to_tsquery($1), 'HighlightAll=TRUE') as title FROM BaseElements WHERE to_tsvector(title) @@ to_tsquery('$1')', 
-      [query, req.user.id, true]
+    const results_title = await pool.query(
+      "SELECT json_build_object('base_element_id', base_element_id, 'title', \
+      ts_headline('russian', title, q), 'source', source, 'type', type) as base_element\
+      FROM BaseElements, to_tsquery('russian', $3) as q\
+      WHERE author_id = $1 AND clipboard = $2 AND to_tsvector('russian', title) @@ q", 
+      [req.user.id, true, query]
     )
+    const results_tags = await pool.query( 
+      "SELECT json_build_object('base_element_id', base_element_id, 'title', title, 'source', source, 'type', type) as base_element,\
+      array_agg(tag) as matched_tags \
+      FROM BaseElementTags INNER JOIN BaseElements USING(base_element_id)\
+      WHERE author_id = $1 AND clipboard = $2\
+      AND to_tsvector('russian', tag) @@ to_tsquery('russian', $3) \
+      group by(base_element_id, title, source, type)",
+      [req.user.id, true, query]
+    )
+    var results = results_tags.rows
+    const size = results_title.rows.length;
+    var index=-1;
+    for (var i=0; i < size; i++) {
+      index = results.findIndex(x => x.base_element.base_element_id === results_title.rows[i].base_element.base_element_id)
+      if(index === -1) {
+        results.push(results_title.rows[i]);
+      } else {
+        results[index].base_element.title = results_title.rows[i].base_element.title
+      }
+    }
+    res.status(200).send(results)
   } catch (e) {
     next(e)
   }

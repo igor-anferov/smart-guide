@@ -1,14 +1,12 @@
+const group = require('../../../schemas/group')
+const member = require('../../../schemas/member')
+
+
 module.exports = {
   tags: ['Группы'],
   summary: 'Получить список пользователей группы',
   parameters: [
-    {
-      name: 'group_id',
-      description: 'Идентификатор группы',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    group.parameters.group_id,
   ],
   responses: {
     '200': {
@@ -17,21 +15,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'user_id': { type: 'integer' },
-                'login': {
-                  type: 'string',
-                  description: 'login пользователя',
-                },
-                'role': {
-                  type: 'string',
-                  enum: ["creator", "member"],
-                },
-              },
-              required: ['user_id', 'login']
-            }
+            items: member.list,
           }
         }
       }

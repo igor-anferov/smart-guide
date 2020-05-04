@@ -1,3 +1,6 @@
+const user = require('../../../schemas/user')
+
+
 module.exports = {
   tags: ['Пользователи'],
   summary: 'Поиск пользователей по email, login',
@@ -29,27 +32,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'user_id': { 
-                  type: 'integer',
-                },
-                'login': {
-                  type: 'string',
-                },
-                'email': {
-                  type: 'string',
-                  format: 'email',
-                },
-                'university': {
-                  type: 'string',
-                },
-                'faculty': {
-                  type: 'string',
-                },
-              },
-            },
+            items: user.list,
           },
         },
       },

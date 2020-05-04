@@ -1,14 +1,12 @@
+const group = require('../../../schemas/group')
+const user = require('../../../schemas/user')
+
+
 module.exports = {
   tags: ['Группы'],
-  summary: 'добавить пользователей в группу',
+  summary: 'Добавить пользователей в группу',
   parameters: [
-    {
-      name: 'group_id',
-      description: 'Идентификатор группы',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    group.parameters.group_id,
   ],
   requestBody: {
     required: true,
@@ -17,15 +15,13 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
-            'users': {
+            'user_ids': {
               type: 'array',
-              items: {
-                type: 'integer',
-              },
-              description: 'список user_id',
-            },
+              description: 'Пользователи для добавления в группу',
+              items: user.properties.user_id,
+            }
           },
-          required: ['users'],
+          required: ['user_ids'],
         },
         encoding: {
           'users': {

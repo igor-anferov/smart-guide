@@ -1,14 +1,12 @@
+const exam = require('../../../../schemas/exam')
+const group = require('../../../../schemas/group')
+
+
 module.exports = {
   tags: ['Экзамены'],
   summary: 'Получить список экзаменов группы',
   parameters: [
-    {
-      name: 'group_id',
-      description: 'Идентификатор группы',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    group.parameters.group_id,
   ],
   responses: {
     '200': {
@@ -17,23 +15,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'exam_id': { type: 'integer' },
-                'title': {
-                  type: 'string',
-                  description: 'Название экзамена',
-                  example: 'Архитектура ЭВМ и язык Ассемблера',
-                },
-                'teacher': {
-                  type: 'string',
-                  description: 'Преподаватель',
-                  example: 'Столяров Андрей Викторович',
-                },
-              },
-              required: ['exam_id', 'title', 'teacher']
-            }
+            items: exam.list,
           }
         }
       }

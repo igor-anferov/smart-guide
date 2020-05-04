@@ -1,32 +1,21 @@
+const base_element = require('../../../../schemas/base_element')
+
+
 module.exports = {
   tags: ['Базовые элементы'],
   summary: 'Получить содержимое базового элемента',
   parameters: [
-    {
-      name: 'base_element_id',
-      description: 'Идентификатор базового элемента',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    base_element.parameters.base_element_id,
   ],
   responses: {
     '200': {
       description: 'Содержимое базового элемента',
       content: {
         'image/*': {
-          schema: {
-            type: 'string',
-            format: 'binary',
-            description: 'Содержимое базового элемента с типом "image"',
-          }
+          schema: base_element.properties.image,
         },
         'application/x-latex': {
-          schema: {
-            type: 'string',
-            format: 'binary',
-            description: 'Содержимое базового элемента с типом "latex"',
-          }
+          schema: base_element.properties.latex,
         },
       }
     },

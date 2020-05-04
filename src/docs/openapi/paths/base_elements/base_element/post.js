@@ -1,74 +1,18 @@
+const base_element = require('../../../schemas/base_element')
+
+
 module.exports = {
   tags: ['Базовые элементы'],
   summary: 'Редактировать базовый элемент',
   parameters: [
-    {
-      name: 'base_element_id',
-      description: 'Идентификатор базового элемента',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    base_element.parameters.base_element_id,
   ],
   requestBody: {
     required: true,
+    description: 'Необходимо передать только изменившиеся поля. Тип базового элемента изменён быть не может',
     content: {
       'multipart/form-data': {
-        schema: {
-          allOf: [
-            {
-              type: 'object',
-              properties: {
-                'title': {
-                  type: 'string',
-                  minLength: 1,
-                  description: 'Новое название базового элемента (опционально, только при изменении)',
-                  example: 'Теорема Лапласа (формулировка, начало)',
-                },
-                'source': {
-                  type: 'string',
-                  minLength: 1,
-                  description: 'Новый источник (опционально, только при изменении)',
-                  example: 'Ильин, Ким. Линейная алгебра и аналитическая геометрия',
-                },
-                'is_pivotal': {
-                  type: 'boolean',
-                  description: 'Включать элемент в теормин (опционально, только при изменении)',
-                },
-                'image': {
-                  type: 'string',
-                  format: 'binary',
-                  description: 'Новое изображение. Может быть передано только в случае, если тип базового элемента "image"',
-                },
-                'latex': {
-                  type: 'string',
-                  minLength: 1,
-                  description: 'Изменённый LaTeX. Может быть передано только в случае, если тип базового элемента "latex"',
-                },
-                'tags': {
-                  type: 'array',
-                  items: {
-                    type: 'string',
-                  },
-                  description : 'Новые теги к базовому элементу',
-                }, 
-              },
-              minProperties: 1,
-            },
-            {
-              not: {
-                allOf: [
-                  {
-                    required: ['image'],
-                  },
-                  {
-                    required: ['latex'],
-                  },
-                ]
-              }
-            }
-          ]
-        },
+        schema: base_element.edit,
       },
     },
   },

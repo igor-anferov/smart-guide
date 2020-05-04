@@ -1,21 +1,18 @@
+const base_element = require('../../../../schemas/base_element')
+
+
 module.exports = {
   tags: ['Базовые элементы'],
   summary: 'Получить информацию о базовом элементе',
   parameters: [
-    {
-      name: 'base_element_id',
-      description: 'Идентификатор базового элемента',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    base_element.parameters.base_element_id,
   ],
   responses: {
     '200': {
       description: 'Информация о базовом элементе',
       content: {
         'application/json': {
-          schema: require('../../../../schemas/base_element/info.js'),
+          schema: base_element.get,
         }
       }
     },

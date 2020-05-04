@@ -1,14 +1,11 @@
+const material = require('../../../../schemas/material')
+
+
 module.exports = {
   tags: ['Буфер обмена'],
   summary: 'Удалить учебный материал из буфера обмена',
   parameters: [
-    {
-      name: 'material_id',
-      description: 'Идентификатор учебного материала',
-      in: 'path',
-      schema: { type: 'integer' },
-      required: true,
-    }
+    material.parameters.material_id,
   ],
   responses: {
     '200': {

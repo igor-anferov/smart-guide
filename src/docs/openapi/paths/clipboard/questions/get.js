@@ -1,3 +1,6 @@
+const question = require('../../../schemas/question')
+
+
 module.exports = {
   tags: ['Буфер обмена'],
   summary: 'Получить иформацию о вопросах, находящихся в буфере обмена',
@@ -8,18 +11,7 @@ module.exports = {
         'application/json': {
           schema: {
             type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'question_id': { type: 'integer' },
-                'text': {
-                  type: 'string',
-                  description: 'Формулировка вопроса',
-                  example: 'Отыскание точек локального экстремума функции. Достаточные условия экстремума',
-                },
-              },
-              required: ['question_id', 'text']
-            }
+            items: question.list,
           }
         }
       }
