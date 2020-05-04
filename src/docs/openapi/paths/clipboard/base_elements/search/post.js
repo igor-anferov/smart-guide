@@ -32,12 +32,12 @@ module.exports = {
               type: 'object',
               properties: {
                 'base_element': base_element.list,
-                /*'matches': {
+                'matches': {
                   type: 'array',
                   minItems: 1,
                   items: { type: 'string', minLength: 1 },
                   example: ['Лапласа', 'формулировка'],
-                },*/
+                },
                 'matched_tags': base_element.properties.tags,
               },
               required: ['base_element'/*, 'matches'*/]

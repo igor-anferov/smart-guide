@@ -43,11 +43,13 @@ router.post('/:material_id', async (req, res, next) => {
       const material_id = parseInt(req.params.material_id)
       const title = req.body.title
       const tags = req.body.tags
-      await client.query(
-        'UPDATE Materials SET title = $1 WHERE material_id = $2 AND author_id = $3',
-        [title, material_id, req.user.id]
-      )
-      if(tags) {
+      if (title) {
+        await client.query(
+          'UPDATE Materials SET title = $1 WHERE material_id = $2 AND author_id = $3',
+          [title, material_id, req.user.id]
+        )
+      }
+      if (tags) {
         await client.query(
           'DELETE FROM MaterialTags WHERE material_id = $1',
           [material_id]

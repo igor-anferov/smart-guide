@@ -64,7 +64,7 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
   }
 })
 
-router.post('/base_elements/search', async (req, res, next) => {
+/*router.post('/base_elements/search', async (req, res, next) => {
   var query = req.body.query
   query = query.replace(/ /g, '|');
   try {
@@ -99,7 +99,7 @@ router.post('/base_elements/search', async (req, res, next) => {
   } catch (e) {
     next(e)
   }
-})
+})*/
 
 router.get('/materials', async (req, res, next) => {
   try {
