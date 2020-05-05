@@ -18,7 +18,10 @@ module.exports = {
             'user_ids': {
               type: 'array',
               description: 'Пользователи для добавления в группу',
-              items: user.properties.user_id,
+              //items: user.properties.user_id,
+              items: {
+                type: 'string',
+              }
             }
           },
           required: ['user_ids'],

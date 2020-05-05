@@ -92,7 +92,7 @@ router.post ('/', async (req, res, next) => {
           if (users.hasOwnProperty(user)) {
             await client.query(
               'INSERT INTO GroupMembers (group_id, user_id, date_entry) VALUES ($1, $2, CURRENT_TIMESTAMP)',
-              [group_id, users[user]]
+              [group_id, parseInt(users[user])]
             )
           }
         }
@@ -116,10 +116,6 @@ router.post ('/:group_id/leave', async (req, res, next) => {
     await client.query('BEGIN')
     const group_id = req.params.group_id
     try {
-      /*await client.query(
-        'UPDATE GroupMembers SET date_exit = CURRENT_TIMESTAMP WHERE user_id = $1 AND group_id = $2',
-        [req.user.id, group_id]
-      )*/
       await client.query(
         'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2',
         [req.user.id, group_id]
@@ -174,14 +170,14 @@ router.post ('/:group_id/members', async (req, res, next) => {
   try {
     await client.query('BEGIN')
     try {
-      const name = req.params.group_id
+      const group_id = req.params.group_id
       const users = req.body.user_ids
       if (users) {
         for (var user in users) {
           if (users.hasOwnProperty(user)) {
             await client.query(
               'INSERT INTO GroupMembers (group_id, user_id, date_entry) VALUES ($1, $2, CURRENT_TIMESTAMP)',
-              [group_id, users[user]]
+              [group_id, parseInt(users[user])]
             )
           }
         }
@@ -202,19 +198,15 @@ router.delete('/:group_id/members/:user_id', async (req, res, next) => {
   try {
     await client.query('BEGIN')
     const group_id = req.params.group_id
-    const user_id = req.params.group_id
+    const user_id = req.params.user_id
     try {
       const creator = await client.query(
         'SELECT creator_id FROM Groups WHERE group_id = $1',
         [group_id]
       )
       if (creator.rows[0].creator_id !== req.user.id) {
-        return res.status(403).send('Вы не являетесь создателем данной группы')
+        return res.status(403).send('Пользователь не является создателем данной группы')
       }
-      /*await client.query(
-        'UPDATE GroupMembers SET date_exit = CURRENT_TIMESTAMP WHERE user_id = $1 AND group_id = $2',
-        [user_id, group_id]
-      )*/
       await client.query(
         'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2',
         [user_id, group_id]
