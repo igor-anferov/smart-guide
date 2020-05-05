@@ -64,13 +64,13 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
   }
 })
 
-/*router.post('/base_elements/search', async (req, res, next) => {
+router.post('/base_elements/search', async (req, res, next) => {
   var query = req.body.query
   query = query.replace(/ /g, '|');
   try {
     const results_title = await pool.query(
-      "SELECT json_build_object('base_element_id', base_element_id, 'title', \
-      ts_headline('russian', title, q), 'source', source, 'type', type) as base_element\
+      "SELECT json_build_object('base_element_id', base_element_id, 'title', title, \
+      'source', source, 'type', type) as base_element, ts_headline('russian', title, q) as matches\
       FROM BaseElements, to_tsquery('russian', $3) as q\
       WHERE author_id = $1 AND clipboard = $2 AND to_tsvector('russian', title) @@ q", 
       [req.user.id, true, query]
@@ -86,20 +86,26 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
     )
     var results = results_tags.rows
     const size = results_title.rows.length;
-    var index=-1;
-    for (var i=0; i < size; i++) {
+    var matches_title = [];
+    var index = -1;
+    for (var i = 0; i < size; i++) {
+      matches_title = results_title.rows[i].matches.match(/<b>[^\s]*<\/b>/g)
+      for(var j = 0; j < matches_title.length; j++) {
+        matches_title[0] = matches_title[0].slice(3, matches_title[0].length-4)
+      }
+      results_title.rows[i].matches = matches_title;
       index = results.findIndex(x => x.base_element.base_element_id === results_title.rows[i].base_element.base_element_id)
       if(index === -1) {
-        results.push(results_title.rows[i]);
+        results.push(results_title.rows[i])
       } else {
-        results[index].base_element.title = results_title.rows[i].base_element.title
+        results[index].matches = results_title.rows[i].matches
       }
     }
     res.status(200).send(results)
   } catch (e) {
     next(e)
   }
-})*/
+})
 
 router.get('/materials', async (req, res, next) => {
   try {

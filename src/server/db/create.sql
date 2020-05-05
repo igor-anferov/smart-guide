@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS Users (
   login varchar unique,
   hs256_sha256 char(64),
   email varchar unique,
+  name varchar,
   university varchar,
   faculty varchar,
   created timestamp
@@ -86,7 +87,7 @@ CREATE TABLE IF NOT EXISTS Books (
 
 CREATE TABLE IF NOT EXISTS Groups (
   group_id serial primary key,
-  name varchar null,
+  name varchar,
   creator_id int,
   created timestamp
 );
@@ -95,7 +96,7 @@ CREATE TABLE IF NOT EXISTS GroupMembers (
   group_id int,
   user_id int,
   date_entry timestamp,
-  date_exit timestamp,
+  --date_exit timestamp,
   primary key(group_id, user_id)
 );
 

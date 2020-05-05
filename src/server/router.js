@@ -45,6 +45,8 @@ async function setupApi(router) {
   router.use('/materials', require('./materials/router'))
   router.use('/exams', require('./exams/router'))
   router.use('/groups', require('./groups/router'))
+  router.use('/users', require('./users/router'))
+  router.use('/self', require('./self/router'))
 
   router.use((err, req, res, next) => {
     const status = err.status || (err instanceof ClientError && 400) || 500;

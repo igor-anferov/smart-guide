@@ -4,7 +4,8 @@ BEGIN;
 
 INSERT INTO Users (login, hs256_sha256, email) VALUES
 	('user', '1815e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c84', 'user@mail.ru'),
-	('prodolban', '3245e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c89', 'prodolban@mail.ru');
+	('prodolban', '3245e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c89', 'prodolban@mail.ru'),
+	('fredpro', '3245e513d9176266ea9719b2c3722fe7c2b92c35295b4236292caa329dae6c89', 'fredpro@mail.ru');
 
 INSERT INTO Groups (name, creator_id, created) VALUES
 	('me and my friend prodolban', 1, '20/04/2020 19:30:07');
