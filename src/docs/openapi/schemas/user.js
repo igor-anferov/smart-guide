@@ -7,12 +7,10 @@ const properties = {
   },
   'name': {
     type: 'string',
-    minLength: 1,
     example: 'Пупкин Иван',
   },
   'login': {
     type: 'string',
-    minLength: 1,
     example: 'ivan_pupkin',
   },
   'email': {
@@ -22,18 +20,17 @@ const properties = {
   },
   'university': {
     type: 'string',
-    minLength: 1,
     example: 'МГУ им. М. В. Ломоносова',
   },
   'faculty': {
     type: 'string',
-    minLength: 1,
     example: 'ВМК',
   },
 }
 
 const edit = filter(properties, [
   'name',
+  'login',
   'email',
   'university',
   'faculty',

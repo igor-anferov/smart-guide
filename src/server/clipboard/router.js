@@ -70,7 +70,7 @@ router.post('/base_elements/search', async (req, res, next) => {
   try {
     const results_title = await pool.query(
       "SELECT json_build_object('base_element_id', base_element_id, 'title', title, \
-      'source', source, 'type', type) as base_element, ts_headline('russian', title, q) as matched\
+      'source', source, 'type', type) as base_element, ts_headline('russian', title, q) as matches\
       FROM BaseElements, to_tsquery('russian', $3) as q\
       WHERE author_id = $1 AND clipboard = $2 AND to_tsvector('russian', title) @@ q", 
       [req.user.id, true, query]
@@ -86,19 +86,19 @@ router.post('/base_elements/search', async (req, res, next) => {
     )
     var results = results_tags.rows
     const size = results_title.rows.length;
-    var matched_title = [];
+    var matches_title = [];
     var index = -1;
     for (var i = 0; i < size; i++) {
-      matched_title = results_title.rows[i].matched.match(/<b>[^\s]*<\/b>/g)
-      for(var j = 0; j < matched_title.length; j++) {
-        matched_title[0] = matched_title[0].slice(3, matched_title[0].length-4)
+      matches_title = results_title.rows[i].matches.match(/<b>[^\s]*<\/b>/g)
+      for(var j = 0; j < matches_title.length; j++) {
+        matches_title[0] = matches_title[0].slice(3, matches_title[0].length-4)
       }
-      results_title.rows[i].matched = matched_title;
+      results_title.rows[i].matches = matches_title;
       index = results.findIndex(x => x.base_element.base_element_id === results_title.rows[i].base_element.base_element_id)
       if(index === -1) {
         results.push(results_title.rows[i])
       } else {
-        results[index].matched = results_title.rows[i].matched
+        results[index].matches = results_title.rows[i].matches
       }
     }
     res.status(200).send(results)

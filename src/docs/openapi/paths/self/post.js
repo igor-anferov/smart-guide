@@ -17,5 +17,9 @@ module.exports = {
       description: 'Информация о себе успешно обновлена',
     },
     '401': require('../../responses/401'),
+    '400': {
+      description: 'Редактирование не удалась',
+      content: require('../../responses/400')
+    }
   }
 }
