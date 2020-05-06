@@ -1,5 +1,5 @@
 const { make_path_params, filter } = require('../utils')
-const user = require('./user')
+//const user = require('./user')
 
 const properties = {
   'group_id': {

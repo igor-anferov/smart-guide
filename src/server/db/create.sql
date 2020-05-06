@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS Exams (
   group_id int,
   author_id int,
   title varchar,
-  teacher varchar,
+  professor varchar,
   created timestamp,
   forks_from int,
   delete_mark boolean default false

@@ -85,6 +85,7 @@ module.exports = {
 
     '/clipboard/questions': {
       get: require('./paths/clipboard/questions/get.js'),
+      post: require('./paths/clipboard/questions/post.js'),
     },
     '/clipboard/questions/{question_id}': {
       delete: require('./paths/clipboard/questions/question/delete.js'),
@@ -124,13 +125,35 @@ module.exports = {
     '/materials/{material_id}/base_elements/{base_element_id}/copy_to_clipboard': {
       post: require('./paths/materials/material/base_elements/base_element/copy_to_clipboard/post.js'),
     },
+    '/materials/{material_id}/{question_id}/copy_to_question': {
+      post: require('./paths/materials/material/copy_to_question/post.js'),
+    },
+    
+    
+    '/questions/search': {
+      post: require('./paths/questions/search/post.js'),
+    },
+    '/questions/{question_id}': {
+      get: require('./paths/questions/question/get.js'),
+      post: require('./paths/questions/question/post.js'),
+    },
+    '/questions/{question_id}/materials': {
+      post: require('./paths/questions/question/materials/post.js'),
+    },
+    '/questions/{question_id}/materials/{material_id}': {
+      delete: require('./paths/questions/question/materials/material/delete.js'),
+    },  
+    '/questions/{question_id}/materials/{material_id}/move': {
+      post: require('./paths/questions/question/materials/material/move/post.js'),
+    },
+    '/questions/{question_id}/materials/{material_id}/copy_to_clipboard': {
+      post: require('./paths/questions/question/materials/material/copy_to_clipboard/post.js'),
+    },
 
 
     '/exams': {
       get: require('./paths/exams/get.js'),
-    },
-    '/exams/{exam_id}': {
-      delete: require('./paths/exams/exam/delete.js'),
+      post: require('./paths/exams/post.js'),
     },
     '/groups/{group_id}/exams': {
       get: require('./paths/groups/group/exams/get.js'),
@@ -138,6 +161,27 @@ module.exports = {
     '/groups/{group_id}/exams/{exam_id}': {
       delete: require('./paths/groups/group/exams/exam/delete.js'),
     },
+    '/exams/search': {
+      post: require('./paths/exams/search/post.js'),
+    },
+    '/exams/{exam_id}': {
+      get: require('./paths/exams/exam/get.js'),
+      post: require('./paths/exams/exam/post.js'),
+      delete: require('./paths/exams/exam/delete.js'),
+    },
+    '/exams/{exam_id}/questions': {
+      post: require('./paths/exams/exam/questions/post.js'),
+    },
+    '/exams/{exam_id}/questions/{question_id}': {
+      delete: require('./paths/exams/exam/questions/question/delete.js'),
+    },  
+    '/exams/{exam_id}/questions/{question_id}/move': {
+      post: require('./paths/exams/exam/questions/question/move/post.js'),
+    },
+    '/exams/{exam_id}/questions/{question_id}/copy_to_clipboard': {
+      post: require('./paths/exams/exam/questions/question/copy_to_clipboard/post.js'),
+    },
+
 
   },
   components: {

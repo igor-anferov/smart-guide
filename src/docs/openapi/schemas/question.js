@@ -3,7 +3,7 @@ const { make_path_params, filter } = require('../utils')
 const properties = {
   'question_id': {
     type: 'integer',
-    description: 'Идентификатор учебного материала',
+    description: 'Идентификатор вопроса',
   },
   'text': {
     type: 'string',

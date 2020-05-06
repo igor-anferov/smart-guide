@@ -1,12 +1,9 @@
-const material = require('../../../schemas/material')
-const question = require('../../../schemas/question')
 const exam = require('../../../schemas/exam')
 const group = require('../../../schemas/group')
 
-
 module.exports = {
-  tags: ['Учебные материалы'],
-  summary: 'Поиск по всем учебным материалам',
+  tags: ['Экзамены'],
+  summary: 'Поиск по всем экзаменам',
   ...require('../../../requests/body_search_query.js'),
   responses: {
     '200': {
@@ -20,33 +17,31 @@ module.exports = {
                 {
                   type: 'object',
                   properties: {
-                    'material': material.list,
+                    'ехam': exam.list,
                     'matches': {
                       type: 'array',
                       minItems: 1,
                       items: { type: 'string', minLength: 1 },
-                      example: ['Лапласа', 'формулировка'],
+                      example: ['введение', 'сети'],
                     },
-                    'matched_tags': material.properties.tags,
+                    'matched_tags': exam.properties.tags,
                   },
-                  required: ['material', 'matches']
+                  required: ['exam']
                 },
                 {
                   type: 'object',
                   properties: {
-                    'material': material.list,
-                    'question': question.list,
                     'exam': exam.list,
                     'group': group.list,
                     'matches': {
                       type: 'array',
                       minItems: 1,
                       items: { type: 'string' },
-                      example: ['Лапласа', 'формулировка'],
+                      example: ['введение', 'сети'],
                     },
-                    'matched_tags': material.properties.tags,
+                    'matched_tags': exam.properties.tags,
                   },
-                  required: ['material', 'question', 'exam', 'matches']
+                  required: ['exam']
                 }
               ]
             },

@@ -7,7 +7,7 @@ const pool = require('../db/pool')
 router.get('/', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT exam_id, title, teacher FROM Exams WHERE author_id = $1 AND group_id IS NULL;',
+      'SELECT exam_id, title, professor FROM Exams WHERE author_id = $1 AND group_id IS NULL;',
       [req.user.id]
     )
     res.status(200).send(results.rows)
