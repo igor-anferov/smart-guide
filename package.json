@@ -16,6 +16,7 @@
     "hypher": "^0.2.5",
     "js-sha256": "^0.9.0",
     "latex.js": "^0.12.1",
+    "lodash": "^4.17.15",
     "material-ui-chip-input": "^1.1.0",
     "react": "^16.13.1",
     "react-codemirror2": "^7.1.0",

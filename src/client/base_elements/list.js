@@ -10,9 +10,11 @@ import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom'
+import { Container, Draggable } from "react-smooth-dnd";
 
 import ApiContext from '../api';
 import ImageUploadDialog from './image-upload-dialog';
@@ -186,32 +188,38 @@ class BaseElements extends React.Component {
         ) : (
           <div/>
         )}
-        <Grid container spacing={this.props.spacing}>
+        <Container nonDragAreaSelector=".no-drag" behaviour="copy" groupName="base_elements" render={(ref) => (
+        <Grid container spacing={this.props.spacing} ref={ref}>
           <Grid container direction='column' item xs={12}>
             <TextField label="Поиск" variant="outlined" />
           </Grid>
-          {this.state.elements.map((item) => (
-            <Grid container item key={item.base_element_id} {...this.props.breakpoints}>
-              <Card className={this.props.classes.flexColumn}>
-                <CardActionArea component={item.type === 'latex' ? Link : 'button'} to={`/base_elements/${item.base_element_id}/latex/edit`} className={this.props.classes.flexColumn} onClick={()=>this.handleItemClick(item)}>
-                  <CardContent>
-                    <Typography gutterBottom variant="h5">
-                      { item.title }
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      { item.source }
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-                <CardActions className={this.props.classes.flexBoxRight}>
-                  <Button size="small" color="secondary" onClick={()=>this.handleRemove(item.base_element_id)}>
-                    Удалить
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-          <Grid container item {...this.props.breakpoints}>
+            {this.state.elements.map((item) => (
+              <Draggable key={item.base_element_id} render={(item_ref) => (
+                <Grid container item ref={item_ref} key={item.base_element_id} style={{cursor: 'move'}} xs={12}>
+                  <Card className={this.props.classes.flexColumn}>
+                    <CardActionArea component={item.type === 'latex' ? Link : 'button'} to={`/base_elements/${item.base_element_id}/latex/edit`} className={`no-drag ${this.props.classes.flexColumn}`} onClick={()=>this.handleItemClick(item)}>
+                      <CardContent>
+                        <Typography gutterBottom variant="h5">
+                          { item.title }
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          { item.source }
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                    <CardActions className={this.props.classes.flexBoxRight}>
+                      <Box mr="auto">
+                        <DragIndicatorIcon/>
+                      </Box>
+                      <Button size="small" color="secondary" className="no-drag" onClick={()=>this.handleRemove(item.base_element_id)}>
+                        Удалить
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              )}/>
+            ))}
+          <Grid container item xs={12}>
             <Card className={this.props.classes.flex}>
               <CardActionArea aria-controls="add-menu" aria-haspopup="true" onClick={this.handleAddClick}>
                 <CardContent className={this.props.classes.flexBox}>
@@ -221,6 +229,7 @@ class BaseElements extends React.Component {
             </Card>
           </Grid>
         </Grid>
+        )}/>
       </Box>
     );
   }

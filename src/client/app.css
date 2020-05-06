@@ -46,3 +46,7 @@
   }
 }
 
+.dnd-drop-placeholder {
+  background-color: rgba(65, 83, 175, 0.1);
+  border: 1px dashed rgba(65, 83, 175, 0.9);
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './fonts/index.css';
 import App from './client/app';
 import Swagger from './docs/swagger';
 

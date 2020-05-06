@@ -9,7 +9,6 @@ export default function () {
   return (
     <Switch>
       <Route exact path={`${match.url}/`} component={ Main } />
-      <Route exact path={`${match.url}/new`} component={ Material } />
       <Route exact path={`${match.url}/:material_id/edit`} component={ Material } />
     </Switch>
   );
