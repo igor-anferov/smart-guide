@@ -4,7 +4,6 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS BaseElements (
   base_element_id serial primary key,
   title varchar,
-  category varchar,
   type varchar,
   is_pivotal boolean,
   body bytea,
@@ -111,7 +110,6 @@ CREATE TABLE IF NOT EXISTS MaterialComments (
   comment_id serial primary key,
   text varchar,
   material_id int,
-  group_id int,
   author_id int,
   created timestamp
 );

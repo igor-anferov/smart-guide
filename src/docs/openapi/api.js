@@ -149,6 +149,9 @@ module.exports = {
     '/questions/{question_id}/materials/{material_id}/copy_to_clipboard': {
       post: require('./paths/questions/question/materials/material/copy_to_clipboard/post.js'),
     },
+    '/questions/{question_id}/{material_id}/copy_to_exam': {
+      post: require('./paths/questions/question/copy_to_exam/post.js'),
+    },
 
 
     '/exams': {
@@ -177,9 +180,6 @@ module.exports = {
     },  
     '/exams/{exam_id}/questions/{question_id}/move': {
       post: require('./paths/exams/exam/questions/question/move/post.js'),
-    },
-    '/exams/{exam_id}/questions/{question_id}/copy_to_clipboard': {
-      post: require('./paths/exams/exam/questions/question/copy_to_clipboard/post.js'),
     },
 
 
