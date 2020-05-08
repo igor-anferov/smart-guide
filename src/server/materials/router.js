@@ -6,6 +6,130 @@ const pool = require('../db/pool')
 
 const { image_checker, latex_checker } = require('../base_elements/utils')
 
+router.post('/search', async (req, res, next) => {
+  var query = req.body.query
+  const own_exams = req.body.own_exams
+  const groups_exams = req.body.groups_exams
+  const global_exams = req.body.global
+  query = query.replace(/ /g, '|')
+  var results_tags
+  var results_title
+  try {
+      if (own_exams) {
+      results_title = await pool.query(
+        "SELECT json_build_object('material_id', m.material_id, 'title', m.title) as material,\
+        ts_headline('russian', m.title, tq) as matches, \
+        json_build_object('question_id', q.question_id, 'text', q.text) as question,\
+        json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam\
+        FROM Materials as m, to_tsquery('russian', $2) as tq, Questions as q,\
+        QuestionMaterials as qm, Exams e, ExamQuestions eq\
+        WHERE m.material_id = qm.material_id AND q.question_id = qm.question_id\
+        AND e.exam_id = eq.exam_id AND q.question_id = eq.question_id \
+        AND e.author_id = $1\
+        AND to_tsvector('russian', m.title) @@ tq", 
+        [req.user.id, query]
+      )
+      results_tags = await pool.query( 
+        "SELECT json_build_object('material_id', m.material_id, 'title', m.title) as material,\
+        array_agg(tag) as matched_tags, \
+        json_build_object('question_id', q.question_id, 'text', q.text) as question,\
+        json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam\
+        FROM Materials as m, to_tsquery('russian', $2) as tq, Questions as q,\
+        QuestionMaterials as qm, Exams e, ExamQuestions eq, MaterialTags mt\
+        WHERE m.material_id = qm.material_id AND q.question_id = qm.question_id\
+        AND e.exam_id = eq.exam_id AND q.question_id = eq.question_id \
+        AND e.author_id = $1\
+        AND mt.material_id = m.material_id\
+        AND to_tsvector('russian', tag) @@ to_tsquery('russian', $2) \
+        GROUP BY(m.material_id, m.title,  q.question_id, q.text, e.exam_id, e.title, e.professor)",
+        [req.user.id, query]
+      )
+    }
+    if (groups_exams) {
+      results_title = await pool.query(
+        "SELECT json_build_object('material_id', m.material_id, 'title', m.title) as material,\
+        ts_headline('russian', m.title, tq) as matches, \
+        json_build_object('question_id', q.question_id, 'text', q.text) as question,\
+        json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam\
+        FROM Materials as m, to_tsquery('russian', $2) as tq, Questions as q,\
+        QuestionMaterials as qm, Exams e, ExamQuestions eq, GroupMembers mg\
+        WHERE m.material_id = qm.material_id AND q.question_id = qm.question_id\
+        AND e.exam_id = eq.exam_id AND q.question_id = eq.question_id \
+        AND e.group_id = mg.group_id AND mg.user_id = $1\
+        AND to_tsvector('russian', m.title) @@ tq", 
+        [req.user.id, query]
+      )
+      results_tags = await pool.query( 
+        "SELECT json_build_object('material_id', m.material_id, 'title', m.title) as material,\
+        array_agg(tag) as matched_tags, \
+        json_build_object('question_id', q.question_id, 'text', q.text) as question,\
+        json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam\
+        FROM Materials as m, to_tsquery('russian', $2) as tq, Questions as q,\
+        QuestionMaterials as qm, Exams e, ExamQuestions eq, GroupMembers mg, MaterialTags mt\
+        WHERE m.material_id = qm.material_id AND q.question_id = qm.question_id\
+        AND e.exam_id = eq.exam_id AND q.question_id = eq.question_id \
+        AND e.group_id = mg.group_id AND mg.user_id = $1\
+        AND mt.material_id = m.material_id\
+        AND to_tsvector('russian', tag) @@ to_tsquery('russian', $2) \
+        GROUP BY(m.material_id, m.title,  q.question_id, q.text, e.exam_id, e.title, e.professor)",
+        [req.user.id, query]
+      )
+    }
+    if (global_exams) {
+      results_title = await pool.query(
+        "SELECT json_build_object('material_id', m.material_id, 'title', m.title) as material,\
+        ts_headline('russian', m.title, tq) as matches, \
+        json_build_object('question_id', q.question_id, 'text', q.text) as question,\
+        json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam\
+        FROM Materials as m, to_tsquery('russian', $2) as tq, Questions as q,\
+        QuestionMaterials as qm, Exams e, ExamQuestions eq, GroupMembers mg\
+        WHERE m.material_id = qm.material_id AND q.question_id = qm.question_id\
+        AND e.exam_id = eq.exam_id AND q.question_id = eq.question_id \
+        AND ((e.author_id IS NULL AND e.group_id = mg.group_id AND mg.user_id != $1) OR\
+        (e.author_id != $1 AND e.author_id IS NOT NULL))\
+        AND to_tsvector('russian', m.title) @@ tq", 
+        [req.user.id, query]
+      )
+      results_tags = await pool.query( 
+        "SELECT json_build_object('material_id', m.material_id, 'title', m.title) as material,\
+        array_agg(tag) as matched_tags, \
+        json_build_object('question_id', q.question_id, 'text', q.text) as question,\
+        json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam\
+        FROM Materials as m, to_tsquery('russian', $2) as tq, Questions as q,\
+        QuestionMaterials as qm, Exams e, ExamQuestions eq, MaterialTags mt, GroupMembers mg\
+        WHERE m.material_id = qm.material_id AND q.question_id = qm.question_id\
+        AND e.exam_id = eq.exam_id AND q.question_id = eq.question_id \
+        AND ((e.author_id IS NULL AND e.group_id = mg.group_id AND mg.user_id != $1) OR\
+        (e.author_id != $1 AND e.author_id IS NOT NULL))\
+        AND mt.material_id = m.material_id\
+        AND to_tsvector('russian', tag) @@ to_tsquery('russian', $2) \
+        GROUP BY(m.material_id, m.title,  q.question_id, q.text, e.exam_id, e.title, e.professor)",
+        [req.user.id, query]
+      )
+    }
+    var results = results_tags.rows
+    const size = results_title.rows.length;
+    var matches_title = [];
+    var index = -1;
+    for (var i = 0; i < size; i++) {
+      matches_title = results_title.rows[i].matches.match(/<b>[^\s]*<\/b>/g)
+      for(var j = 0; j < matches_title.length; j++) {
+        matches_title[j] = matches_title[j].slice(3, matches_title[j].length-4)
+      }
+      results_title.rows[i].matches = matches_title;
+      index = results.findIndex(x => x.material.material_id === results_title.rows[i].material.material_id)
+      if(index === -1) {
+        results.push(results_title.rows[i])
+      } else {
+        results[index].matches = results_title.rows[i].matches
+      }
+    }
+    res.status(200).send(results)
+  } catch (e) {
+    next(e)
+  }
+})
+
 router.get('/:material_id', async (req, res, next) => {
   try {
     const material_id = parseInt(req.params.material_id)

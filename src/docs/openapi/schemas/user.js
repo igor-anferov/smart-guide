@@ -26,6 +26,14 @@ const properties = {
     type: 'string',
     example: 'ВМК',
   },
+  'current_hs256': {
+    type: 'string',
+    example: '16aa95479af46da4def2d52a345960d2cd276398763e430571ea4aba3ac70f12',
+  },
+  'new_hs256': {
+    type: 'string',
+    example: '16aa95479af46da4def2d52a345960d2cd276398764e430571ea4aba3ac70f12',
+  },
 }
 
 const edit = filter(properties, [
@@ -34,6 +42,8 @@ const edit = filter(properties, [
   'email',
   'university',
   'faculty',
+  'current_hs256',
+  'new_hs256'
 ])
 
 const list = filter(properties, [
@@ -49,11 +59,12 @@ module.exports = {
   properties,
   parameters: make_path_params(properties),
 
-  edit: {
-    type: 'object',
-    properties: edit,
-    minProperties: 1,
-  },
+  edit:
+    { 
+      type: 'object',
+      properties: edit, 
+      minProperties: 1,
+    },
 
   list: {
     type: 'object',

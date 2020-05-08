@@ -21,7 +21,7 @@ INSERT INTO Books (title, user_id, content) VALUES
 
 INSERT INTO Exams (group_id, author_id, title, professor, created) VALUES
 	(null, 1, 'Линейная алгебра и аналитическая геометрия', 'Ким Галина Динховна', '20/04/2020 21:03:57'),
-	(1, 1, 'Математический анализ', 'Фомичёв Василий Владимирович', '20/05/2020 20:37:01'),
+	(null, 2, 'Математический анализ', 'Фомичёв Василий Владимирович', '20/05/2020 20:37:01'),
 	(1, 1, 'Архитектура ЭВМ и язык ассемблера', 'Столяров Андрей Викторович', '27/05/2020 17:56:31');
 
 INSERT INTO Questions (text, clipboard, author_id, created) VALUES
@@ -1256,5 +1256,12 @@ INSERT INTO BaseElementTags (base_element_id, tag) VALUES
 	(1, 'теорема Ферма'),
 	(1, 'теоремы о точках'),
 	(1, 'Ферма ключ');	
+
+INSERT INTO MaterialTags (material_id, tag) VALUES
+	(20, 'регистр'),
+	(20, 'i386'),
+	(5, 'Линейная алгебра'),
+	(5, 'базис'),
+	(13, 'экстремум');
 
 COMMIT;

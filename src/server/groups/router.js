@@ -120,10 +120,82 @@ router.post ('/:group_id/leave', async (req, res, next) => {
         'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2',
         [req.user.id, group_id]
       )
+      const exams = await client.query(
+        'SELECT array_agg(exam_id) as e FROM Exams WHERE group_id = $1',
+        [group_id]
+      )
+      if (exams.rows[0].e) {
+        for (i = 0; i < exams.rows[0].e.length; i++) {
+          var new_exam = await client.query(
+            'INSERT INTO Exams (author_id, title, professor, created, forks_from)\
+            SELECT $1, title, professor, CURRENT_TIMESTAMP, exam_id FROM Exams\
+            WHERE exam_id = $2 RETURNING exam_id',
+            [req.user.id, exams.rows[0].e[i]]
+          )
+          const questions = await client.query(
+            'SELECT array_agg(question_id) as q FROM ExamQuestions WHERE exam_id = $1',
+            [exams.rows[0].e[i]]
+          )
+          if (questions.rows[0].q) {
+            for (j = 0; j < questions.rows[0].q.length; j++) {
+              var new_question = await client.query(
+                'INSERT INTO Questions (text, author_id, created, forks_from)\
+                SELECT text, $1, CURRENT_TIMESTAMP, question_id FROM Questions\
+                WHERE question_id = $2 RETURNING question_id',
+                [req.user.id, questions.rows[0].q[j]]
+              )
+              await client.query(
+                'INSERT INTO ExamQuestions (exam_id, position, question_id)\
+                SELECT $1, position, $2 FROM ExamQuestions\
+                WHERE exam_id = $3 AND question_id = $4',
+                [new_exam.rows[0].exam_id, new_question.rows[0].question_id, exams.rows[0].e[i], questions.rows[0].q[j] ]
+              )
+              const materials = await client.query(
+                'SELECT array_agg(material_id) as m FROM QuestionMaterials WHERE question_id = $1',
+                [questions.rows[0].q[j]]
+              )
+              if (materials.rows[0].m) {
+                for (k = 0; k < materials.rows[0].m.length; k++) {
+                  var new_material = await client.query(
+                    'INSERT INTO Materials (title, author_id, created, forks_from)\
+                    SELECT title, $1, CURRENT_TIMESTAMP, material_id FROM Materials\
+                    WHERE material_id = $2 RETURNING material_id',
+                    [req.user.id, materials.rows[0].m[k]]
+                  )
+                  await client.query(
+                    'INSERT INTO QuestionMaterials (question_id, position, material_id)\
+                    SELECT $1, position, $2 FROM QuestionMaterials\
+                    WHERE question_id = $3 AND material_id = $4',
+                    [new_question.rows[0].question_id, new_material.rows[0].material_id, questions.rows[0].q[j], materials.rows[0].m[k] ]
+                  )
+                  const base_elements = await client.query(
+                    'SELECT array_agg(base_element_id) as b FROM MaterialBaseElements WHERE material_id = $1',
+                    [materials.rows[0].m[k]]
+                  )
+                  if (base_elements.rows[0].b) {
+                    for (l = 0; l < base_elements.rows[0].b.length; l++) {
+                      var new_base_element = await client.query(
+                        'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, forks_from)\
+                        SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, base_element_id FROM BaseElements\
+                        WHERE base_element_id = $2 RETURNING base_element_id',
+                        [req.user.id, base_elements.rows[0].b[l]]
+                      )
+                      await client.query(
+                        'INSERT INTO MaterialBaseElements (material_id, position, base_element_id)\
+                        SELECT $1, position, $2 FROM MaterialBaseElements\
+                        WHERE material_id = $3 AND base_element_id = $4',
+                        [new_material.rows[0].material_id, new_base_element.rows[0].base_element_id, materials.rows[0].m[k], base_elements.rows[0].b[l] ]
+                      )
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
       await client.query('COMMIT')
-      res.status(201).json({
-        "group_id": group_id
-      })   
+      res.status(200).send()   
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)

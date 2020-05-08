@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS BaseElements (
   source varchar,
   author_id int,
   created timestamp,
+  forks_from int,
   clipboard boolean
 );
 
@@ -20,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Materials (
   created timestamp,
   forks_from int,
   views_count int,
-  clipboard boolean
+  clipboard boolean default false
 );
 
 CREATE TABLE IF NOT EXISTS MaterialBaseElements (
@@ -40,7 +41,7 @@ CREATE TABLE IF NOT EXISTS Questions (
   author_id int,
   created timestamp,
   forks_from int,
-  clipboard boolean
+  clipboard boolean default false
 );
 
 CREATE TABLE IF NOT EXISTS QuestionMaterials (

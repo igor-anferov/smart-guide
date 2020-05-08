@@ -1,6 +1,8 @@
 const assert = require('assert').strict;
 const express = require('express');
 
+const crypto = require('crypto');
+
 let router = express.Router();
 
 const pool = require('../db/pool')
@@ -20,6 +22,7 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   var args = req.body
+  var check = false
   try {
     if (args.login) {
       var results = await pool.query(
@@ -43,7 +46,29 @@ router.post('/', async (req, res, next) => {
         })
       }
     }
+    if (args.current_hs256) {
+      results = await pool.query(
+        'SELECT hs256_sha256 FROM Users WHERE user_id = $1',
+        [req.user.id]
+      )
+      const hash = crypto.createHash('sha256')
+      hash.update(args.current_hs256)
+      const hs256_sha256 = hash.digest('hex')
+      if (hs256_sha256 !== results.rows[0].hs256_sha256) {
+        return res.status(400).json({
+          reason: 'WRONG_HS256'
+        })
+      }
+      check = true
+      delete args.current_hs256
+    }
     if (args) {
+      if (args.new_hs256 && check) {
+        const hash = crypto.createHash('sha256')
+        hash.update(args.new_hs256)
+        args.hs256_sha256 = hash.digest('hex')
+        delete args.new_hs256
+      }
       await pool.query(
         `UPDATE Users SET ${
           Object.keys(args)

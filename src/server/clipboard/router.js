@@ -41,7 +41,8 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
       assert(Boolean(image) !== Boolean(latex))
       const [type, body] = image ? ['image', image.buffer] : ['latex', Buffer.from(latex)];
       const results = await client.query(
-        'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard, created) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING base_element_id',
+        'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard, created)\
+         VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING base_element_id',
         [title, req.user.id, body, source, type, is_pivotal, true]
       )
       for (var tag in tags) {
@@ -91,7 +92,7 @@ router.post('/base_elements/search', async (req, res, next) => {
     for (var i = 0; i < size; i++) {
       matches_title = results_title.rows[i].matches.match(/<b>[^\s]*<\/b>/g)
       for(var j = 0; j < matches_title.length; j++) {
-        matches_title[0] = matches_title[0].slice(3, matches_title[0].length-4)
+        matches_title[j] = matches_title[j].slice(3, matches_title[j].length-4)
       }
       results_title.rows[i].matches = matches_title;
       index = results.findIndex(x => x.base_element.base_element_id === results_title.rows[i].base_element.base_element_id)

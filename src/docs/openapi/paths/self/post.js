@@ -19,7 +19,19 @@ module.exports = {
     '401': require('../../responses/401'),
     '400': {
       description: 'Редактирование не удалась',
-      content: require('../../responses/400')
+        content: {
+        'application/json': {
+          schema: {
+            properties: {
+              reason: {
+                type: 'string',
+                enum: ['LOGIN_ALREADY_USED', 'EMAIL_ALREADY_USED', 'WRONG_HS256'],
+                description: 'LOGIN_ALREADY_USED — Пользователь с таким логином уже зарегистрирован в системе<br/>EMAIL_ALREADY_USED — Пользователь с таким email уже зарегистрирован в системе<br/>WRONG_HS256 — Переданный hs256 не является указанным пользователем в качестве верного'
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
