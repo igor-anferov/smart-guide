@@ -14,6 +14,9 @@ router.get('/:base_element_id/info', async (req, res, next) => {
       'SELECT title, source, type, is_pivotal FROM BaseElements WHERE base_element_id = $1;',
       [base_element_id]
     )
+    if (results.rows.length === 0) {
+      return res.status(404).send('Базовый элемент не найден')
+    }
     const results_tags = await pool.query('SELECT tag FROM BaseElementTags WHERE base_element_id = $1',
       [base_element_id]
     )
@@ -41,6 +44,9 @@ router.get('/:base_element_id/content', async (req, res, next) => {
       'SELECT body, type FROM BaseElements WHERE base_element_id = $1;',
       [base_element_id]
     )
+    if (results.rows.length === 0) {
+      return res.status(404).send('Базовый элемент не найден')
+    }
     const result = results.rows[0]
     switch (result.type) {
       case 'image':
@@ -64,13 +70,20 @@ router.post('/:base_element_id', image_checker, latex_checker, async (req, res, 
     await client.query('BEGIN')
     try {
       const base_element_id = parseInt(req.params.base_element_id)
+      var results = await client.query(
+        'SELECT * FROM BaseElements WHERE base_element_id = $1 AND author_id = $2',
+        [base_element_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Базовый элемент не найден')
+      }
       let { tags, image, latex, ...args } = req.body
       const [allowed_types, body] = image ? [['image'], image.buffer] : latex ? [['latex'], Buffer.from(latex)] : [['image', 'latex']];
       if (body)
         args.body = body
       let arg_num = 0;
       if (args.title || args.source || args.is_pivotal || args.body) {
-        await client.query(
+        results = await client.query(
           `UPDATE BaseElements SET ${
             Object.keys(args)
               .map((k) => k + ` = $${++arg_num}`)
@@ -79,7 +92,7 @@ router.post('/:base_element_id', image_checker, latex_checker, async (req, res, 
             allowed_types
               .map(() => `$${++arg_num}`)
               .join()
-          })`,
+          } )`,
           [...Object.values(args), base_element_id, ...allowed_types]
         )
       }
@@ -115,14 +128,28 @@ router.post('/:base_element_id/:material_id/copy_to_material', async (req, res, 
       var base_element_id = parseInt(req.params.base_element_id)
       const material_id = parseInt(req.params.material_id)
       const position = parseInt(req.body.position)
+      var results = await client.query(
+        'SELECT * FROM Materials WHERE material_id = $1 AND author_id = $2',
+        [material_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Материал не найден')
+      }
       const new_base_element = await pool.query(
-        'INSERT INTO BaseElements (title, category, type, is_pivotal, body, source, author_id, created, clipboard)\
-        SELECT title, category, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements\
+        'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, clipboard)\
+        SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements\
         WHERE base_element_id = $3 AND clipboard = false RETURNING base_element_id',
         [req.user.id, false, base_element_id]
       )
       if (new_base_element.rows.length !== 0) {
         base_element_id = new_base_element.rows[0].base_element_id
+      }
+      results = await client.query(
+        'SELECT * FROM BaseElements WHERE base_element_id = $1 AND clipboard = $2',
+        [base_element_id, true]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Базовый элемент не найден')
       }
       results = await client.query(
         'INSERT INTO MaterialBaseElements (material_id, position, base_element_id)\

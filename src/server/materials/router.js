@@ -137,6 +137,9 @@ router.get('/:material_id', async (req, res, next) => {
       'SELECT title FROM Materials WHERE material_id = $1',
       [material_id]
     )
+    if (results_title.rows.length === 0) {
+      return res.status(404).send('Материал не найден')
+    }
     const results = await pool.query(
       'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements INNER JOIN MaterialBaseElements USING(base_element_id) WHERE material_id = $1 ORDER BY position;',
       [material_id]
@@ -167,9 +170,16 @@ router.post('/:material_id', async (req, res, next) => {
       const material_id = parseInt(req.params.material_id)
       const title = req.body.title
       const tags = req.body.tags
+      const results = await client.query(
+        'SELECT * FROM Materials WHERE material_id = $1 AND author_id = $2',
+        [material_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Материал не найден')
+      }
       if (title) {
         await client.query(
-          'UPDATE Materials SET title = $1 WHERE material_id = $2 AND author_id = $3',
+          'UPDATE Materials SET title = $1 WHERE material_id = $2 AND author_id = $3 RETURNING material_id',
           [title, material_id, req.user.id]
         )
       }
@@ -205,8 +215,16 @@ router.post('/:material_id/base_elements', image_checker, latex_checker, async (
       const material_id = parseInt(req.params.material_id)
       const {image, latex, source, title, is_pivotal, tags} = req.body;
       const [type, body] = image ? ['image', image.buffer] : ['latex', Buffer.from(latex)];
-      const results = await client.query(
-        'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard, created) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING base_element_id',
+      var results = await client.query(
+        'SELECT * FROM Materials WHERE material_id = $1 AND author_id = $2',
+        [material_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Материал не найден')
+      }
+      results = await client.query(
+        'INSERT INTO BaseElements (title, author_id, body, source, type, is_pivotal, clipboard, created)\
+         VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING base_element_id',
         [title, req.user.id, body, source, type, is_pivotal, false]
       )
       const results_position = await pool.query('SELECT COUNT(*) FROM MaterialBaseElements WHERE material_id = $1', 
@@ -241,10 +259,20 @@ router.delete('/:material_id/base_elements/:base_element_id', async (req, res, n
     await client.query('BEGIN')
     try {
       const material_id = parseInt(req.params.material_id)
+      var results = await client.query(
+        'SELECT * FROM Materials WHERE material_id = $1 AND author_id = $2',
+        [material_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Материал не найден')
+      }
       const base_element_id = parseInt(req.params.base_element_id)
-      const results = await pool.query ('DELETE FROM MaterialBaseElements WHERE base_element_id = $1 AND material_id = $2 RETURNING position',
+      results = await pool.query ('DELETE FROM MaterialBaseElements WHERE base_element_id = $1 AND material_id = $2 RETURNING position',
         [base_element_id, material_id]
       )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Базовый элемент не найден')
+      }
       await client.query('UPDATE MaterialBaseElements SET position = position - 1 WHERE material_id = $1 AND position >= $2',
         [material_id, parseInt(results.rows[0].position)]
       )
@@ -267,9 +295,19 @@ router.post('/:material_id/base_elements/:base_element_id/move', async (req, res
       const material_id = parseInt(req.params.material_id)
       const base_element_id = parseInt(req.params.base_element_id)
       const new_position = parseInt(req.body.position)
-      const results = await client.query ('SELECT position FROM MaterialBaseElements WHERE material_id = $1 AND base_element_id = $2',
+      var results = await client.query(
+        'SELECT * FROM Materials WHERE material_id = $1 AND author_id = $2',
+        [material_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Материал не найден')
+      }
+      results = await client.query ('SELECT position FROM MaterialBaseElements WHERE material_id = $1 AND base_element_id = $2',
         [material_id, base_element_id]
       )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Базовый элемент не найден')
+      }
       const old_position = parseInt(results.rows[0].position)
       if (new_position < old_position) {
         await client.query('UPDATE MaterialBaseElements SET position = position + 1 WHERE material_id = $1 AND position BETWEEN $2 AND $3',
@@ -295,16 +333,26 @@ router.post('/:material_id/base_elements/:base_element_id/move', async (req, res
 })
 
 router.post('/:material_id/base_elements/:base_element_id/copy_to_clipboard', async (req, res, next) => {
+  const client = await pool.connect()
   try {
-    const base_element_id = parseInt(req.params.base_element_id)
-    await pool.query(
-      'INSERT INTO BaseElements (title, category, type, is_pivotal, body, source, author_id, created, clipboard)\
-      SELECT title, category, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3',
-      [req.user.id, true, base_element_id]
-    )
-    res.status(200).send()
-  } catch (e) {
-    next(e)
+    await client.query('BEGIN')
+    try {
+      const base_element_id = parseInt(req.params.base_element_id)
+      const results =  await client.query(
+        'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, clipboard)\
+        SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3',
+        [req.user.id, true, base_element_id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Базовый элемент не найден')
+      }
+      res.status(200).send()
+    } catch (e) {
+      await client.query('ROLLBACK')
+      next(e)
+    }
+  } finally {
+    client.release()
   }
 })
 

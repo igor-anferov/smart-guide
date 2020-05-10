@@ -47,10 +47,13 @@ router.post('/', async (req, res, next) => {
 router.delete('/:book_id', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
-    await pool.query(
-      'DELETE FROM Books WHERE book_id =$1;',
+    const delete_book = await pool.query(
+      'DELETE FROM Books WHERE book_id =$1 RETURNING book_id',
       [book_id]
     )
+    if (delete_book.rows.length == 0) {
+        return res.status(404).send("Книга не найдена")
+    }
     res.status(200).send()
   } catch (e) {
     next(e)
@@ -64,6 +67,9 @@ router.get('/:book_id/info', async (req, res, next) => {
       'SELECT title FROM Books WHERE book_id =$1;',
       [book_id]
     )
+    if (results.rows.length == 0) {
+        return res.status(404).send("Книга не найдена")
+    }
     res.status(200).send(results.rows[0])
   } catch (e) {
     next(e)
@@ -74,10 +80,13 @@ router.post('/:book_id/info', async (req, res, next) => {
   try {
     const book_id = parseInt(req.params.book_id)
     const new_title = req.body.title
-    await pool.query(
-      'UPDATE Books SET title = $1 WHERE book_id =$2;',
+    const results = await pool.query(
+      'UPDATE Books SET title = $1 WHERE book_id =$2 RETURNING book_id',
       [new_title, book_id]
     )
+    if (results.rows.length == 0) {
+      return res.status(404).send("Книга не найдена")
+    }
     res.status(200).send()
   } catch (e) {
     next(e)
@@ -91,6 +100,9 @@ router.get('/:book_id/content', async (req, res, next) => {
       'SELECT content FROM Books WHERE book_id =$1;',
       [book_id]
     )
+    if (results.rows.length == 0) {
+      return res.status(404).send("Книга не найдена")
+    }
     res.contentType("application/pdf");
     res.status(200).send(results.rows[0].content);
   } catch (e) {

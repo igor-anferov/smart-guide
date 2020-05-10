@@ -116,10 +116,20 @@ router.post ('/:group_id/leave', async (req, res, next) => {
     await client.query('BEGIN')
     const group_id = req.params.group_id
     try {
-      await client.query(
-        'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2',
+      const group = await client.query(
+        'SELECT * FROM Groups WHERE group_id = $1',
+        [group_id]
+      ) 
+      if (group.rows.length === 0) {
+        return res.status(404).send("Группа не найдена")
+      }
+      const delete_user = await client.query(
+        'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2 RETURNING user_id',
         [req.user.id, group_id]
       )
+      if (delete_user.rows.length === 0) {
+        return res.status(403).send("Пользователь не состоит в данной группе")
+      }
       const exams = await client.query(
         'SELECT array_agg(exam_id) as e FROM Exams WHERE group_id = $1',
         [group_id]
@@ -208,6 +218,13 @@ router.post ('/:group_id/leave', async (req, res, next) => {
 router.get('/:group_id/members', async (req, res, next) => {
   try {
     const group_id = req.params.group_id
+    const group = await pool.query(
+      'SELECT * FROM Groups WHERE group_id = $1',
+       [group_id]
+    ) 
+    if (group.rows.length === 0) {
+      return res.status(404).send("Группа не найдена")
+    }
     const creator = await pool.query(
       'SELECT creator_id FROM Groups INNER JOIN GroupMembers USING(group_id)\
        WHERE group_id = $1 AND user_id = $2',
@@ -244,6 +261,20 @@ router.post ('/:group_id/members', async (req, res, next) => {
     try {
       const group_id = req.params.group_id
       const users = req.body.user_ids
+      const group = await client.query(
+        'SELECT * FROM Groups WHERE group_id = $1',
+        [group_id]
+      ) 
+      if (group.rows.length === 0) {
+        return res.status(404).send("Группа не найдена")
+      }
+      const members = await client.query(
+        'SELECT * FROM GroupMembers WHERE group_id = $1 AND user_id = $2',
+        [group_id, req.user.id]
+      )
+      if (members.rows.length === 0) {
+        return res.status(403).send('Пользователь не является участником группы')
+      }
       if (users) {
         for (var user in users) {
           if (users.hasOwnProperty(user)) {
@@ -279,10 +310,13 @@ router.delete('/:group_id/members/:user_id', async (req, res, next) => {
       if (creator.rows[0].creator_id !== req.user.id) {
         return res.status(403).send('Пользователь не является создателем данной группы')
       }
-      await client.query(
-        'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2',
+      const delete_user = await client.query(
+        'DELETE FROM GroupMembers WHERE user_id = $1 AND group_id = $2 RETURNING user_id',
         [user_id, group_id]
       )
+      if (delete_user.rows.length === 0) {
+        return res.status(403).send("Пользователь не состоит в данной группе")
+      }
       await client.query('COMMIT')
       res.status(200).send()
     } catch (e) {

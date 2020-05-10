@@ -22,10 +22,14 @@ router.get('/base_elements', async (req, res, next) => {
 router.delete('/base_elements/:base_element_id', async (req, res, next) => {
   try {
     const base_element_id = parseInt(req.params.base_element_id)
-    await pool.query(
-      'DELETE FROM BaseElements WHERE base_element_id = $1;',
-      [base_element_id]
+    const delete_element = await pool.query(
+      'DELETE FROM BaseElements WHERE base_element_id = $1 AND author_id = $2 AND clipboard = $3\
+       RETURNING base_element_id',
+      [base_element_id, req.user.id, true]
     )
+    if (delete_element.rows.length == 0) {
+      return res.status(404).send("Базовый элемент не найден")
+    }
     res.status(200).send()
   } catch (e) {
     next(e)
@@ -123,10 +127,14 @@ router.get('/materials', async (req, res, next) => {
 router.delete('/materials/:material_id', async (req, res, next) => {
   try {
     const material_id = parseInt(req.params.material_id)
-    await pool.query(
-      'DELETE FROM Materials WHERE material_id = $1 AND author_id = $2 and clipboard= $3;',
+    const delete_material = await pool.query(
+      'DELETE FROM Materials WHERE material_id = $1 AND author_id = $2 AND clipboard = $3\
+       RETURNING material_id',
       [material_id, req.user.id, true]
     )
+    if (delete_material.rows.length == 0) {
+      return res.status(404).send("Материал не найден")
+    }
     res.status(200).send()
   } catch (e) {
     next(e)
@@ -167,7 +175,7 @@ router.post('/materials', async (req, res, next) => {
 router.get('/questions', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT question_id, text FROM Questions WHERE author_id = $1 and clipboard = $2 ORDER BY created;',
+      'SELECT question_id, text FROM Questions WHERE author_id = $1 and clipboard = $2 ORDER BY created',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)
@@ -179,10 +187,14 @@ router.get('/questions', async (req, res, next) => {
 router.delete('/questions/:question_id', async (req, res, next) => {
   try {
     const question_id = parseInt(req.params.question_id)
-    await pool.query(
-      'DELETE FROM Questions WHERE question_id = $1 AND author_id = $2 and clipboard= $3;',
+    const delete_question = await pool.query(
+      'DELETE FROM Questions WHERE question_id = $1 AND author_id = $2 AND clipboard = $3\
+       RETURNING question_id',
       [question_id, req.user.id, true]
     )
+    if (delete_question.rows.length == 0) {
+      return res.status(404).send("Вопрос не найден")
+    }
     res.status(200).send()
   } catch (e) {
     next(e)
