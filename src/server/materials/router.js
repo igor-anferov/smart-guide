@@ -340,12 +340,90 @@ router.post('/:material_id/base_elements/:base_element_id/copy_to_clipboard', as
       const base_element_id = parseInt(req.params.base_element_id)
       const results =  await client.query(
         'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, clipboard)\
-        SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements WHERE base_element_id = $3',
+        SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements\
+        WHERE base_element_id = $3 RETURNING base_element_id',
         [req.user.id, true, base_element_id]
       )
       if (results.rows.length === 0) {
         return res.status(404).send('Базовый элемент не найден')
       }
+      await client.query('COMMIT')
+      res.status(200).send()
+    } catch (e) {
+      await client.query('ROLLBACK')
+      next(e)
+    }
+  } finally {
+    client.release()
+  }
+})
+
+router.post('/:material_id/:question_id/copy_to_question', async (req, res, next) => {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    try {
+      const question_id = parseInt(req.params.question_id)
+      var material_id = parseInt(req.params.material_id)
+      const position = parseInt(req.body.position)
+      var results = await client.query(
+        'SELECT * FROM Questions WHERE question_id = $1 AND author_id = $2',
+        [question_id, req.user.id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Вопрос не найден')
+      }
+      results = await client.query(
+        'SELECT * FROM Materials WHERE material_id = $1',
+        [material_id]
+      )
+      if (results.rows.length === 0) {
+        return res.status(404).send('Материал не найден')
+      }
+      const new_material = await pool.query(
+        'INSERT INTO Materials (title, author_id, created, clipboard)\
+        SELECT title, $1, CURRENT_TIMESTAMP, $2 FROM Materials\
+        WHERE material_id = $3 AND clipboard = false RETURNING material_id',
+        [req.user.id, false, material_id]
+      )
+      if (new_material.rows.length !== 0) {
+        const base_elements = await client.query(
+          'SELECT array_agg(base_element_id) as b FROM MaterialBaseElements WHERE material_id = $1',
+          [material_id]
+        )
+        if (base_elements.rows[0].b) {
+          for (l = 0; l < base_elements.rows[0].b.length; l++) {
+            var new_base_element = await client.query(
+              'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, forks_from)\
+              SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, base_element_id\
+              FROM BaseElements WHERE base_element_id = $2 RETURNING base_element_id',
+              [req.user.id, base_elements.rows[0].b[l]]
+            )
+            await client.query(
+              'INSERT INTO MaterialBaseElements (material_id, position, base_element_id)\
+              SELECT $1, position, $2 FROM MaterialBaseElements\
+              WHERE material_id = $3 AND base_element_id = $4',
+              [new_material.rows[0].material_id, new_base_element.rows[0].base_element_id, material_id, base_elements.rows[0].b[l] ]
+            )
+          }
+        }
+        material_id = new_material.rows[0].material_id
+      }
+      results = await client.query(
+        'INSERT INTO QuestionMaterials (question_id, position, material_id)\
+        VALUES ($1, $2, $3) RETURNING position',
+        [question_id, position, material_id]
+      )     
+      await client.query(
+        'UPDATE Materials SET clipboard = $1 WHERE material_id = $2',
+        [false, material_id]
+      )
+      await client.query(
+        'UPDATE QuestionMaterials SET position = position + 1 \
+        WHERE question_id = $1 AND position >= $2 AND material_id != $3',
+        [question_id, parseInt(results.rows[0].position), material_id]
+      )
+      await client.query('COMMIT')
       res.status(200).send()
     } catch (e) {
       await client.query('ROLLBACK')

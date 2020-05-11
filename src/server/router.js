@@ -43,6 +43,7 @@ async function setupApi(router) {
   router.use('/clipboard', require('./clipboard/router'))
   router.use('/base_elements', require('./base_elements/router'))
   router.use('/materials', require('./materials/router'))
+  router.use('/questions', require('./questions/router'))
   router.use('/exams', require('./exams/router'))
   router.use('/groups', require('./groups/router'))
   router.use('/users', require('./users/router'))

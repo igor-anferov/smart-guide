@@ -8,7 +8,8 @@ router.get('/:group_id/exams', async (req, res, next) => {
   try {
     const group_id = parseInt(req.params.group_id)
     const results = await pool.query(
-      'SELECT exam_id, title, professor FROM Exams WHERE group_id = $1 AND group_id IN (SELECT group_id FROM GroupMembers WHERE user_id = $2);',
+      'SELECT exam_id, title, professor FROM Exams WHERE group_id = $1\
+       AND group_id IN (SELECT group_id FROM GroupMembers WHERE user_id = $2)',
       [group_id, req.user.id]
     )
     res.status(200).send(results.rows)

@@ -10,7 +10,8 @@ const pool = require('../db/pool')
 router.get('/base_elements', async (req, res, next) => {
   try {
     const results = await pool.query(
-      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements WHERE author_id = $1 and clipboard = $2 ORDER BY created;',
+      'SELECT base_element_id, title, source, type, is_pivotal FROM BaseElements\
+       WHERE author_id = $1 and clipboard = $2 ORDER BY created;',
       [req.user.id, true]
     )
     res.status(200).send(results.rows)
@@ -51,7 +52,8 @@ router.post('/base_elements', image_checker, latex_checker, async (req, res, nex
       )
       for (var tag in tags) {
         if (tags.hasOwnProperty(tag)) {
-          await client.query('INSERT INTO BaseElementTags (tag, base_element_id) VALUES ($1, $2)',
+          await client.query(
+            'INSERT INTO BaseElementTags (tag, base_element_id) VALUES ($1, $2)',
             [tags[tag], results.rows[0].base_element_id]
           )
         }
@@ -154,7 +156,8 @@ router.post('/materials', async (req, res, next) => {
       )
       for (var tag in tags) {
         if (tags.hasOwnProperty(tag)) {
-          await client.query('INSERT INTO MaterialTags (tag, material_id) VALUES ($1, $2)',
+          await client.query(
+            'INSERT INTO MaterialTags (tag, material_id) VALUES ($1, $2)',
             [tags[tag], results.rows[0].material_id]
           )
         }
