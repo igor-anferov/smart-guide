@@ -1,5 +1,5 @@
 const base_element = require('../../../schemas/base_element')
-
+const material = require('../../../schemas/material')
 
 module.exports = {
   tags: ['Базовые элементы'],

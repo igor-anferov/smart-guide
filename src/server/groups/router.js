@@ -131,6 +131,14 @@ router.post ('/:group_id/leave', async (req, res, next) => {
       if (delete_user.rows.length === 0) {
         return res.status(403).send("Пользователь не состоит в данной группе")
       }
+      if (group.rows[0].creator_id === req.user.id) {
+        await client.query(
+          'UPDATE Groups g SET creator_id = gm.user_id FROM \
+          (SELECT group_id, user_id FROM GroupMembers WHERE group_id = $1 ORDER BY date_entry) gm\
+          WHERE g.group_id = gm.group_id',
+          [group_id]
+        )
+      }
       const exams = await client.query(
         'SELECT array_agg(exam_id) as e FROM Exams WHERE group_id = $1',
         [group_id]

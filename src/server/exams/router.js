@@ -95,9 +95,9 @@ router.post('/search', async (req, res, next) => {
       if (own_exams) {
       results_title = await pool.query(
         "SELECT json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam,\
-        ts_headline('russian', e.title || e.professor, tq) as matches\
+        ts_headline('russian', e.title || ' ' || e.professor, tq) as matches\
         FROM to_tsquery('russian', $2) as tq, Exams e\
-        WHERE e.author_id = $1 AND to_tsvector('russian', e.title || e.professor) @@ tq", 
+        WHERE e.author_id = $1 AND to_tsvector('russian', e.title || ' ' || e.professor) @@ tq", 
         [req.user.id, query]
       )
       results_tags = await pool.query( 
@@ -113,10 +113,10 @@ router.post('/search', async (req, res, next) => {
     if (groups_exams) {
       results_title = await pool.query(
         "SELECT json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam,\
-        ts_headline('russian', e.title || e.professor, tq) as matches\
+        ts_headline('russian', e.title || ' ' || e.professor, tq) as matches\
         FROM to_tsquery('russian', $2) as tq, Exams e, GroupMembers mg\
         WHERE e.group_id = mg.group_id AND mg.user_id = $1\
-        AND to_tsvector('russian', e.title || e.professor) @@ tq", 
+        AND to_tsvector('russian', e.title || ' ' || e.professor) @@ tq", 
         [req.user.id, query]
       )
       results_tags = await pool.query( 
@@ -133,11 +133,11 @@ router.post('/search', async (req, res, next) => {
     if (global_exams) {
       results_title = await pool.query(
         "SELECT json_build_object('exam_id', e.exam_id, 'title', e.title, 'professor', e.professor) as exam,\
-        ts_headline('russian', e.title || e.professor, tq) as matches\
+        ts_headline('russian', e.title || ' ' || e.professor, tq) as matches\
         FROM to_tsquery('russian', $2) as tq, Exams e, GroupMembers mg\
         WHERE ((e.author_id IS NULL AND e.group_id = mg.group_id AND mg.user_id != $1) OR\
         (e.author_id != $1 AND e.author_id IS NOT NULL))\
-        AND to_tsvector('russian', e.title || e.professor) @@ tq", 
+        AND to_tsvector('russian', e.title || ' ' || e.professor) @@ tq", 
         [req.user.id, query]
       )
       results_tags = await pool.query( 
@@ -152,8 +152,19 @@ router.post('/search', async (req, res, next) => {
         [req.user.id, query]
       )
     }
+  console.log('WRITE!!!')
+    var size = results_tags.rows.length
+  console.log('SIZE tags!!!')
+    for (var k = 0; k < size; k++) {
+      rank = await pool.query(
+        'SELECT COUNT(1) FROM Exams WHERE forks_from = $1',
+        [results_tags.rows[k].exam.exam_id]
+      )
+      results_tags.rows[k].rank = results_tags.rows[k].matched_tags.length * 0.3 + rank.rows[0].count * 0.4
+    }
     var results = results_tags.rows
-    const size = results_title.rows.length;
+    size = results_title.rows.length
+  console.log('SIZE title')
     var matches_title = [];
     var index = -1;
     for (var i = 0; i < size; i++) {
@@ -164,11 +175,23 @@ router.post('/search', async (req, res, next) => {
       results_title.rows[i].matches = matches_title;
       index = results.findIndex(x => x.exam.exam_id === results_title.rows[i].exam.exam_id)
       if(index === -1) {
+        rank = await pool.query(
+          'SELECT COUNT(1) FROM Exams WHERE forks_from = $1',
+          [results_title.rows[i].exam.exam_id]
+        )
+        results_title.rows[i].rank = matches_title.length * 0.4 + rank.rows[0].count * 0.4 
         results.push(results_title.rows[i])
       } else {
+        results[index].rank += matches_title.length * 0.4 + rank.rows[0].count * 0.4
         results[index].matches = results_title.rows[i].matches
       }
     }
+    results.sort(function(a, b) {
+      return b.rank - a.rank
+    })
+    /*var result = results.map( function (r) {
+      delete r.rank
+    })*/
     res.status(200).send(results)
   } catch (e) {
     next(e)
