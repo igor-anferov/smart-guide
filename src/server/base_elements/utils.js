@@ -1,6 +1,6 @@
 const assert = require('assert').strict;
 const sharp = require('sharp');
-const { parse, HtmlGenerator } = require('esm')(module)('latex.js').default;
+//const { parse, HtmlGenerator } = require('esm')(module)('latex.js').default;
 
 
 async function image_checker(req, res, next) {
@@ -27,7 +27,7 @@ function latex_checker(req, res, next) {
     return next()
 
   try {
-    parse(latex, {generator: new HtmlGenerator()});
+//    parse(latex, {generator: new HtmlGenerator()});
     next()
   } catch (e) {
     e.status = 400
