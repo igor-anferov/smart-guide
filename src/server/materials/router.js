@@ -358,12 +358,12 @@ router.post('/:material_id/base_elements/:base_element_id/copy_to_clipboard', as
   }
 })
 
-router.post('/:material_id/:question_id/copy_to_question', async (req, res, next) => {
+router.post('/:material_id/copy_to_question', async (req, res, next) => {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     try {
-      const question_id = parseInt(req.params.question_id)
+      const question_id = parseInt(req.body.question_id)
       var material_id = parseInt(req.params.material_id)
       const position = parseInt(req.body.position)
       var results = await client.query(

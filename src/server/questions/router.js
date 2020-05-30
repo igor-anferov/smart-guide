@@ -373,13 +373,13 @@ router.post('/:question_id/materials/:material_id/copy_to_clipboard', async (req
   }
 })
 
-router.post('/:question_id/:exam_id/copy_to_exam', async (req, res, next) => {
+router.post('/:question_id/copy_to_exam', async (req, res, next) => {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     try {
       var question_id = parseInt(req.params.question_id)
-      const exam_id = parseInt(req.params.exam_id)
+      const exam_id = parseInt(req.body.exam_id)
       const position = parseInt(req.body.position)
       var results = await client.query(
         'SELECT * FROM Exams WHERE exam_id = $1 AND author_id = $2',

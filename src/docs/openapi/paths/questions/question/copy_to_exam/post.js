@@ -7,7 +7,6 @@ module.exports = {
   summary: 'Скопировать вопрос в экзамен',
   parameters: [
     question.parameters.question_id,
-    exam.parameters.exam_id,
   ],
   requestBody: {
     required: true,
@@ -16,12 +15,13 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
+            'exam_id': exam.properties.exam_id,
             'position': {
               type: 'integer',
               description: 'Позиция вопроса внутри экзамена',
             },
           },
-          required: ['position'],
+          required: ['exam_id', 'position'],
         },
       },
     },

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Materials (
 CREATE TABLE IF NOT EXISTS MaterialBaseElements (
   material_id int,
   position int,
-  base_element_id int
+  base_element_id int unique
 );
 
 CREATE TABLE IF NOT EXISTS RelatedMaterials (
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS Questions (
 CREATE TABLE IF NOT EXISTS QuestionMaterials (
   question_id int,
   position int,
-  material_id int
+  material_id int unique
 );
 
 CREATE TABLE IF NOT EXISTS Exams (
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Exams (
 CREATE TABLE IF NOT EXISTS ExamQuestions (
   exam_id int,
   position int,
-  question_id int
+  question_id int unique
 );
 
 CREATE TABLE IF NOT EXISTS Users (

@@ -188,48 +188,54 @@ class BaseElements extends React.Component {
         ) : (
           <div/>
         )}
-        <Container nonDragAreaSelector=".no-drag" behaviour="copy" groupName="base_elements" render={(ref) => (
-        <Grid container spacing={this.props.spacing} ref={ref}>
-          <Grid container direction='column' item xs={12}>
-            <TextField label="Поиск" variant="outlined" />
-          </Grid>
-            {this.state.elements.map((item) => (
-              <Draggable key={item.base_element_id} render={(item_ref) => (
-                <Grid container item ref={item_ref} key={item.base_element_id} style={{cursor: 'move'}} xs={12}>
-                  <Card className={this.props.classes.flexColumn}>
-                    <CardActionArea component={item.type === 'latex' ? Link : 'button'} to={`/base_elements/${item.base_element_id}/latex/edit`} className={`no-drag ${this.props.classes.flexColumn}`} onClick={()=>this.handleItemClick(item)}>
-                      <CardContent>
-                        <Typography gutterBottom variant="h5">
-                          { item.title }
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          { item.source }
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                    <CardActions className={this.props.classes.flexBoxRight}>
-                      <Box mr="auto">
-                        <DragIndicatorIcon/>
-                      </Box>
-                      <Button size="small" color="secondary" className="no-drag" onClick={()=>this.handleRemove(item.base_element_id)}>
-                        Удалить
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              )}/>
-            ))}
-          <Grid container item xs={12}>
-            <Card className={this.props.classes.flex}>
-              <CardActionArea aria-controls="add-menu" aria-haspopup="true" onClick={this.handleAddClick}>
-                <CardContent className={this.props.classes.flexBox}>
-                  <AddCircleIcon className={this.props.classes.flex} color="disabled" style={{ fontSize: 120 }}/>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        </Grid>
-        )}/>
+        <Container
+          nonDragAreaSelector=".no-drag"
+          behaviour="copy"
+          groupName="base_elements"
+          getChildPayload={index => this.state.elements[index - 1]}
+          render={(ref) => (
+            <Grid container spacing={this.props.spacing} ref={ref}>
+              <Grid container direction='column' item xs={12}>
+                <TextField label="Поиск" variant="outlined" />
+              </Grid>
+                {this.state.elements.map((item) => (
+                  <Draggable key={item.base_element_id} render={(item_ref) => (
+                    <Grid container item ref={item_ref} key={item.base_element_id} style={{cursor: 'move'}} xs={12}>
+                      <Card className={this.props.classes.flexColumn}>
+                        <CardActionArea component={item.type === 'latex' ? Link : 'button'} to={`/base_elements/${item.base_element_id}/latex/edit`} className={`no-drag ${this.props.classes.flexColumn}`} onClick={()=>this.handleItemClick(item)}>
+                          <CardContent>
+                            <Typography gutterBottom variant="h5">
+                              { item.title }
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              { item.source }
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                        <CardActions className={this.props.classes.flexBoxRight}>
+                          <Box mr="auto">
+                            <DragIndicatorIcon/>
+                          </Box>
+                          <Button size="small" color="secondary" className="no-drag" onClick={()=>this.handleRemove(item.base_element_id)}>
+                            Удалить
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  )}/>
+                ))}
+              <Grid container item xs={12}>
+                <Card className={this.props.classes.flex}>
+                  <CardActionArea aria-controls="add-menu" aria-haspopup="true" onClick={this.handleAddClick}>
+                    <CardContent className={this.props.classes.flexBox}>
+                      <AddCircleIcon className={this.props.classes.flex} color="disabled" style={{ fontSize: 120 }}/>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+        />
       </Box>
     );
   }

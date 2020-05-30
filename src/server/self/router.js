@@ -8,7 +8,6 @@ let router = express.Router();
 const pool = require('../db/pool')
 
 router.get('/', async (req, res, next) => {
-  console.log(req.user.id)
   try {
     const results = await pool.query(
       "SELECT user_id, email, login, name, university, faculty FROM Users WHERE user_id = $1",
@@ -81,7 +80,7 @@ router.post('/', async (req, res, next) => {
     res.status(200).send()
   } catch (e) {
     next(e)
-  }    
+  }
 })
 
 module.exports = router

@@ -37,7 +37,6 @@ router.delete('/:group_id/exams/:exam_id', async (req, res, next) => {
         'SELECT creator_id FROM Groups WHERE group_id = $1',
         [group_id]
       )
-      console.log(creator)
       if (count_questions.rows[0].count === 0 && count_forks.rows[0].count === 0 && creator.rows[0].creator_id === req.user.id) {
         await client.query(
           'DELETE FROM Exams WHERE exam_id = $1 AND group_id = $2',

@@ -7,7 +7,6 @@ module.exports = {
   summary: 'Скопировать базовый элемент в учебный материал',
   parameters: [
     base_element.parameters.base_element_id,
-    material.parameters.material_id,
   ],
   requestBody: {
     required: true,
@@ -16,12 +15,13 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
+            'material_id': material.properties.material_id,
             'position': {
               type: 'integer',
               description: 'Позиция базового элемента внутри учебного материала',
             },
           },
-          required: ['position'],
+          required: ['material_id', 'position'],
         },
       },
     },
