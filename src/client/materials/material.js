@@ -52,6 +52,10 @@ function diff(a, b) {
   return Object.fromEntries(Object.entries(a).filter(([k, v]) => !Object.keys(b).includes(k) || !isEqual(v, b[k])))
 }
 
+function insert(array, index, elem) {
+  return [...array.slice(0, index), elem, ...array.slice(index)]
+}
+
 const styles = theme => ({
   ...commonStyles(theme),
 
@@ -232,7 +236,7 @@ class Material extends React.Component {
       })
   }
 
-  async onDrop({ removedIndex, addedIndex }) {
+  async move(removedIndex, addedIndex) {
     const moved_base_element_id = this.state.base_elements[removedIndex].base_element_id
     this.setState({
       base_elements: arrayMove(this.state.base_elements, removedIndex, addedIndex)
@@ -249,6 +253,32 @@ class Material extends React.Component {
     })
     if (!results.ok)
       throw Error(`Failed to move base element inside material: ${results.status}`)
+  }
+
+  async add(addedIndex, new_element) {
+    this.setState({
+      base_elements: insert(this.state.base_elements, addedIndex, new_element)
+    })
+    const API = this.context;
+    const results = await API.request(
+      `/base_elements/${
+        new_element.base_element_id
+      }/copy_to_material`, {
+      method: 'POST',
+      body: new URLSearchParams({
+        position: addedIndex,
+        material_id: this.props.match.params.material_id
+      }),
+    })
+    if (!results.ok)
+      throw Error(`Failed to move base element inside material: ${results.status}`)
+  }
+
+  async onDrop({ removedIndex, addedIndex, payload }) {
+    if (removedIndex !== null)
+      await this.move(removedIndex, addedIndex)
+    else
+      await this.add(addedIndex, payload)
     await this.fetch()
   }
 
@@ -371,37 +401,44 @@ class Material extends React.Component {
               </Toolbar>
             </AppBar>
           </Grid>
-          <Container dragHandleSelector=".drag-handle" onDrop={this.onDrop} dropPlaceholder={{className: 'dnd-drop-placeholder'}} groupName="base_elements" render={(ref) => (
-            <List className={classes.fullHeight} ref={ref}>
-              {this.state.base_elements.map(({ base_element_id, title }) => (
-                <Draggable key={base_element_id}>
-                  <ExpansionPanel>
-                    <ExpansionPanelSummary className="drag-handle"
-                      expandIcon={<ExpandMoreIcon />}
-                    >
-                      <Grid container wrap='nowrap' alignItems='center'>
-                        <ExpansionPanelActions
-                          style={{cursor: 'move'}}
-                        >
-                          <ListItemIcon>
-                            <DragHandleIcon />
-                          </ListItemIcon>
-                        </ExpansionPanelActions>
-                        <Typography>
-                          {title}
+          <Container
+            dragHandleSelector=".drag-handle"
+            onDrop={this.onDrop}
+            dropPlaceholder={{className: 'dnd-drop-placeholder'}}
+            groupName="base_elements"
+            getChildPayload={index => this.state.base_elements[index]}
+            render={(ref) => (
+              <List className={classes.fullHeight} ref={ref}>
+                {this.state.base_elements.map(({ base_element_id, title }) => (
+                  <Draggable key={base_element_id}>
+                    <ExpansionPanel>
+                      <ExpansionPanelSummary className="drag-handle"
+                        expandIcon={<ExpandMoreIcon />}
+                      >
+                        <Grid container wrap='nowrap' alignItems='center'>
+                          <ExpansionPanelActions
+                            style={{cursor: 'move'}}
+                          >
+                            <ListItemIcon>
+                              <DragHandleIcon />
+                            </ListItemIcon>
+                          </ExpansionPanelActions>
+                          <Typography>
+                            {title}
+                          </Typography>
+                        </Grid>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails>
+                        <Typography color="textSecondary">
+                          The click event of the nested action will propagate up and expand the panel unless you explicitly stop it.
                         </Typography>
-                      </Grid>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                      <Typography color="textSecondary">
-                        The click event of the nested action will propagate up and expand the panel unless you explicitly stop it.
-                      </Typography>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                </Draggable>
-              ))}
-            </List>
-          )}/>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  </Draggable>
+                ))}
+              </List>
+            )}
+          />
         </div>
         <Drawer
           className={classes.drawer}

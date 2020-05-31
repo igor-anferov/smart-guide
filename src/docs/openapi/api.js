@@ -101,7 +101,7 @@ module.exports = {
     '/base_elements/{base_element_id}/content': {
       get: require('./paths/base_elements/base_element/content/get.js'),
     },
-    '/base_elements/{base_element_id}/{material_id}/copy_to_material': {
+    '/base_elements/{base_element_id}/copy_to_material': {
       post: require('./paths/base_elements/base_element/copy_to_material/post.js'),
     },
 
@@ -125,7 +125,7 @@ module.exports = {
     '/materials/{material_id}/base_elements/{base_element_id}/copy_to_clipboard': {
       post: require('./paths/materials/material/base_elements/base_element/copy_to_clipboard/post.js'),
     },
-    '/materials/{material_id}/{question_id}/copy_to_question': {
+    '/materials/{material_id}/copy_to_question': {
       post: require('./paths/materials/material/copy_to_question/post.js'),
     },
     
@@ -149,7 +149,7 @@ module.exports = {
     '/questions/{question_id}/materials/{material_id}/copy_to_clipboard': {
       post: require('./paths/questions/question/materials/material/copy_to_clipboard/post.js'),
     },
-    '/questions/{question_id}/{exam_id}/copy_to_exam': {
+    '/questions/{question_id}/copy_to_exam': {
       post: require('./paths/questions/question/copy_to_exam/post.js'),
     },
 

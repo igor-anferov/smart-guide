@@ -6,7 +6,6 @@ module.exports = {
   tags: ['Учебные материалы'],
   summary: 'Скопировать учебный материал в вопрос',
   parameters: [
-    question.parameters.question_id,
     material.parameters.material_id,
   ],
   requestBody: {
@@ -16,12 +15,13 @@ module.exports = {
         schema: {
           type: 'object',
           properties: {
+            'question_id': question.properties.question_id,
             'position': {
               type: 'integer',
               description: 'Позиция учебного материала внутри вопроса',
             },
           },
-          required: ['position'],
+          required: ['question_id', 'position'],
         },
       },
     },

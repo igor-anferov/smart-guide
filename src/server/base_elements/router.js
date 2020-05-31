@@ -120,19 +120,18 @@ router.post('/:base_element_id', image_checker, latex_checker, async (req, res, 
   }
 })
 
-router.post('/:base_element_id/:material_id/copy_to_material', async (req, res, next) => {
+router.post('/:base_element_id/copy_to_material', async (req, res, next) => {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     try {
       var base_element_id = parseInt(req.params.base_element_id)
-      const material_id = parseInt(req.params.material_id)
+      const material_id = parseInt(req.body.material_id)
       const position = parseInt(req.body.position)
       var results = await client.query(
         'SELECT * FROM Materials WHERE material_id = $1 AND author_id = $2',
         [material_id, req.user.id]
       )
-  console.log(results)
       if (results.rows.length === 0) {
         return res.status(404).send('Материал не найден')
       }
@@ -140,7 +139,6 @@ router.post('/:base_element_id/:material_id/copy_to_material', async (req, res, 
         'SELECT * FROM BaseElements WHERE base_element_id = $1',
         [base_element_id]
       )
-  console.log(results)
       if (results.rows.length === 0) {
         return res.status(404).send('Базовый элемент не найден')
       }
