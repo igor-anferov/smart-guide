@@ -27,8 +27,13 @@ module.exports = {
     },
   },
   responses: {
-    '200': {
+    '201': {
       description: 'Учебный материал успешно скопирован в вопрос',
+      content: {
+        'application/json': {
+          schema: material.create.response,
+        }
+      }
     },
     '404': {
       description: 'Вопрос не найден',

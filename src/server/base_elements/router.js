@@ -145,7 +145,7 @@ router.post('/:base_element_id/copy_to_material', async (req, res, next) => {
       const new_base_element = await pool.query(
         'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, clipboard)\
         SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, $2 FROM BaseElements\
-        WHERE base_element_id = $3 AND clipboard = false RETURNING base_element_id',
+        WHERE base_element_id = $3 RETURNING base_element_id',
         [req.user.id, false, base_element_id]
       )
       if (new_base_element.rows.length !== 0) {
@@ -157,16 +157,14 @@ router.post('/:base_element_id/copy_to_material', async (req, res, next) => {
         [material_id, position, base_element_id]
       )     
       await client.query(
-        'UPDATE BaseElements SET clipboard = $1 WHERE base_element_id = $2',
-        [false, base_element_id]
-      )
-      await client.query(
         'UPDATE MaterialBaseElements SET position = position + 1 \
         WHERE material_id = $1 AND position >= $2 AND base_element_id != $3',
         [material_id, parseInt(results.rows[0].position), base_element_id]
       )
       await client.query('COMMIT')
-      res.status(200).send()
+      res.status(201).json({
+        "base_element_id": base_element_id
+      })
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)

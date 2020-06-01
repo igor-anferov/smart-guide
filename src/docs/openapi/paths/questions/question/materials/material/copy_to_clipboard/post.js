@@ -10,8 +10,13 @@ module.exports = {
      question.parameters.question_id,
   ],
   responses: {
-    '200': {
+    '201': {
       description: 'Учебный материал успешно скопирован в буфер обмена',
+      content: {
+        'application/json': {
+          schema: material.create.response,
+        }
+      }
     },
     '404': {
       description: 'Вопрос не найден',

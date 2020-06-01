@@ -10,8 +10,13 @@ module.exports = {
     base_element.parameters.base_element_id,
   ],
   responses: {
-    '200': {
+    '201': {
       description: 'Базовый элемент успешно скопирован в буфер обмена',
+      content: {
+        'application/json': {
+          schema: base_element.create.response,
+        }
+      }
     },
     '404': {
       description: 'Базовый элемент не найден',

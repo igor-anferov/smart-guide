@@ -479,7 +479,9 @@ router.post('/:exam_id/questions/:question_id/copy_to_clipboard', async (req, re
         }
       }
       await client.query('COMMIT')
-      res.status(200).send()
+      res.status(201).json({
+        "question_id": results.rows[0].question_id
+      })
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)

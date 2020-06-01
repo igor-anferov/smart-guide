@@ -27,8 +27,13 @@ module.exports = {
     },
   },
   responses: {
-    '200': {
+    '201': {
       description: 'Вопрос успешно скопирован в экзамен',
+      content: {
+        'application/json': {
+          schema: question.create.response,
+        }
+      }
     },
     '404': {
       description: 'Экзамен не найден',

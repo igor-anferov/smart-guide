@@ -348,7 +348,9 @@ router.post('/:material_id/base_elements/:base_element_id/copy_to_clipboard', as
         return res.status(404).send('Базовый элемент не найден')
       }
       await client.query('COMMIT')
-      res.status(200).send()
+      res.status(201).json({
+        "base_element_id": results.rows[0].base_element_id
+      })
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)
@@ -383,7 +385,7 @@ router.post('/:material_id/copy_to_question', async (req, res, next) => {
       const new_material = await pool.query(
         'INSERT INTO Materials (title, author_id, created, clipboard)\
         SELECT title, $1, CURRENT_TIMESTAMP, $2 FROM Materials\
-        WHERE material_id = $3 AND clipboard = false RETURNING material_id',
+        WHERE material_id = $3 RETURNING material_id',
         [req.user.id, false, material_id]
       )
       if (new_material.rows.length !== 0) {
@@ -415,16 +417,14 @@ router.post('/:material_id/copy_to_question', async (req, res, next) => {
         [question_id, position, material_id]
       )     
       await client.query(
-        'UPDATE Materials SET clipboard = $1 WHERE material_id = $2',
-        [false, material_id]
-      )
-      await client.query(
         'UPDATE QuestionMaterials SET position = position + 1 \
         WHERE question_id = $1 AND position >= $2 AND material_id != $3',
         [question_id, parseInt(results.rows[0].position), material_id]
       )
       await client.query('COMMIT')
-      res.status(200).send()
+      res.status(201).json({
+        "material_id": material_id
+      })
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)

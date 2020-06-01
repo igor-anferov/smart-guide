@@ -1,6 +1,5 @@
 const exam = require('../../../schemas/exam')
 
-
 module.exports = {
   tags: ['Экзамены'],
   summary: 'Удалить личный экзамен',

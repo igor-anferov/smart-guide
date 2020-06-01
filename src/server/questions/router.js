@@ -363,7 +363,9 @@ router.post('/:question_id/materials/:material_id/copy_to_clipboard', async (req
         }
       }
       await client.query('COMMIT')
-      res.status(200).send()
+      res.status(201).json({
+        "material_id": results.rows[0].material_id
+      })
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)
@@ -398,7 +400,7 @@ router.post('/:question_id/copy_to_exam', async (req, res, next) => {
       const new_question = await pool.query(
         'INSERT INTO Questions (text, author_id, created, clipboard)\
         SELECT text, $1, CURRENT_TIMESTAMP, $2 FROM Questions\
-        WHERE question_id = $3 AND clipboard = false RETURNING question_id',
+        WHERE question_id = $3 RETURNING question_id',
         [req.user.id, false, question_id]
       )
       if (new_question.rows.length !== 0) {
@@ -450,16 +452,14 @@ router.post('/:question_id/copy_to_exam', async (req, res, next) => {
         [exam_id, position, question_id]
       )     
       await client.query(
-        'UPDATE Questions SET clipboard = $1 WHERE question_id = $2',
-        [false, question_id]
-      )
-      await client.query(
         'UPDATE ExamQuestions SET position = position + 1 \
         WHERE exam_id = $1 AND position >= $2 AND question_id != $3',
         [exam_id, parseInt(results.rows[0].position), question_id]
       )
       await client.query('COMMIT')
-      res.status(200).send()
+      res.status(201).json({
+        "question_id": question_id
+      })
     } catch (e) {
       await client.query('ROLLBACK')
       next(e)

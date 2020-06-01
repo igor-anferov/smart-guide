@@ -27,8 +27,13 @@ module.exports = {
     },
   },
   responses: {
-    '200': {
+    '201': {
       description: 'Базовый элемент успешно скопирован в учебный материал',
+      content: {
+        'application/json': {
+          schema: base_element.create.response,
+        }
+      }
     },
     '404': {
       description: 'Базовый элемент или учебный материал не найден',
