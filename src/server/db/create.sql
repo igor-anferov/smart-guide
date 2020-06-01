@@ -112,7 +112,9 @@ CREATE TABLE IF NOT EXISTS MaterialComments (
   text varchar,
   material_id int,
   author_id int,
-  created timestamp
+  created_ts timestamp,
+  edited_ts timestamp,
+  deleted_ts timestamp
 );
 
 

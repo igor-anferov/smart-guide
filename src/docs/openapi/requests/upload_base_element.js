@@ -1,6 +1,5 @@
 const base_element = require('../schemas/base_element')
 
-
 module.exports = {
   requestBody: {
     required: true,

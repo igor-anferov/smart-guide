@@ -209,7 +209,7 @@ module.exports = {
     '/exams/{exam_id}/materials/{material_id}/study_result': {
       post: require('./paths/exams/exam/material_to_study/post.js'),
     },
-    '/exam/{exam_id}/reset_study_progress': {
+    '/exams/{exam_id}/reset_study_progress': {
       post: require('./paths/exams/exam/reset_study_progress/post.js'),
     },
 

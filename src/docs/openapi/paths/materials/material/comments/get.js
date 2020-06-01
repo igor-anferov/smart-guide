@@ -15,17 +15,50 @@ module.exports = {
           schema: {
             type: 'array',
             items: {
-              type: 'object',
-              properties: {
-                'comment_id': { type: 'integer' },
-                'author': user.list,
-                'created': {
-                  type: 'string',
-                  format: 'date-time',
+              oneOf: [
+                {
+                  type: 'object',
+                  properties: {
+                    'comment_id': { type: 'integer' },
+                    'text': { type: 'string' },
+                    'author': user.list,
+                    'created_ts': {
+                      type: 'string',
+                      format: 'date-time',
+                    },
+                    'edited_ts': {
+                      type: 'string',
+                      format: 'date-time',
+                    },
+                  },
+                  required: ['comment_id', 'text', 'author', 'created_ts']
                 },
-              },
-              required: ['comment_id', 'author', 'created']
-            },
+                {
+                  type: 'object',
+                  properties: {
+                    'comment_id': { type: 'integer' },
+                    'deleted': {
+                      type: 'boolean',
+                      default: 'true',
+                    },
+                    'author': user.list,
+                    'created_ts': {
+                      type: 'string',
+                      format: 'date-time',
+                    },
+                    'edited_ts': {
+                      type: 'string',
+                      format: 'date-time',
+                    },
+                    'deleted_ts': {
+                      type: 'string',
+                      format: 'date-time',
+                    },
+                  },
+                  required: ['comment_id', 'deleted', 'author','created_ts', 'deleted_ts']
+                },
+              ]
+            }
           },
         },
       },
