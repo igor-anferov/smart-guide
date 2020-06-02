@@ -152,9 +152,7 @@ router.post('/search', async (req, res, next) => {
         [req.user.id, query]
       )
     }
-  console.log('WRITE!!!')
     var size = results_tags.rows.length
-  console.log('SIZE tags!!!')
     for (var k = 0; k < size; k++) {
       rank = await pool.query(
         'SELECT COUNT(1) FROM Exams WHERE forks_from = $1',
@@ -164,7 +162,6 @@ router.post('/search', async (req, res, next) => {
     }
     var results = results_tags.rows
     size = results_title.rows.length
-  console.log('SIZE title')
     var matches_title = [];
     var index = -1;
     for (var i = 0; i < size; i++) {
@@ -488,6 +485,198 @@ router.post('/:exam_id/questions/:question_id/copy_to_clipboard', async (req, re
     }
   } finally {
     client.release()
+  }
+})
+
+copy_exams = async (req, res, next) => {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const exam_id = req.params.exam_id
+    const group_id = req.body.group_id
+    try {
+      if (group_id) {
+        var new_exam = await client.query(
+          'INSERT INTO Exams (group_id, title, professor, created, forks_from)\
+          SELECT $1, title, professor, CURRENT_TIMESTAMP, exam_id FROM Exams\
+          WHERE exam_id = $2 RETURNING exam_id',
+          [group_id, exam_id]
+        )
+      } else {
+        var new_exam = await client.query(
+          'INSERT INTO Exams (author_id, title, professor, created, forks_from)\
+          SELECT $1, title, professor, CURRENT_TIMESTAMP, exam_id FROM Exams\
+          WHERE exam_id = $2 RETURNING exam_id',
+          [req.user.id, exam_id]
+        )
+      }
+      if (new_exam.rows.length === 0) {
+        return res.status(404).send('Экзамен не найден')
+      }
+      const questions = await client.query(
+        'SELECT array_agg(question_id) as q FROM ExamQuestions WHERE exam_id = $1',
+        [exam_id]
+      )
+      if (questions.rows[0].q) {
+        for (j = 0; j < questions.rows[0].q.length; j++) {
+          var new_question = await client.query(
+            'INSERT INTO Questions (text, author_id, created, forks_from)\
+            SELECT text, $1, CURRENT_TIMESTAMP, question_id FROM Questions\
+            WHERE question_id = $2 RETURNING question_id',
+            [req.user.id, questions.rows[0].q[j]]
+          )
+          await client.query(
+            'INSERT INTO ExamQuestions (exam_id, position, question_id)\
+            SELECT $1, position, $2 FROM ExamQuestions\
+            WHERE exam_id = $3 AND question_id = $4',
+            [new_exam.rows[0].exam_id, new_question.rows[0].question_id, exam_id, questions.rows[0].q[j] ]
+          )
+          const materials = await client.query(
+            'SELECT array_agg(material_id) as m FROM QuestionMaterials WHERE question_id = $1',
+            [questions.rows[0].q[j]]
+          )
+          if (materials.rows[0].m) {
+            for (k = 0; k < materials.rows[0].m.length; k++) {
+              var new_material = await client.query(
+                'INSERT INTO Materials (title, author_id, created, forks_from)\
+                SELECT title, $1, CURRENT_TIMESTAMP, material_id FROM Materials\
+                WHERE material_id = $2 RETURNING material_id',
+                [req.user.id, materials.rows[0].m[k]]
+              )
+              await client.query(
+                'INSERT INTO QuestionMaterials (question_id, position, material_id)\
+                SELECT $1, position, $2 FROM QuestionMaterials\
+                WHERE question_id = $3 AND material_id = $4',
+                [new_question.rows[0].question_id, new_material.rows[0].material_id, questions.rows[0].q[j], materials.rows[0].m[k] ]
+              )
+              const base_elements = await client.query(
+                'SELECT array_agg(base_element_id) as b FROM MaterialBaseElements WHERE material_id = $1',
+                [materials.rows[0].m[k]]
+              )
+              if (base_elements.rows[0].b) {
+                for (l = 0; l < base_elements.rows[0].b.length; l++) {
+                  var new_base_element = await client.query(
+                    'INSERT INTO BaseElements (title, type, is_pivotal, body, source, author_id, created, forks_from)\
+                    SELECT title, type, is_pivotal, body, source, $1, CURRENT_TIMESTAMP, base_element_id FROM BaseElements\
+                    WHERE base_element_id = $2 RETURNING base_element_id',
+                    [req.user.id, base_elements.rows[0].b[l]]
+                  )
+                  await client.query(
+                    'INSERT INTO MaterialBaseElements (material_id, position, base_element_id)\
+                    SELECT $1, position, $2 FROM MaterialBaseElements\
+                    WHERE material_id = $3 AND base_element_id = $4',
+                    [new_material.rows[0].material_id, new_base_element.rows[0].base_element_id, materials.rows[0].m[k], base_elements.rows[0].b[l] ]
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+      await client.query('COMMIT')
+      res.status(201).json({
+        "exam_id": new_exam.rows[0].exam_id
+      })   
+    } catch (e) {
+      await client.query('ROLLBACK')
+      next(e)
+    }
+  } finally {
+    client.release()
+  }
+}
+
+router.post('/:exam_id/copy', copy_exams)
+router.post('/:exam_id/copy_to_group', copy_exams)
+
+router.post('/:exam_id/material_to_study', async (req, res, next) => {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const exam_id = parseInt(req.params.exam_id)
+    const success_threshold = req.body.success_threshold
+    const consecutively = req.body.consecutively
+    try {
+      const results = await client.query( 
+        "SELECT m.material_id as material_id, m.title as title,\
+         json_build_object('base_element_id', b.base_element_id, 'title', b.title, 'source', b.source, 'type', b.type) as base_elements\
+         FROM BaseElements b, MaterialBaseElements mb, Materials m, QuestionMaterials qm, Questions q, ExamQuestions eq, Exams e\
+         WHERE e.exam_id = $1 AND e.exam_id = eq.exam_id AND eq.question_id = q.question_id\
+         AND qm.question_id = q.question_id AND qm.material_id = m.material_id\
+         AND mb.material_id = m.material_id AND b.base_element_id = mb.base_element_id\
+         AND b.is_pivotal = $2",
+        [exam_id, true]
+      )
+      const success = await client.query(
+        'SELECT array_agg(material_id) as materials FROM StudyMaterials WHERE exam_id = $1\
+         AND user_id = $2 AND ' + ((consecutively) ? 'success_consecutively' : 'success_inconsistently') + ' >= $3',
+        [exam_id, req.user.id, success_threshold]
+      )
+      var materials = results.rows
+      var study_materials = (success.rows[0].materials) ? success.rows[0].materials : []
+      for (var i = 0; i < materials.length; i++) {
+        if (!materials[i].base_elements || study_materials.includes(materials[i].material_id)) {
+          materials.splice(i, i)
+        } 
+      }     
+      await client.query('COMMIT')
+      if (materials.length === 0) {
+        if (study_materials.length === 0) {
+          return res.status(404).send('Учебные материалы не найдены')
+        } else {
+          return res.status(204).send('Все учебные материалы изучены')
+        }
+      }
+      var material = materials[Math.round(Math.random()*materials.length)]
+      const study = await client.query(
+        'SELECT material_id FROM StudyMaterials WHERE material_id = $1 AND user_id = $2',
+        [material.material_id, req.user.id]
+      )
+      if (study.rows.length === 0) {
+        await client.query(
+          'INSERT INTO StudyMaterials (material_id, exam_id, user_id, success_consecutively, success_inconsistently)\
+           VALUES ($1, $2, $3, 0, 0)',
+           [material.material_id, exam_id, req.user.id]
+        )
+      }
+      delete material.material_id
+      res.status(200).send(material)
+    } catch(e) {
+      await client.query('ROLLBACK')
+      next(e)
+    }
+  } finally {
+    client.release()
+  }
+})
+
+router.post('/:exam_id/materials/:material_id/study_result', async (req, res, next) => {
+  try {
+    const exam_id = parseInt(req.params.exam_id)
+    const material_id = parseInt(req.params.material_id)
+    const successful = req.body.successful
+    await pool.query(
+      'UPDATE StudyMaterials SET success_consecutively = ' + ((successful) ? 'success_consecutively + 1' : '0') +
+      ', success_inconsistently = success_inconsistently + 1\
+       WHERE material_id = $1 AND exam_id = $2 AND user_id = $3',
+      [material_id, exam_id, req.user.id]
+    )
+    res.status(200).send()
+  } catch(e) {
+    next(e)
+  }
+})
+
+router.post('/:exam_id/reset_study_progress', async (req, res, next) => {
+  try {
+    const exam_id = parseInt(req.params.exam_id)
+    await pool.query(
+      'DELETE FROM StudyMaterials WHERE exam_id = $1 AND user_id = $2',
+      [exam_id, req.user.id]
+    )
+    res.status(200).send()
+  } catch(e) {
+    next(e)
   }
 })
 

@@ -434,4 +434,87 @@ router.post('/:material_id/copy_to_question', async (req, res, next) => {
   }
 })
 
+router.get('/:material_id/comments', async (req, res, next) => {
+  try {
+    const material_id = parseInt(req.params.material_id)
+    const results =  await pool.query(
+      "SELECT comment_id, text, json_build_object('user_id', user_id, 'name', name, 'login', login, 'email', email, 'university', university, 'faculty', faculty) as author,\
+       to_char(created_ts, 'YYYY-MM-DDThh:MI:SS.MSZ') as created_ts, to_char(edited_ts, 'YYYY-MM-DDThh:MI:SS.MSZ') as edited_ts, to_char(deleted_ts, 'YYYY-MM-DDThh:MI:SS.MSZ') as deleted_ts\
+       FROM MaterialComments, Users WHERE user_id = author_id AND material_id = $1",
+      [material_id]
+    )
+    var comments = results.rows
+    for (var i = 0; i < comments.length; i++) {
+      if(comments[i].deleted_ts) {
+        delete comments[i].text
+        comments[i].deleted = true
+      } else {
+        delete comments[i].deleted_ts
+      }
+      if(!comments[i].edited_ts) {
+        delete comments[i].edited_ts
+      }
+    }
+    res.status(200).send(comments)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.post('/:material_id/comments', async (req, res, next) => {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    try {
+      const material_id = parseInt(req.params.material_id)
+      const text = req.body.text
+      const results =  await client.query(
+        'INSERT INTO MaterialComments (text, material_id, author_id, created_ts)\
+        VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING comment_id',
+        [text, material_id, req.user.id]
+      )
+      await client.query('COMMIT')
+      res.status(201).json({
+        "comment_id": results.rows[0].comment_id
+      })
+    } catch (e) {
+      await client.query('ROLLBACK')
+      next(e)
+    }
+  } finally {
+    client.release()
+  }
+})
+
+router.post('/:material_id/comments/:comment_id', async (req, res, next) => {
+  try {
+    const material_id = parseInt(req.params.material_id)
+    const comment_id = parseInt(req.params.comment_id)
+    const text = req.body.text
+    const results =  await pool.query(
+      'UPDATE MaterialComments SET text = $1, edited_ts = CURRENT_TIMESTAMP\
+       WHERE material_id = $2 AND comment_id = $3 AND author_id = $4',
+      [text, material_id, comment_id, req.user.id]
+    )
+    res.status(200).send()
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.delete('/:material_id/comments/:comment_id', async (req, res, next) => {
+  try {
+    const material_id = parseInt(req.params.material_id)
+    const comment_id = parseInt(req.params.comment_id)
+    const results =  await pool.query(
+      'UPDATE MaterialComments SET deleted_ts = CURRENT_TIMESTAMP\
+       WHERE material_id = $1 AND comment_id = $2 AND author_id = $3',
+      [material_id, comment_id, req.user.id]
+    )
+    res.status(200).send()
+  } catch (e) {
+    next(e)
+  }
+})
+
 module.exports = router

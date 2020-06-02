@@ -18,6 +18,38 @@ router.get('/:group_id/exams', async (req, res, next) => {
   }
 })
 
+router.post('/:group_id/exams', async (req, res, next) => {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    try {
+      const group_id = parseInt(req.params.group_id)
+      const {title, professor, tags} = req.body;
+      const results = await client.query(
+        'INSERT INTO Exams (title, professor, group_id, created)\
+         VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING exam_id',
+        [title, professor, group_id]
+      )
+      for (var tag in tags) {
+        if (tags.hasOwnProperty(tag)) {
+          await client.query('INSERT INTO ExamTags (tag, exam_id) VALUES ($1, $2)',
+            [tags[tag], results.rows[0].exam_id]
+          )
+        }
+      }
+      await client.query('COMMIT')
+      res.status(201).json({
+        exam_id: results.rows[0].exam_id
+      })
+    } catch (e) {
+      await client.query('ROLLBACK')
+      next(e)
+    }
+  } finally {
+    client.release()
+  }
+})
+
 router.delete('/:group_id/exams/:exam_id', async (req, res, next) => {
   const client = await pool.connect()
   try {

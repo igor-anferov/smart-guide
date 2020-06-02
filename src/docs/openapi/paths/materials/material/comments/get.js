@@ -52,10 +52,10 @@ module.exports = {
                     },
                     'deleted_ts': {
                       type: 'string',
-                      format: 'date-time',
+                      format: 'date-time',                      
                     },
                   },
-                  required: ['comment_id', 'deleted', 'author','created_ts', 'deleted_ts']
+                  required: ['comment_id', 'deleted', 'author', 'created_ts', 'deleted_ts']
                 },
               ]
             }

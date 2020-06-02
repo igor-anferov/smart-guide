@@ -117,6 +117,14 @@ CREATE TABLE IF NOT EXISTS MaterialComments (
   deleted_ts timestamp
 );
 
+CREATE TABLE IF NOT EXISTS StudyMaterials (
+  user_id int,
+  material_id int,
+  exam_id int,
+  success_consecutively int,
+  success_inconsistently int,
+  primary key(user_id, material_id)
+);
 
 CREATE TABLE IF NOT EXISTS BaseElementTags (
   base_element_id int,

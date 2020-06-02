@@ -204,7 +204,7 @@ module.exports = {
     },
 
     '/exams/{exam_id}/material_to_study': {
-      get: require('./paths/exams/exam/material_to_study/get.js'),
+      post: require('./paths/exams/exam/material_to_study/get.js'),
     },
     '/exams/{exam_id}/materials/{material_id}/study_result': {
       post: require('./paths/exams/exam/material_to_study/post.js'),
