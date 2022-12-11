@@ -51,7 +51,7 @@
   "devDependencies": {
     "cookie-parser": "^1.4.5",
     "esm": "^3.2.25",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-openapi-validator": "^3.12.9",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
